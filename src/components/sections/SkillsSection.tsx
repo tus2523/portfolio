@@ -29,7 +29,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
       <div className="flex flex-col items-center mb-10 text-center">
         <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold text-[#D7E2EA]/40 mb-2">What I bring to the table</p>
         <h2 className="hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide">
-          Skills &amp; Expertise
+          Skills & Expertise
         </h2>
       </div>
       {skills && skills.length > 0 ? (
