@@ -1,0 +1,56 @@
+import React from 'react';
+import { FadeIn } from '../FadeIn';
+import { FloatingEmoji } from '../FloatingEmoji';
+import { VideoProjectRow } from '../VideoProjectRow';
+import { defaultData } from '../../lib/store';
+
+const getAssetUrl = (path: string) => {
+  const base = import.meta.env.BASE_URL || '/';
+  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  return `${cleanBase}${cleanPath}`;
+};
+
+const GLASS_CLAPPERBOARD = getAssetUrl('glass_clapperboard.png');
+const GLASS_SPARKLES = getAssetUrl('glass_sparkles.png');
+
+interface ProjectsSectionProps {
+  videoProjects: typeof defaultData.videoProjects;
+  onSelectVideo: (video: any) => void;
+}
+
+export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects, onSelectVideo }) => {
+  return (
+    <section
+      id="projects"
+      className="bg-[#0C0C0C] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden"
+    >
+      {/* Floating Decorative 3D Glass Assets */}
+      <FloatingEmoji src={GLASS_CLAPPERBOARD} alt="Clapperboard" className="top-[20%] left-[2%] sm:left-[4%]" rotation={15} delay={1.8} />
+      <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="bottom-[20%] right-[2%] sm:right-[4%]" rotation={-12} delay={2.0} />
+
+      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12">
+        <FadeIn delay={0} y={40}>
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold text-[#D7E2EA]/40 mb-2 text-center">Reel Cuts Portfolio</p>
+          <h2 className="hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide text-center">
+            Editing Work
+          </h2>
+        </FadeIn>
+      </div>
+
+      <div className="max-w-[1400px] mx-auto w-full flex flex-col gap-10">
+        {videoProjects && videoProjects.length > 0 ? (
+          videoProjects.map((project) => (
+            <VideoProjectRow
+              key={project.id}
+              project={project}
+              onSelectVideo={onSelectVideo}
+            />
+          ))
+        ) : (
+          <div className="text-center text-[#D7E2EA]/30 py-20 italic">No video projects added yet. Add them in the admin dashboard.</div>
+        )}
+      </div>
+    </section>
+  );
+};
