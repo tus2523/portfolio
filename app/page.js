@@ -438,7 +438,7 @@ export default function Home() {
                           {thumb ? (
                             <img src={thumb} alt={vid.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                           ) : (
-                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyCenter: 'center', color: '#222', fontSize: '2rem' }}>▶</div>
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222', fontSize: '2rem' }}>▶</div>
                           )}
                           <div style={{ 
                             position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
