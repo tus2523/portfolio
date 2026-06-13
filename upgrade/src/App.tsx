@@ -113,12 +113,43 @@ function MainApp() {
         else if (/macintosh/i.test(ua)) device = 'Mac';
         else if (/linux/i.test(ua)) device = 'Linux PC';
 
-        // Parse custom referrer name/tag from URL (e.g. ?ref=John_Doe or ?name=Jio_HR)
+        // Parse custom referrer, name, and ID/handle from URL
         const params = new URLSearchParams(window.location.search);
-        const refName = params.get('ref') || params.get('name') || params.get('refName') || '';
-        const displayName = refName ? decodeURIComponent(refName).replace(/_/g, ' ') : 'General Visitor';
+        
+        // 1. Detect platform/referrer source
+        let source = 'General';
+        const urlRef = params.get('ref') || params.get('source') || '';
+        const refUrl = document.referrer.toLowerCase();
+        
+        if (urlRef) {
+          source = urlRef.charAt(0).toUpperCase() + urlRef.slice(1);
+        } else if (refUrl.includes('instagram.com')) {
+          source = 'Instagram';
+        } else if (refUrl.includes('linkedin.com') || refUrl.includes('lnkd.in')) {
+          source = 'LinkedIn';
+        } else if (refUrl.includes('youtube.com') || refUrl.includes('youtu.be')) {
+          source = 'YouTube';
+        } else if (refUrl.includes('facebook.com')) {
+          source = 'Facebook';
+        } else if (refUrl.includes('twitter.com') || refUrl.includes('t.co')) {
+          source = 'Twitter/X';
+        } else if (refUrl.includes('wa.me') || refUrl.includes('whatsapp.com')) {
+          source = 'WhatsApp';
+        }
 
-        const message = `🚀 New Visitor Alert!\n👤 Ref/Name: ${displayName}\n📍 Location: ${geo.city || 'Unknown'}, ${geo.region || ''}, ${geo.country_name || 'Unknown'}\n🌐 IP: ${geo.ip || 'Unknown'}\n📱 Device: ${device}\n🏢 ISP: ${geo.org || 'Unknown'}`;
+        // 2. Extract visitor Name (e.g. ?name=John_Doe)
+        let visitorName = params.get('name') || params.get('fullName') || params.get('fullname') || params.get('refName') || '';
+        if (visitorName) {
+          visitorName = decodeURIComponent(visitorName).replace(/_/g, ' ');
+        }
+
+        // 3. Extract visitor ID/Handle (e.g. ?id=john_123 or ?username=john_123)
+        let visitorId = params.get('id') || params.get('username') || params.get('handle') || params.get('userId') || '';
+        if (visitorId) {
+          visitorId = decodeURIComponent(visitorId);
+        }
+
+        const message = `🚀 New Visitor Alert!\n📱 Platform: ${source}\n👤 Name: ${visitorName || 'Unknown Visitor'}\n🆔 ID/Handle: ${visitorId ? (visitorId.startsWith('@') ? visitorId : `@${visitorId}`) : 'Not Available'}\n📍 Location: ${geo.city || 'Unknown'}, ${geo.region || ''}, ${geo.country_name || 'Unknown'}\n🌐 IP: ${geo.ip || 'Unknown'}\n📱 Device: ${device}\n🏢 ISP: ${geo.org || 'Unknown'}`;
 
         const encoded = encodeURIComponent(message);
         const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encoded}&apikey=${apikey}`;
