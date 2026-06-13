@@ -2,14 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDMzAHqfo-svL8Z1TNBRK6PxsW6VEK-5os",
-  authDomain: "sahill-trial.firebaseapp.com",
-  projectId: "sahill-trial",
-  storageBucket: "sahill-trial.firebasestorage.app",
-  messagingSenderId: "1885629881585",
-  appId: "1:1885629881585:web:82c18f4a09425e25508de0",
-  measurementId: "G-YBGTESJMHK",
-  databaseURL: "https://sahill-trial-default-rtdb.firebaseio.com"
+  apiKey: "AIzaSyB3qLkvx-bE0IRRJLx9ptmYU-mHTuQq5yc",
+  authDomain: "sahil-portfolio-cf061.firebaseapp.com",
+  projectId: "sahil-portfolio-cf061",
+  storageBucket: "sahil-portfolio-cf061.firebasestorage.app",
+  messagingSenderId: "951737944490",
+  appId: "1:951737944490:web:f2a055e3027c4dc397c3d3",
+  measurementId: "G-FVC3D4SB8R",
+  databaseURL: "https://sahil-portfolio-cf061-default-rtdb.firebaseio.com"
 };
 
 const app = initializeApp(firebaseConfig);
