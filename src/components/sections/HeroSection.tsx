@@ -77,7 +77,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
       {/* Bottom bar */}
       <div className="flex flex-col sm:flex-row justify-end items-start sm:items-end px-6 sm:px-12 md:px-16 lg:px-24 pb-4 w-full z-20">
         <FadeIn delay={0.5} y={20} className="ml-auto">
-          <a href={`mailto:${data.about?.email || 'thoratsahil90@gmail.com'}`}>
+          <a
+            href={`https://wa.me/${(data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '').length === 10 ? '91' + (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '') : (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <ContactButton />
           </a>
         </FadeIn>

@@ -63,7 +63,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ data }) => {
       </div>
 
       <FadeIn delay={0} y={30} className="z-20">
-        <a href={`mailto:${data.about?.email || 'thoratsahil90@gmail.com'}`}>
+        <a
+          href={`https://wa.me/${(data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '').length === 10 ? '91' + (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '') : (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <ContactButton />
         </a>
       </FadeIn>
