@@ -17,6 +17,8 @@ import { ProjectsSection } from './components/sections/ProjectsSection';
 import { ExperienceSection } from './components/sections/ExperienceSection';
 import { SkillsSection } from './components/sections/SkillsSection';
 import { FooterSection } from './components/sections/FooterSection';
+import { WebsitesSection } from './components/sections/WebsitesSection';
+import { ReviewsSection } from './components/sections/ReviewsSection';
 
 import { MarqueeRow } from './components/MarqueeRow';
 import './App.css';
@@ -60,8 +62,11 @@ function MainApp() {
             heroStats: { ...prev.heroStats, ...(fbData.heroStats || {}) },
             about: { ...prev.about, ...(fbData.about || {}) },
             videoProjects: fbData.videoProjects || [],
+            websites: fbData.websites || [],
+            reviews: fbData.reviews || [],
             experience: fbData.experience || [],
             skills: fbData.skills || [],
+            brandLogos: fbData.brandLogos || [],
             settings: { ...prev.settings, ...(fbData.settings || {}) }
           };
           saveData(merged); // Cache locally to prevent flash glitch on page refresh
@@ -244,10 +249,12 @@ function MainApp() {
 
       <AboutSection data={data} />
       <ServicesSection data={data} />
-      <CampaignsSection campaigns={campaigns} />
+      <CampaignsSection campaigns={campaigns} brandLogos={(data as any).brandLogos || []} />
       <ProjectsSection videoProjects={data.videoProjects || []} onSelectVideo={(video) => setLightbox(video)} />
+      <WebsitesSection websites={data.websites || []} />
       <ExperienceSection experience={data.experience || []} />
       <SkillsSection skills={data.skills || []} />
+      <ReviewsSection reviews={data.reviews || []} />
       <FooterSection data={data} />
 
       {/* Video Lightbox */}

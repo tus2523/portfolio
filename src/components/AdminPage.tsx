@@ -36,14 +36,17 @@ import { deleteImageByUrl } from '../lib/storage';
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 const NAV = [
-  { id: 'stats',      icon: '📊', label: 'Hero Stats'     },
-  { id: 'campaigns',  icon: '📋', label: 'Campaigns'      },
-  { id: 'videos',     icon: '🎬', label: 'Video Projects' },
-  { id: 'experience', icon: '💼', label: 'Experience'     },
-  { id: 'skills',     icon: '🛠️', label: 'Skills'         },
-  { id: 'about',      icon: '👤', label: 'About'          },
-  { id: 'settings',   icon: '⚙️', label: 'Settings'       },
-  { id: 'seed',       icon: '🗄️', label: 'Seed Data'      },
+  { id: 'stats',        icon: '📊', label: 'Hero Stats'     },
+  { id: 'campaigns',   icon: '📋', label: 'Campaigns'      },
+  { id: 'videos',      icon: '🎬', label: 'Video Projects' },
+  { id: 'websites',    icon: '🌐', label: 'Websites'       },
+  { id: 'brand-logos', icon: '🏷️', label: 'Brand Logos'    },
+  { id: 'reviews',     icon: '⭐', label: 'Reviews'        },
+  { id: 'experience',  icon: '💼', label: 'Experience'     },
+  { id: 'skills',      icon: '🛠️', label: 'Skills'         },
+  { id: 'about',       icon: '👤', label: 'About'          },
+  { id: 'settings',    icon: '⚙️', label: 'Settings'       },
+  { id: 'seed',        icon: '🗄️', label: 'Seed Data'      },
 ];
 
 export const AdminPage: React.FC = () => {
@@ -221,14 +224,17 @@ export const AdminPage: React.FC = () => {
           </div>
         )}
 
-        {tab === 'stats'      && <HeroStats      data={data} save={save} />}
-        {tab === 'campaigns'  && <Campaigns      data={data} saveCampaigns={saveCampaigns} />}
-        {tab === 'videos'     && <VideoProjects  data={data} save={save} flash={flash} />}
-        {tab === 'experience' && <Experience     data={data} save={save} />}
-        {tab === 'skills'     && <Skills         data={data} save={save} />}
-        {tab === 'about'      && <About          data={data} save={save} />}
-        {tab === 'settings'   && <Settings       data={data} save={save} />}
-        {tab === 'seed'       && <SeedData       setData={setData} flash={flash} />}
+        {tab === 'stats'        && <HeroStats      data={data} save={save} />}
+        {tab === 'campaigns'    && <Campaigns      data={data} saveCampaigns={saveCampaigns} />}
+        {tab === 'videos'       && <VideoProjects  data={data} save={save} flash={flash} />}
+        {tab === 'websites'     && <WebsitesManagement data={data} save={save} />}
+        {tab === 'brand-logos'  && <BrandLogosManagement data={data} save={save} />}
+        {tab === 'reviews'      && <ReviewsManagement  data={data} save={save} />}
+        {tab === 'experience'   && <Experience     data={data} save={save} />}
+        {tab === 'skills'       && <Skills         data={data} save={save} />}
+        {tab === 'about'        && <About          data={data} save={save} />}
+        {tab === 'settings'     && <Settings       data={data} save={save} />}
+        {tab === 'seed'         && <SeedData       setData={setData} flash={flash} />}
       </main>
     </div>
   );
@@ -1090,6 +1096,338 @@ const SeedData: React.FC<{
           {confirmed ? '⚠️ Confirm Database Reset' : 'Reset Database to Presets'}
         </button>
       </div>
+    </div>
+  );
+};
+
+// ─── BRAND LOGOS MANAGEMENT SUBCOMPONENT ─────────────────────────────────
+const BrandLogosManagement: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
+  const [items, setItems] = useState<{ id: string; name: string; logoUrl: string }[]>([]);
+  const [modal, setModal] = useState<{ isEdit: boolean; id?: string } | null>(null);
+  const [form, setForm] = useState({ name: '', logoUrl: '' });
+
+  useEffect(() => setItems((data as any).brandLogos || []), [(data as any).brandLogos]);
+
+  const persist = (updated: any) => {
+    setItems(updated);
+    save('brandLogos', updated);
+  };
+
+  const openAdd = () => {
+    setForm({ name: '', logoUrl: '' });
+    setModal({ isEdit: false });
+  };
+
+  const openEdit = (item: any) => {
+    setForm({ name: item.name, logoUrl: item.logoUrl || '' });
+    setModal({ isEdit: true, id: item.id });
+  };
+
+  const saveItem = () => {
+    if (modal?.isEdit) {
+      persist(items.map((i: any) => i.id === modal.id ? { ...i, ...form } : i));
+    } else {
+      persist([...items, { id: uid(), ...form }]);
+    }
+    setModal(null);
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Brand Logos</h2>
+        <button onClick={openAdd} className="bg-[#7621B0] text-white font-semibold py-2 px-4 rounded-lg uppercase tracking-wider text-xs hover:bg-[#611a93]">
+          + Add Logo
+        </button>
+      </div>
+      <p className="text-sm text-[#D7E2EA]/50 mb-6">Yahan aap un brands ke logos add kar sakte ho jinke saath aapne kaam kiya hai. Ye logos aapki website pe showcase honge.</p>
+
+      {/* Logos Grid Preview */}
+      {items.length > 0 && (
+        <div className="flex flex-wrap gap-4 mb-8 p-4 bg-[#121212] border border-[#222] rounded-2xl">
+          {items.map((item: any) => (
+            <div key={item.id} className="flex flex-col items-center gap-2 group/logo relative">
+              <div className="w-20 h-20 bg-[#0C0C0C] border border-[#333] rounded-xl flex items-center justify-center overflow-hidden p-2">
+                {item.logoUrl ? (
+                  <img src={item.logoUrl} alt={item.name} className="max-w-full max-h-full object-contain" />
+                ) : (
+                  <span className="text-xs text-[#D7E2EA]/30 text-center">{item.name}</span>
+                )}
+              </div>
+              <span className="text-[10px] text-[#D7E2EA]/50 max-w-[80px] text-center truncate">{item.name}</span>
+              <div className="absolute -top-2 -right-2 hidden group-hover/logo:flex gap-1">
+                <button onClick={() => openEdit(item)} className="w-6 h-6 bg-[#7621B0] rounded-full text-[9px] text-white flex items-center justify-center">✏️</button>
+                <button onClick={() => { if(confirm('Delete?')) persist(items.filter((i:any) => i.id !== item.id)); }} className="w-6 h-6 bg-red-700 rounded-full text-[9px] text-white flex items-center justify-center">✕</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* List */}
+      <div className="flex flex-col gap-3">
+        {items.map((item: any) => (
+          <div key={item.id} className="bg-[#121212] border border-[#222] p-4 rounded-xl flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#0C0C0C] rounded-lg flex items-center justify-center overflow-hidden p-1">
+                {item.logoUrl ? (
+                  <img src={item.logoUrl} alt={item.name} className="max-w-full max-h-full object-contain" />
+                ) : (
+                  <span className="text-[10px] text-[#D7E2EA]/30">No img</span>
+                )}
+              </div>
+              <span className="font-semibold text-[#D7E2EA]">{item.name}</span>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => openEdit(item)} className="text-xs text-[#D7E2EA]/50 hover:text-[#D7E2EA]">Edit</button>
+              <button onClick={() => { if(confirm('Delete?')) persist(items.filter((i:any) => i.id !== item.id)); }} className="text-xs text-red-500 hover:text-red-400">Delete</button>
+            </div>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <div className="text-center text-[#D7E2EA]/30 py-12 italic">Abhi koi logo add nahi kiya. Upar "+ Add Logo" click karo.</div>
+        )}
+      </div>
+
+      {modal && (
+        <div className="fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50">
+          <div className="bg-[#121212] p-6 rounded-2xl w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">{modal.isEdit ? 'Edit Brand Logo' : 'Add Brand Logo'}</h3>
+            <div className="flex flex-col gap-4">
+              <input
+                className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm"
+                placeholder="Brand Name (e.g. Flipkart, ICICI Bank)"
+                value={form.name}
+                onChange={e => setForm(p => ({...p, name: e.target.value}))}
+              />
+              {/* Logo: URL paste karo ya upload karo - free aspect ratio */}
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/50 font-semibold">Brand Logo</label>
+                <input
+                  className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm"
+                  placeholder="Logo URL paste karo (e.g. https://...logo.png)"
+                  value={form.logoUrl}
+                  onChange={e => setForm(p => ({...p, logoUrl: e.target.value}))}
+                />
+                <p className="text-[10px] text-[#D7E2EA]/40 text-center">— ya apne computer se upload karo —</p>
+                <ImageUpload
+                  value={form.logoUrl}
+                  onChange={url => setForm(p => ({...p, logoUrl: url}))}
+                  folderPath="brand-logos"
+                  label="Upload Brand Logo (PNG/SVG/JPG)"
+                />
+                {/* Live Preview */}
+                {form.logoUrl && (
+                  <div className="mt-2 p-4 bg-[#0C0C0C] border border-[#333] rounded-xl flex items-center justify-center min-h-[80px]">
+                    <img
+                      src={form.logoUrl}
+                      alt="Logo Preview"
+                      className="max-h-16 max-w-full object-contain"
+                      onError={e => (e.currentTarget.style.display='none')}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setModal(null)} className="px-4 py-2 border border-[#333] rounded text-xs">Cancel</button>
+              <button onClick={saveItem} className="px-4 py-2 bg-[#7621B0] rounded text-xs font-bold">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── WEBSITES MANAGEMENT SUBCOMPONENT ────────────────────────────────
+const WebsitesManagement: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
+  const [items, setItems] = useState<typeof defaultData.websites>([]);
+  const [modal, setModal] = useState<{ isEdit: boolean; id?: string } | null>(null);
+  const [form, setForm] = useState({ title: '', description: '', url: '', previewUrl: '', tags: '' });
+
+  useEffect(() => setItems(data.websites || []), [data.websites]);
+
+  const persist = (updated: any) => {
+    setItems(updated);
+    save('websites', updated);
+  };
+
+  const openAdd = () => {
+    setForm({ title: '', description: '', url: '', previewUrl: '', tags: '' });
+    setModal({ isEdit: false });
+  };
+
+  const openEdit = (item: any) => {
+    setForm({ ...item, tags: (item.tags || []).join(', ') });
+    setModal({ isEdit: true, id: item.id });
+  };
+
+  const saveItem = () => {
+    const tagsArr = (form.tags || '').split(',').map(t => t.trim().toUpperCase()).filter(Boolean);
+    if (modal?.isEdit) {
+      persist(items.map((i: any) => i.id === modal.id ? { ...i, ...form, tags: tagsArr } : i));
+    } else {
+      persist([...items, { id: uid(), ...form, tags: tagsArr }]);
+    }
+    setModal(null);
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Websites Built</h2>
+        <button onClick={openAdd} className="bg-[#7621B0] text-white font-semibold py-2 px-4 rounded-lg uppercase tracking-wider text-xs hover:bg-[#611a93]">
+          + Add Website
+        </button>
+      </div>
+      <div className="flex flex-col gap-3 mb-8">
+        {items.map((item: any) => (
+          <div key={item.id} className="bg-[#121212] border border-[#222] p-4 rounded-xl flex justify-between items-center">
+            <div>
+              <h3 className="font-bold text-[#D7E2EA]">{item.title}</h3>
+              <a href={item.url} target="_blank" rel="noreferrer" className="text-xs text-blue-400">{item.url}</a>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => openEdit(item)} className="text-xs text-[#D7E2EA]/50 hover:text-[#D7E2EA]">Edit</button>
+              <button onClick={() => { if(confirm('Delete?')) persist(items.filter((i:any) => i.id !== item.id)); }} className="text-xs text-red-500 hover:text-red-400">Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {modal && (
+        <div className="fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50">
+          <div className="bg-[#121212] p-6 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-bold mb-4">{modal.isEdit ? 'Edit Website' : 'Add Website'}</h3>
+            <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto pr-2">
+              <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm" placeholder="Title" value={form.title} onChange={e => setForm(p => ({...p, title: e.target.value}))} />
+              <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm" placeholder="Website URL (e.g. https://yoursite.com)" value={form.url} onChange={e => setForm(p => ({...p, url: e.target.value}))} />
+              {/* Preview image: paste URL OR upload file */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/50 font-semibold">Preview Image</label>
+                <input
+                  className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm"
+                  placeholder="Paste image URL (e.g. https://i.imgur.com/abc.jpg)"
+                  value={form.previewUrl}
+                  onChange={e => setForm(p => ({...p, previewUrl: e.target.value}))}
+                />
+                <p className="text-[10px] text-[#D7E2EA]/40 px-1">— ya neeche se apne computer se upload karo —</p>
+                <ImageUpload
+                  value={form.previewUrl}
+                  onChange={url => setForm(p => ({...p, previewUrl: url}))}
+                  folderPath="websites"
+                  label="Upload Website Screenshot / Mockup"
+                />
+                {form.previewUrl && (
+                  <div className="mt-2 rounded-xl overflow-hidden border border-white/10">
+                    <img src={form.previewUrl} alt="Preview" className="w-full h-36 object-cover" onError={e => (e.currentTarget.style.display='none')} />
+                  </div>
+                )}
+              </div>
+              <textarea className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm h-20" placeholder="Description" value={form.description} onChange={e => setForm(p => ({...p, description: e.target.value}))} />
+              <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm" placeholder="Tags (comma separated)" value={form.tags} onChange={e => setForm(p => ({...p, tags: e.target.value}))} />
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setModal(null)} className="px-4 py-2 border border-[#333] rounded text-xs">Cancel</button>
+              <button onClick={saveItem} className="px-4 py-2 bg-[#7621B0] rounded text-xs font-bold">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── REVIEWS MANAGEMENT SUBCOMPONENT ─────────────────────────────────
+const ReviewsManagement: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
+  const [items, setItems] = useState<typeof defaultData.reviews>([]);
+  const [modal, setModal] = useState<{ id?: string; isEdit?: boolean } | null>(null);
+  const [form, setForm] = useState({ clientName: '', comment: '', rating: 5, logoUrl: '' });
+
+  useEffect(() => setItems(data.reviews || []), [data.reviews]);
+
+  const persist = (updated: any) => {
+    setItems(updated);
+    save('reviews', updated);
+  };
+
+  const toggleStatus = (id: string, status: string) => {
+    persist(items.map((i: any) => i.id === id ? { ...i, status } : i));
+  };
+
+  const openAdd = () => {
+    setForm({ clientName: '', comment: '', rating: 5, logoUrl: '' });
+    setModal({ isEdit: false });
+  };
+
+  const openEdit = (item: any) => {
+    setForm({ clientName: item.clientName, comment: item.comment, rating: item.rating, logoUrl: item.logoUrl || '' });
+    setModal({ id: item.id, isEdit: true });
+  };
+
+  const saveEdit = () => {
+    if (modal?.isEdit) {
+      persist(items.map((i: any) => i.id === modal.id ? { ...i, ...form } : i));
+    } else {
+      const uid = () => Math.random().toString(36).slice(2, 9);
+      persist([...items, { id: uid(), ...form, status: 'approved', date: new Date().toISOString() }]);
+    }
+    setModal(null);
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Client Reviews</h2>
+        <button onClick={openAdd} className="bg-[#7621B0] text-white font-semibold py-2 px-4 rounded-lg uppercase tracking-wider text-xs hover:bg-[#611a93]">
+          + Add Review
+        </button>
+      </div>
+      <div className="flex flex-col gap-4">
+        {items.map((item: any) => (
+          <div key={item.id} className="bg-[#121212] border border-[#222] p-5 rounded-xl flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-bold text-[#D7E2EA]">{item.clientName}</span>
+                <span className="text-amber-400 text-xs">★ {item.rating}/5</span>
+                <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded ${item.status === 'approved' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                  {item.status}
+                </span>
+              </div>
+              <p className="text-sm text-[#D7E2EA]/60 italic">"{item.comment}"</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => toggleStatus(item.id, item.status === 'approved' ? 'pending' : 'approved')} className="text-xs px-3 py-1.5 bg-[#181818] border border-[#333] rounded hover:bg-[#222]">
+                {item.status === 'approved' ? 'Unapprove' : 'Approve'}
+              </button>
+              <button onClick={() => openEdit(item)} className="text-xs px-3 py-1.5 bg-[#181818] border border-[#333] rounded hover:bg-[#222]">Edit</button>
+              <button onClick={() => { if(confirm('Delete?')) persist(items.filter((i:any) => i.id !== item.id)); }} className="text-xs px-3 py-1.5 bg-red-950/20 text-red-400 rounded hover:bg-red-950/40">Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {modal && (
+        <div className="fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50">
+          <div className="bg-[#121212] p-6 rounded-2xl w-full max-w-lg">
+            <h3 className="text-xl font-bold mb-4">{modal.isEdit ? 'Edit Review' : 'Add Review'}</h3>
+            <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto pr-2">
+              <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm" placeholder="Client Name" value={form.clientName} onChange={e => setForm(p => ({...p, clientName: e.target.value}))} />
+              <input type="number" min="1" max="5" className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm" placeholder="Rating" value={form.rating} onChange={e => setForm(p => ({...p, rating: parseInt(e.target.value)}))} />
+              <ImageUpload
+                value={form.logoUrl}
+                onChange={url => setForm(p => ({...p, logoUrl: url}))}
+                folderPath="logos"
+                label="Client Brand Logo"
+              />
+              <textarea className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm h-24" placeholder="Comment" value={form.comment} onChange={e => setForm(p => ({...p, comment: e.target.value}))} />
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setModal(null)} className="px-4 py-2 border border-[#333] rounded text-xs">Cancel</button>
+              <button onClick={saveEdit} className="px-4 py-2 bg-[#7621B0] rounded text-xs font-bold">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

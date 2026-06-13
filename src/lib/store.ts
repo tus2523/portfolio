@@ -21,9 +21,7 @@ export const defaultData = {
       title: 'Parking Lot Sessions S2',
       description: 'Lead post-production for the underground music series — Urban Monkey',
       tags: ['ARTIST MANAGEMENT', 'EDITOR', 'MUSIC'],
-      videos: [
-        { id: 'v1', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', title: 'Episode 1' },
-      ],
+      videos: [],
     },
     {
       id: 'vp2',
@@ -38,6 +36,116 @@ export const defaultData = {
       description: 'High-energy rap music video edits and post-production',
       tags: ['MUSIC', 'RAP', 'EDITING'],
       videos: [],
+    },
+  ],
+  websites: [
+    {
+      id: 'ws1',
+      title: 'Beatstore',
+      description: 'A platform to buy and sell instrumentals.',
+      url: 'https://lilraix-store.vercel.app/',
+      previewUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop',
+      tags: ['E-COMMERCE', 'MUSIC'],
+    },
+    {
+      id: 'ws2',
+      title: 'Studio Website',
+      description: 'A professional audio fusion studio website.',
+      url: 'https://audio-fusion-two.vercel.app',
+      previewUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=800&auto=format&fit=crop',
+      tags: ['STUDIO', 'PORTFOLIO'],
+    }
+  ],
+  reviews: [
+    {
+      id: 'rev1',
+      clientName: 'Ravi Sharma — ICICI Bank',
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/320px-ICICI_Bank_Logo.svg.png',
+      rating: 5,
+      comment: 'Sahil aur uski team ne humari influencer campaign flawlessly execute ki. Creator selection se leke reporting tak sab kuch on-point tha. Highly recommended!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev2',
+      clientName: 'Priya Mehta — Flipkart',
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Flipkart_wordmark.svg/320px-Flipkart_wordmark.svg.png',
+      rating: 5,
+      comment: 'Big Billion Days ke liye jo influencer strategy banai, uska result ekdum amazing tha. ROI expectations se kaafi upar raha. Great work!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev3',
+      clientName: 'Arjun Nair — Tata Motors',
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_logo.svg/320px-Tata_logo.svg.png',
+      rating: 5,
+      comment: 'Content quality aur creator briefing dono exceptional tha. Brand message bilkul sahi way mein convey hua. Definitely will work again!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev4',
+      clientName: 'Sneha Kulkarni — My11Circle',
+      logoUrl: '',
+      rating: 5,
+      comment: 'Sahil ka kaam dekhke pata chalta hai ye field mein kitna experience hai. Campaign delivery fast thi aur results bhi solid. Bohot badiya!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev5',
+      clientName: 'Vikas Joshi — Sony SAB',
+      logoUrl: '',
+      rating: 5,
+      comment: 'Show promotion ke liye jo creators choose kiye gaye, unka audience exactly hum target karna chahte the. Engagement rate top-notch tha. 5/5!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev6',
+      clientName: 'Deepika Rao — Urban Monkey',
+      logoUrl: '',
+      rating: 5,
+      comment: 'Parking Lot Sessions ka post-production Sahil ne handle kiya. Editing clean, crisp aur brand ke tone ke sath perfectly aligned thi. Ek dum fire!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev7',
+      clientName: 'Mohit Gupta — Puma India',
+      logoUrl: '',
+      rating: 5,
+      comment: 'Sahil genuinely samajhta hai youth culture aur creator economy. Usi wajah se humari brand integration organic feel karti hai, forced nahi. Will collaborate again!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev8',
+      clientName: 'Ananya Singh — Mamaearth',
+      logoUrl: '',
+      rating: 5,
+      comment: 'Influencer selection process mein jo transparency thi woh kaafi impressive tha. Regular updates milte rahe, koi guessing game nahi. Professional aur reliable!',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev9',
+      clientName: 'Rahul Verma — Boat Lifestyle',
+      logoUrl: '',
+      rating: 5,
+      comment: 'Reels content strategy ne humara organic reach 3x kar diya. Sahil clearly algorithm samajhta hai. Best decision tha yeh collaboration karna.',
+      status: 'approved',
+      date: new Date().toISOString()
+    },
+    {
+      id: 'rev10',
+      clientName: 'Kavya Patel — Nykaa',
+      logoUrl: '',
+      rating: 5,
+      comment: 'Brand ke vision ko itne achhe se execute kiya — content aur creators dono perfect fit the. Honestly one of the best campaign experiences I have had!',
+      status: 'approved',
+      date: new Date().toISOString()
     },
   ],
   experience: [
@@ -96,6 +204,7 @@ export const defaultData = {
     whatsappPhone: '8082812805',
     whatsappApiKey: '',
   },
+  brandLogos: [] as { id: string; name: string; logoUrl: string }[],
 };
 
 /* ─── Auth ───────────────────────────────────────────────────────── */
@@ -135,10 +244,13 @@ export function getData(): typeof defaultData {
       heroStats: { ...defaultData.heroStats, ...(stored.heroStats || {}) },
       campaigns: { ...defaultData.campaigns, ...(stored.campaigns || {}) },
       videoProjects: stored.videoProjects ?? defaultData.videoProjects,
+      websites: (stored.websites && stored.websites.length > 0) ? stored.websites : defaultData.websites,
+      reviews: (stored.reviews && stored.reviews.length > 0) ? stored.reviews : defaultData.reviews,
       experience: stored.experience ?? defaultData.experience,
       about: { ...defaultData.about, ...(stored.about || {}) },
       skills: stored.skills ?? defaultData.skills,
       settings: { ...defaultData.settings, ...(stored.settings || {}) },
+      brandLogos: stored.brandLogos ?? defaultData.brandLogos,
     };
   } catch (err) {
     console.warn("Store: Falling back to default data due to error:", err);

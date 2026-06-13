@@ -34,7 +34,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
           SAHIL THORAT<span className="text-[#BBCCD7]">.</span>
         </div>
         <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-[10px] sm:text-sm font-semibold uppercase tracking-widest text-[#D7E2EA]/70">
-          {["About", "Campaigns", "Projects", "Contact"].map((item) => (
+          {["About", "Campaigns", "Projects", "Websites", "Reviews", "Contact"].map((item) => (
             <a
               key={item}
               href={item === "Campaigns" ? "#campaigns" : `#${item.toLowerCase()}`}

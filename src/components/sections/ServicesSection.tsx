@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Film, Video, User, Briefcase, Globe, ExternalLink, MessageSquare, ArrowRight } from 'lucide-react';
+import { Sparkles, Film, Video, User, Briefcase, Globe, MessageSquare, ArrowRight } from 'lucide-react';
 import { FadeIn } from '../FadeIn';
 import { FloatingEmoji } from '../FloatingEmoji';
 import { defaultData } from '../../lib/store';
@@ -55,10 +55,6 @@ const SERVICES = [
     name: "Website Development",
     description: "Designing and developing modern portfolio stores, beat-selling landing pages, and studio websites with responsive layouts.",
     details: "Interactive frontend experiences tailored for creative brands. Specializing in high-performance portfolios, beatstores, and recording studio landing pages built with clean code and premium animations.",
-    websites: [
-      { name: "Beatstore", url: "https://lilraix-store.vercel.app/" },
-      { name: "Studio Website", url: "https://audio-fusion-two.vercel.app" }
-    ]
   },
 ];
 
@@ -199,28 +195,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
                 </p>
               </div>
 
-              {/* Websites List if Website Development */}
-              {activeService.websites && (
-                <div className="flex flex-col gap-3 mt-1">
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-[#BBCCD7]/40">Featured Web Builds:</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {activeService.websites.map((web: any, widx: number) => (
-                      <a
-                        key={widx}
-                        href={web.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between p-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-[#BBCCD7]/30 transition group/web"
-                      >
-                        <span className="text-xs font-semibold text-white">{web.name}</span>
-                        <span className="text-[10px] text-[#BBCCD7]/60 group-hover/web:text-white flex items-center gap-1">
-                          Live <ExternalLink size={11} />
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
+
 
               <div className="flex flex-col sm:flex-row gap-3 mt-4">
                 <a
