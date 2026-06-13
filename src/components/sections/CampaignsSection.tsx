@@ -13,6 +13,49 @@ const getAssetUrl = (path: string) => {
 const GLASS_MEGAPHONE = getAssetUrl('glass_megaphone.png');
 const GLASS_HEART = getAssetUrl('glass_heart.png');
 
+const getBrandLogo = (brandName: string) => {
+  const name = brandName.toLowerCase();
+  if (name.includes('flipkart')) {
+    return (
+      <svg className="w-4 h-4 mr-1.5 flex-shrink-0 text-amber-500 fill-amber-500" viewBox="0 0 24 24">
+        <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm0 10c-2.76 0-5-2.24-5-5h2c0 1.66 1.34 3 3 3s3-1.34 3-3h2c0 2.76-2.24 5-5 5z"/>
+      </svg>
+    );
+  }
+  if (name.includes('tata')) {
+    return (
+      <svg className="w-4 h-4 mr-1.5 flex-shrink-0 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M8 9 L12 13 L16 9 M12 13 L12 17" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (name.includes('icici')) {
+    return (
+      <svg className="w-4 h-4 mr-1.5 flex-shrink-0 text-orange-500 fill-current" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="4" />
+        <path d="M9 7h6v2H9V7zm2 4h2v6h-2v-6z" fill="#f59e0b" />
+      </svg>
+    );
+  }
+  if (name.includes('sab') || name.includes('sony')) {
+    return (
+      <svg className="w-4 h-4 mr-1.5 flex-shrink-0 text-red-600 fill-current" viewBox="0 0 24 24">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+    );
+  }
+  if (name.includes('my11') || name.includes('circle')) {
+    return (
+      <svg className="w-4 h-4 mr-1.5 flex-shrink-0 text-red-700 fill-current" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8l1.2 2.4 2.8.4-2 2 .5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-2 2.8-.4L12 8z" fill="#ffffff" />
+      </svg>
+    );
+  }
+  return null;
+};
+
 interface Creator {
   creator: string;
   profile: string;
@@ -74,24 +117,28 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns })
           <div className="w-full flex flex-col items-center">
             {/* Brand Tabs */}
             <div className="flex flex-wrap gap-2 mb-8 justify-center max-w-5xl">
-              {campaigns.brands.map(brand => (
-                <button
-                  type="button"
-                  key={brand}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    selectBrand(brand);
-                  }}
-                  className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-200 border ${
-                    activeBrand === brand 
-                      ? 'bg-[#0C0C0C] text-white border-[#0C0C0C] shadow-lg shadow-black/10' 
-                      : 'bg-white/70 text-[#0C0C0C]/60 border-[#0C0C0C]/10 hover:border-[#0C0C0C]/35 hover:text-[#0C0C0C] shadow-sm'
-                  }`}
-                >
-                  {brand}
-                </button>
-              ))}
+              {campaigns.brands.map(brand => {
+                const logo = getBrandLogo(brand);
+                return (
+                  <button
+                    type="button"
+                    key={brand}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      selectBrand(brand);
+                    }}
+                    className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-200 border flex items-center justify-center ${
+                      activeBrand === brand 
+                        ? 'bg-[#0C0C0C] text-white border-[#0C0C0C] shadow-lg shadow-black/10' 
+                        : 'bg-white/70 text-[#0C0C0C]/60 border-[#0C0C0C]/10 hover:border-[#0C0C0C]/35 hover:text-[#0C0C0C] shadow-sm'
+                    }`}
+                  >
+                    {logo}
+                    <span>{brand}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Accordion campaigns */}

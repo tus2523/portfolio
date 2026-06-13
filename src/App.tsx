@@ -243,7 +243,7 @@ function MainApp() {
       </section>
 
       <AboutSection data={data} />
-      <ServicesSection />
+      <ServicesSection data={data} />
       <CampaignsSection campaigns={campaigns} />
       <ProjectsSection videoProjects={data.videoProjects || []} onSelectVideo={(video) => setLightbox(video)} />
       <ExperienceSection experience={data.experience || []} />
