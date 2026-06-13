@@ -438,6 +438,7 @@ function VideoProjects({ data, save, flash, setData }) {
   const [editingVideoId, setEditingVideoId] = useState(null);
   const [editVideoTitle, setEditVideoTitle] = useState('');
   const [editVideoUrl, setEditVideoUrl] = useState('');
+  const [fetchingTitles, setFetchingTitles] = useState(false);
 
   useEffect(() => {
     const updatedProjects = data.videoProjects || [];
@@ -449,6 +450,48 @@ function VideoProjects({ data, save, flash, setData }) {
       }
     }
   }, [data.videoProjects]);
+
+  // Auto-fetch title for new video input
+  useEffect(() => {
+    const ytid = getYoutubeId(newVideoUrl);
+    if (ytid) {
+      const fetchTitle = async () => {
+        try {
+          const res = await fetch(`/api/youtube-title?url=${encodeURIComponent(newVideoUrl)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.title && !newVideoTitle) {
+              setNewVideoTitle(data.title);
+            }
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchTitle();
+    }
+  }, [newVideoUrl]);
+
+  // Auto-fetch title when editing video URL
+  useEffect(() => {
+    const ytid = getYoutubeId(editVideoUrl);
+    if (ytid && editingVideoId) {
+      const fetchTitle = async () => {
+        try {
+          const res = await fetch(`/api/youtube-title?url=${encodeURIComponent(editVideoUrl)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.title) {
+              setEditVideoTitle(data.title);
+            }
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchTitle();
+    }
+  }, [editVideoUrl]);
 
   const persist = (updated) => {
     setProjects(updated);
@@ -513,6 +556,41 @@ function VideoProjects({ data, save, flash, setData }) {
     setManageProject(updatedProject);
     persist(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
     cancelVideoEdit();
+  };
+
+  const fetchAllTitles = async () => {
+    if (!manageProject.videos || manageProject.videos.length === 0) return;
+    setFetchingTitles(true);
+    try {
+      const updatedVideos = await Promise.all(
+        manageProject.videos.map(async (v) => {
+          const ytid = getYoutubeId(v.url);
+          if (ytid) {
+            try {
+              const res = await fetch(`/api/youtube-title?url=${encodeURIComponent(v.url)}`);
+              if (res.ok) {
+                const data = await res.json();
+                if (data.title) {
+                  return { ...v, title: data.title };
+                }
+              }
+            } catch (err) {
+              console.error("Failed to fetch title for video:", v.id, err);
+            }
+          }
+          return v;
+        })
+      );
+      const updatedProject = { ...manageProject, videos: updatedVideos };
+      setManageProject(updatedProject);
+      persist(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+      flash('All YouTube titles updated! 🎬');
+    } catch (err) {
+      console.error(err);
+      flash('Error updating titles');
+    } finally {
+      setFetchingTitles(false);
+    }
   };
 
   const addVideo = () => {
@@ -614,6 +692,17 @@ function VideoProjects({ data, save, flash, setData }) {
               <h3>Manage Videos — {manageProject.title}</h3>
               <button className="modal-close" onClick={() => setModal(null)}>✕</button>
             </div>
+
+            {manageProject.videos && manageProject.videos.length > 0 && (
+              <button 
+                className="btn btn-outline btn-sm" 
+                style={{ marginBottom: '1.25rem', width: '100%', justifyContent: 'center' }} 
+                onClick={fetchAllTitles}
+                disabled={fetchingTitles}
+              >
+                {fetchingTitles ? '🔍 Fetching Titles...' : '🎬 Fetch All YouTube Titles'}
+              </button>
+            )}
 
             <div className="video-list">
               {!(manageProject.videos && manageProject.videos.length > 0) && (
