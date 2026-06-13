@@ -435,6 +435,9 @@ function VideoProjects({ data, save, flash, setData }) {
   const [manageProject, setManageProject] = useState(null);
   const [newVideoUrl, setNewVideoUrl] = useState('');
   const [newVideoTitle, setNewVideoTitle] = useState('');
+  const [editingVideoId, setEditingVideoId] = useState(null);
+  const [editVideoTitle, setEditVideoTitle] = useState('');
+  const [editVideoUrl, setEditVideoUrl] = useState('');
 
   useEffect(() => {
     const updatedProjects = data.videoProjects || [];
@@ -482,6 +485,34 @@ function VideoProjects({ data, save, flash, setData }) {
     setModal({ type: 'videos' });
     setNewVideoUrl('');
     setNewVideoTitle('');
+    setEditingVideoId(null);
+    setEditVideoTitle('');
+    setEditVideoUrl('');
+  };
+
+  const startVideoEdit = (v) => {
+    setEditingVideoId(v.id);
+    setEditVideoTitle(v.title);
+    setEditVideoUrl(v.url);
+  };
+
+  const cancelVideoEdit = () => {
+    setEditingVideoId(null);
+    setEditVideoTitle('');
+    setEditVideoUrl('');
+  };
+
+  const saveVideoEdit = (vidId) => {
+    if (!editVideoUrl.trim()) return;
+    const updatedVideos = (manageProject.videos || []).map(v => 
+      v.id === vidId 
+        ? { ...v, title: editVideoTitle.trim() || 'Untitled', url: editVideoUrl.trim() } 
+        : v
+    );
+    const updatedProject = { ...manageProject, videos: updatedVideos };
+    setManageProject(updatedProject);
+    persist(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+    cancelVideoEdit();
   };
 
   const addVideo = () => {
@@ -589,13 +620,41 @@ function VideoProjects({ data, save, flash, setData }) {
                 <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>No videos yet. Add one below.</p>
               )}
               {(manageProject.videos || []).map(v => {
+                const isEditing = editingVideoId === v.id;
                 const ytid = getYoutubeId(v.url);
+
+                if (isEditing) {
+                  return (
+                    <div key={v.id} className="video-list-item" style={{ gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <input
+                        className="form-input"
+                        value={editVideoTitle}
+                        onChange={e => setEditVideoTitle(e.target.value)}
+                        placeholder="Video Title"
+                        style={{ flex: '1 1 150px', padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}
+                      />
+                      <input
+                        className="form-input"
+                        value={editVideoUrl}
+                        onChange={e => setEditVideoUrl(e.target.value)}
+                        placeholder="YouTube / Drive URL"
+                        style={{ flex: '1 1 200px', padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}
+                      />
+                      <div style={{ display: 'flex', gap: '0.3rem' }}>
+                        <button className="btn btn-gold btn-sm" onClick={() => saveVideoEdit(v.id)}>💾 Save</button>
+                        <button className="btn btn-outline btn-sm" onClick={cancelVideoEdit}>✕</button>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={v.id} className="video-list-item">
                     {ytid
                       ? <img src={`https://img.youtube.com/vi/${ytid}/default.jpg`} className="video-list-thumb" alt="" />
                       : <div className="video-list-thumb" />}
                     <span className="video-list-title">{v.title}</span>
+                    <button className="btn btn-ghost btn-sm" style={{ padding: '0.2rem 0.4rem', fontSize: '0.9rem' }} onClick={() => startVideoEdit(v)}>✏️</button>
                     <a href={v.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm">🔗</a>
                     <button className="btn btn-danger btn-sm" onClick={() => deleteVideo(v.id)}>🗑</button>
                   </div>
