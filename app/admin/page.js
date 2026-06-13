@@ -18,7 +18,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { getData, updateSection, resetData, login, logout, isLoggedIn, parseCampaignCsv } from '../lib/store';
+import { getData, updateSection, resetData, login, logout, isLoggedIn, parseCampaignCsv, getYoutubeId } from '../lib/store';
 import { db } from '../lib/firebase';
 import { ref, set, onValue } from 'firebase/database';
 
@@ -271,6 +271,10 @@ function HeroStats({ data, save }) {
   const [form, setForm] = useState({ ...(data.heroStats || {}) });
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
+  useEffect(() => {
+    setForm({ ...(data.heroStats || {}) });
+  }, [data.heroStats]);
+
   return (
     <>
       <h2 className="admin-page-title">Hero Stats</h2>
@@ -320,6 +324,10 @@ function HeroStats({ data, save }) {
 function Campaigns({ data, saveCampaigns }) {
   const [url, setUrl] = useState((data.campaigns || {}).sheetUrl || '');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setUrl((data.campaigns || {}).sheetUrl || '');
+  }, [data.campaigns]);
 
   const handleRefresh = async () => {
     if (!url) return;
@@ -427,6 +435,17 @@ function VideoProjects({ data, save, flash, setData }) {
   const [manageProject, setManageProject] = useState(null);
   const [newVideoUrl, setNewVideoUrl] = useState('');
   const [newVideoTitle, setNewVideoTitle] = useState('');
+
+  useEffect(() => {
+    const updatedProjects = data.videoProjects || [];
+    setProjects(updatedProjects);
+    if (manageProject) {
+      const freshProject = updatedProjects.find(p => p.id === manageProject.id);
+      if (freshProject) {
+        setManageProject(freshProject);
+      }
+    }
+  }, [data.videoProjects]);
 
   const persist = (updated) => {
     setProjects(updated);
@@ -569,16 +588,19 @@ function VideoProjects({ data, save, flash, setData }) {
               {!(manageProject.videos && manageProject.videos.length > 0) && (
                 <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>No videos yet. Add one below.</p>
               )}
-              {(manageProject.videos || []).map(v => (
-                <div key={v.id} className="video-list-item">
-                  {v.url.includes('youtube') || v.url.includes('youtu.be')
-                    ? <img src={`https://img.youtube.com/vi/${v.url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1]}/default.jpg`} className="video-list-thumb" alt="" />
-                    : <div className="video-list-thumb" />}
-                  <span className="video-list-title">{v.title}</span>
-                  <a href={v.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm">🔗</a>
-                  <button className="btn btn-danger btn-sm" onClick={() => deleteVideo(v.id)}>🗑</button>
-                </div>
-              ))}
+              {(manageProject.videos || []).map(v => {
+                const ytid = getYoutubeId(v.url);
+                return (
+                  <div key={v.id} className="video-list-item">
+                    {ytid
+                      ? <img src={`https://img.youtube.com/vi/${ytid}/default.jpg`} className="video-list-thumb" alt="" />
+                      : <div className="video-list-thumb" />}
+                    <span className="video-list-title">{v.title}</span>
+                    <a href={v.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm">🔗</a>
+                    <button className="btn btn-danger btn-sm" onClick={() => deleteVideo(v.id)}>🗑</button>
+                  </div>
+                );
+              })}
             </div>
 
             <hr className="divider" />
@@ -606,6 +628,10 @@ function Experience({ data, save }) {
   const [items, setItems] = useState([...(data.experience || [])]);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
+
+  useEffect(() => {
+    setItems(data.experience || []);
+  }, [data.experience]);
 
   const persist = (updated) => { setItems(updated); save('experience', updated); };
 
@@ -703,6 +729,10 @@ function About({ data, save }) {
   const [form, setForm] = useState({ ...(data.about || {}) });
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
+  useEffect(() => {
+    setForm({ ...(data.about || {}) });
+  }, [data.about]);
+
   return (
     <>
       <h2 className="admin-page-title">About</h2>
@@ -741,6 +771,10 @@ function About({ data, save }) {
 ════════════════════════════════════════════════════════════ */
 function Skills({ data, save }) {
   const [text, setText] = useState((data.skills || []).join(', '));
+
+  useEffect(() => {
+    setText((data.skills || []).join(', '));
+  }, [data.skills]);
 
   const handleSave = () => {
     const skillsArray = text.split(',').map(s => s.trim()).filter(Boolean);
