@@ -412,7 +412,7 @@ function SortableProject({ p, openManage, openEdit, deleteProject }) {
         </div>
         <div>
           <div className="vp-tags">
-            {p.tags.map(t => <span key={t} className="tag">{t}</span>)}
+            {(p.tags || []).map(t => <span key={t} className="tag">{t}</span>)}
           </div>
           <h3 style={{ margin: '0.4rem 0 0.2rem', fontSize: '1.1rem' }}>{p.title}</h3>
           <div className="vp-desc">{p.description}</div>
