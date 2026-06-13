@@ -113,7 +113,12 @@ function MainApp() {
         else if (/macintosh/i.test(ua)) device = 'Mac';
         else if (/linux/i.test(ua)) device = 'Linux PC';
 
-        const message = `🚀 New Visitor Alert!\n📍 Location: ${geo.city || 'Unknown'}, ${geo.region || ''}, ${geo.country_name || 'Unknown'}\n🌐 IP: ${geo.ip || 'Unknown'}\n📱 Device: ${device}\n🏢 ISP: ${geo.org || 'Unknown'}`;
+        // Parse custom referrer name/tag from URL (e.g. ?ref=John_Doe or ?name=Jio_HR)
+        const params = new URLSearchParams(window.location.search);
+        const refName = params.get('ref') || params.get('name') || params.get('refName') || '';
+        const displayName = refName ? decodeURIComponent(refName).replace(/_/g, ' ') : 'General Visitor';
+
+        const message = `🚀 New Visitor Alert!\n👤 Ref/Name: ${displayName}\n📍 Location: ${geo.city || 'Unknown'}, ${geo.region || ''}, ${geo.country_name || 'Unknown'}\n🌐 IP: ${geo.ip || 'Unknown'}\n📱 Device: ${device}\n🏢 ISP: ${geo.org || 'Unknown'}`;
 
         const encoded = encodeURIComponent(message);
         const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encoded}&apikey=${apikey}`;
