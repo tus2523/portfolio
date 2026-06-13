@@ -80,6 +80,33 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
               </div>
             </a>
           )}
+          {data.settings?.whatsappPhone && (
+            <a
+              href={`https://wa.me/${data.settings.whatsappPhone.replace(/\D/g, '').length === 10 ? '91' + data.settings.whatsappPhone.replace(/\D/g, '') : data.settings.whatsappPhone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 px-6 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-[#BBCCD7]/35 transition"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-[#BBCCD7] fill-[#BBCCD7]/10"
+              >
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-[9px] uppercase tracking-widest text-[#D7E2EA]/40 font-semibold">WhatsApp</span>
+                <span className="text-xs sm:text-sm font-semibold text-[#D7E2EA]">{data.settings.whatsappPhone}</span>
+              </div>
+            </a>
+          )}
         </div>
       </div>
       <div className="max-w-[1400px] mx-auto border-t border-white/5 mt-12 pt-6 text-center text-xs text-[#D7E2EA]/30">

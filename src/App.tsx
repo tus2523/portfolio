@@ -7,6 +7,7 @@ import { AdminPage } from './components/AdminPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { InteractiveGlow } from './components/InteractiveGlow';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 
 // Section Components
 import { HeroSection } from './components/sections/HeroSection';
@@ -231,6 +232,7 @@ function MainApp() {
       <ScrollProgressBar />
       <div className="film-grain" aria-hidden="true" />
       <InteractiveGlow />
+      <FloatingWhatsApp phone={data.settings?.whatsappPhone} />
 
       <HeroSection data={data} />
       
