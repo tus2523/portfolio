@@ -458,12 +458,12 @@ function VideoProjects({ data, save, flash, setData }) {
   };
 
   const openEdit = (p) => {
-    setForm({ title: p.title, description: p.description, tags: p.tags.join(', ') });
+    setForm({ title: p.title, description: p.description, tags: (p.tags || []).join(', ') });
     setModal({ type: 'project', isEdit: true, id: p.id });
   };
 
   const saveProject = () => {
-    const tags = form.tags.split(',').map(t => t.trim().toUpperCase()).filter(Boolean);
+    const tags = (form.tags || '').split(',').map(t => t.trim().toUpperCase()).filter(Boolean);
     if (modal.isEdit) {
       persist(projects.map(p => p.id === modal.id ? { ...p, title: form.title, description: form.description, tags } : p));
     } else {
