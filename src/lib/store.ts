@@ -202,7 +202,7 @@ export const defaultData = {
   ],
   settings: {
     whatsappPhone: '8082812805',
-    whatsappApiKey: '',
+    web3formsAccessKey: '',
     footerHeading: "Let's work together",
     footerBio: "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions.",
     sectionOrder: ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'],

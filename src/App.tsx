@@ -41,16 +41,26 @@ function MainApp() {
       if (!snapshot.exists() || !fbData) {
         setDbDeleted(true);
         
-        // Dispatch WhatsApp deletion alert
-        const localSettings = getData().settings || {};
-        const phone = localSettings.whatsappPhone || '8082812805';
-        const apikey = localSettings.whatsappApiKey;
-        if (apikey && !sessionStorage.getItem('db_deletion_notified')) {
+        const localSettings = getData().settings || {} as any;
+        const accessKey = localSettings.web3formsAccessKey;
+        if (accessKey && !sessionStorage.getItem('db_deletion_notified')) {
           sessionStorage.setItem('db_deletion_notified', 'true');
-          const message = `🚨 EMERGENCY: Your portfolio database content ('portfolio_content') has been deleted or is missing from Firebase Realtime Database! Please check your admin console immediately.`;
-          const encoded = encodeURIComponent(message);
-          const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encoded}&apikey=${apikey}`;
-          fetch(url, { mode: 'no-cors' }).catch(console.error);
+          const messageHtml = `
+            <h2>🚨 EMERGENCY DATABASE ALERT!</h2>
+            <p>Your portfolio database content (<code>portfolio_content</code>) has been deleted or is missing from Firebase Realtime Database!</p>
+            <p>Please check your Firebase console immediately.</p>
+          `;
+          
+          fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              access_key: accessKey,
+              subject: `🚨 EMERGENCY: Database Deleted!`,
+              from_name: 'Portfolio Tracker',
+              message: messageHtml,
+            }),
+          }).catch(console.error);
         }
       } else {
         setDbDeleted(false);
@@ -93,14 +103,11 @@ function MainApp() {
       unsubscribePort();
       unsubscribeCamp();
     };
-  }, []);
-
-  // Geolocation Visitor Tracking & WhatsApp Notification
+  }, []);  // Geolocation Visitor Tracking & Email Notification
   useEffect(() => {
-    const phone = data.settings?.whatsappPhone || '8082812805';
-    const apikey = data.settings?.whatsappApiKey;
+    const accessKey = data.settings?.web3formsAccessKey;
 
-    if (!apikey || sessionStorage.getItem('portfolio_visit_notified')) return;
+    if (!accessKey || sessionStorage.getItem('portfolio_visit_notified')) return;
 
     const trackVisitor = async () => {
       try {
@@ -122,43 +129,54 @@ function MainApp() {
         const params = new URLSearchParams(window.location.search);
         
         // 1. Detect platform/referrer source
-        let source = 'General';
-        const urlRef = params.get('ref') || params.get('source') || '';
+        let source = 'Direct/Unknown';
         const refUrl = document.referrer.toLowerCase();
         
-        if (urlRef) {
-          source = urlRef.charAt(0).toUpperCase() + urlRef.slice(1);
-        } else if (refUrl.includes('instagram.com')) {
+        if (refUrl.includes('instagram.com')) {
           source = 'Instagram';
-        } else if (refUrl.includes('linkedin.com') || refUrl.includes('lnkd.in')) {
-          source = 'LinkedIn';
-        } else if (refUrl.includes('youtube.com') || refUrl.includes('youtu.be')) {
+        } else if (refUrl.includes('youtube.com')) {
           source = 'YouTube';
-        } else if (refUrl.includes('facebook.com')) {
-          source = 'Facebook';
-        } else if (refUrl.includes('twitter.com') || refUrl.includes('t.co')) {
+        } else if (refUrl.includes('linkedin.com')) {
+          source = 'LinkedIn';
+        } else if (refUrl.includes('t.co') || refUrl.includes('twitter.com') || refUrl.includes('x.com')) {
           source = 'Twitter/X';
         } else if (refUrl.includes('wa.me') || refUrl.includes('whatsapp.com')) {
           source = 'WhatsApp';
         }
 
-        // 2. Extract visitor Name (e.g. ?name=John_Doe)
+        // 2. Extract visitor Name
         let visitorName = params.get('name') || params.get('fullName') || params.get('fullname') || params.get('refName') || '';
         if (visitorName) {
           visitorName = decodeURIComponent(visitorName).replace(/_/g, ' ');
         }
 
-        // 3. Extract visitor ID/Handle (e.g. ?id=john_123 or ?username=john_123)
+        // 3. Extract visitor ID/Handle
         let visitorId = params.get('id') || params.get('username') || params.get('handle') || params.get('userId') || '';
         if (visitorId) {
           visitorId = decodeURIComponent(visitorId);
         }
 
-        const message = `🚀 New Visitor Alert!\n📱 Platform: ${source}\n👤 Name: ${visitorName || 'Unknown Visitor'}\n🆔 ID/Handle: ${visitorId ? (visitorId.startsWith('@') ? visitorId : `@${visitorId}`) : 'Not Available'}\n📍 Location: ${geo.city || 'Unknown'}, ${geo.region || ''}, ${geo.country_name || 'Unknown'}\n🌐 IP: ${geo.ip || 'Unknown'}\n📱 Device: ${device}\n🏢 ISP: ${geo.org || 'Unknown'}`;
+        const messageHtml = `
+          <h2>🚀 New Visitor Alert!</h2>
+          <p><strong>📱 Platform:</strong> ${source}</p>
+          <p><strong>👤 Name:</strong> ${visitorName || 'Unknown Visitor'}</p>
+          <p><strong>🆔 ID/Handle:</strong> ${visitorId ? (visitorId.startsWith('@') ? visitorId : '@' + visitorId) : 'Not Available'}</p>
+          <p><strong>📍 Location:</strong> ${geo.city || 'Unknown'}, ${geo.region || ''}, ${geo.country_name || 'Unknown'}</p>
+          <p><strong>🌐 IP:</strong> ${geo.ip || 'Unknown'}</p>
+          <p><strong>📱 Device:</strong> ${device}</p>
+          <p><strong>🏢 ISP:</strong> ${geo.org || 'Unknown'}</p>
+        `;
 
-        const encoded = encodeURIComponent(message);
-        const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encoded}&apikey=${apikey}`;
-        await fetch(url, { mode: 'no-cors' });
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            access_key: accessKey,
+            subject: `New Portfolio Visitor from ${geo.city || 'Unknown'}`,
+            from_name: 'Portfolio Tracker',
+            message: messageHtml,
+          }),
+        });
       } catch (err) {
         console.error("Visitor tracking alert error:", err);
       }

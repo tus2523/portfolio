@@ -1152,16 +1152,14 @@ const About: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => v
 
 const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
   const [form, setForm] = useState({ 
-    whatsappPhone: (data.settings as any)?.whatsappPhone || '8082812805', 
-    whatsappApiKey: (data.settings as any)?.whatsappApiKey || '',
+    web3formsAccessKey: (data.settings as any)?.web3formsAccessKey || '',
     footerHeading: (data.settings as any)?.footerHeading || "Let's work together",
     footerBio: (data.settings as any)?.footerBio || "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."
   });
 
   useEffect(() => {
     setForm({ 
-      whatsappPhone: (data.settings as any)?.whatsappPhone || '8082812805', 
-      whatsappApiKey: (data.settings as any)?.whatsappApiKey || '',
+      web3formsAccessKey: (data.settings as any)?.web3formsAccessKey || '',
       footerHeading: (data.settings as any)?.footerHeading || "Let's work together",
       footerBio: (data.settings as any)?.footerBio || "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."
     });
@@ -1194,28 +1192,18 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
           <p className="text-[10px] text-[#D7E2EA]/40 mt-0.5">This text appears at the very bottom of the website above the email/whatsapp buttons.</p>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40">WhatsApp Phone Number</label>
-          <input
-            className="bg-[#0C0C0C] border border-[#222] rounded-lg p-3 text-[#D7E2EA] text-sm"
-            value={form.whatsappPhone}
-            onChange={e => setVal('whatsappPhone', e.target.value)}
-            placeholder="e.g. 8082812805"
-          />
-          <p className="text-[10px] text-[#D7E2EA]/40 mt-0.5">Enter your WhatsApp number (without country code if using CallMeBot default, or with country code if registered, e.g. 918082812805).</p>
-        </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40">CallMeBot API Key</label>
+          <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40 flex items-center gap-2">📧 Email Alerts (Web3Forms)</label>
           <input
-            type="password"
+            type="text"
             className="bg-[#0C0C0C] border border-[#222] rounded-lg p-3 text-[#D7E2EA] text-sm"
-            value={form.whatsappApiKey}
-            onChange={e => setVal('whatsappApiKey', e.target.value)}
-            placeholder="e.g. 123456"
+            value={form.web3formsAccessKey}
+            onChange={e => setVal('web3formsAccessKey', e.target.value)}
+            placeholder="e.g. 12345678-abcd-1234-abcd-1234567890ab"
           />
           <p className="text-[10px] text-[#D7E2EA]/40 mt-0.5 font-sans leading-relaxed">
-            To get your free key: Add <strong>+34 644 66 32 62</strong> to WhatsApp contacts and send <strong>I allow callmebot to send me messages</strong>. Copy the API key you receive here.
+            Get an email every time someone visits your portfolio. To get your free access key, visit <a href="https://web3forms.com" target="_blank" rel="noreferrer" className="text-[#7621B0] hover:underline font-bold">Web3Forms.com</a>, enter your email address, and copy the Access Key here.
           </p>
         </div>
 
