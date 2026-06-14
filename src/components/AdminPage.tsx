@@ -125,6 +125,9 @@ const AdminPageInner: React.FC = () => {
     const unsubscribe = onValue(portfolioRef, (snapshot) => {
       const fbData = snapshot.val();
       if (fbData) {
+        if (!fbData.services) {
+          fbData.services = defaultData.services;
+        }
         setData(fbData);
         saveData(fbData); // Update local cache to prevent page refresh flash glitch
       } else {
@@ -1588,7 +1591,7 @@ const ServicesManagement: React.FC<{ data: typeof defaultData; save: (s: string,
   const [modal, setModal] = useState<{ isEdit: boolean; id?: string } | null>(null);
   const [form, setForm] = useState({ name: '', icon: 'sparkles', description: '', details: '' });
 
-  useEffect(() => setItems((data as any).services || []), [(data as any).services]);
+  useEffect(() => setItems((data as any).services || defaultData.services), [(data as any).services]);
 
   const persist = (updated: any) => {
     setItems(updated);

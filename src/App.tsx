@@ -77,7 +77,7 @@ function MainApp() {
             experience: fbData.experience || [],
             skills: fbData.skills || [],
             brandLogos: fbData.brandLogos || [],
-            services: fbData.services || [],
+            services: fbData.services || defaultData.services,
             settings: { ...prev.settings, ...(fbData.settings || {}) }
           };
           saveData(merged); // Cache locally to prevent flash glitch on page refresh
