@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Phone } from 'lucide-react';
+import { Mail, Phone, Star } from 'lucide-react';
 import { ConfettiEffect } from '../ConfettiEffect';
-import { defaultData } from '../../lib/store';
+import { defaultData, updateSection, getData } from '../../lib/store';
+import { db } from '../../lib/firebase';
+import { ref, set } from 'firebase/database';
 
 const Instagram = ({ size = 24 }: { size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
@@ -22,6 +24,10 @@ interface FooterSectionProps {
 
 export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   const [showConfetti, setShowConfetti] = useState(false);
+  const [name, setName] = useState('');
+  const [comment, setComment] = useState('');
+  const [rating, setRating] = useState(5);
+  const [submitted, setSubmitted] = useState(false);
 
   const cleanPhone = (data.settings?.whatsappPhone || '').replace(/\D/g, '');
   const waPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
@@ -36,58 +42,153 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
     { url: data.about?.phone ? `tel:${data.about.phone}` : null, icon: <Phone size={18} />, title: "Call Me" },
   ].filter(link => link.url);
 
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !comment.trim()) return;
+
+    const newReview = {
+      id: `rev_${Date.now()}`,
+      clientName: name,
+      logoUrl: '',
+      rating,
+      comment,
+      status: 'pending', // Needs admin approval
+      date: new Date().toISOString(),
+    };
+
+    const updatedReviews = [newReview, ...(data.reviews || [])];
+    updateSection('reviews', updatedReviews);
+
+    try {
+      const portfolioRef = ref(db, 'portfolio_content');
+      const current = getData();
+      await set(portfolioRef, { ...current, reviews: updatedReviews });
+    } catch (err) {
+      console.error('Failed to sync review to Firebase:', err);
+    }
+
+    setSubmitted(true);
+    setName('');
+    setComment('');
+  };
+
   return (
     <footer id="contact" className="bg-[#121212]/50 border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20">
-      <div className="max-w-[900px] mx-auto flex flex-col gap-8">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-[#D7E2EA] mb-4">
-            Let&apos;s Work Together
-          </h2>
-          <p className="text-sm sm:text-base font-light leading-relaxed text-[#D7E2EA]/60">
-            {data.about?.bio}
-          </p>
+      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        {/* Contact Info Side */}
+        <div className="flex flex-col gap-8">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-[#D7E2EA] mb-4">
+              Let&apos;s Work Together
+            </h2>
+            <p className="text-sm sm:text-base font-light leading-relaxed text-[#D7E2EA]/60 max-w-md">
+              {data.about?.bio}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-4 items-center">
+            {contactLinks.map((s, idx) => {
+              const isExternal = !s.url?.startsWith('mailto:') && !s.url?.startsWith('tel:');
+              
+              if (s.title === "Email Me") {
+                return (
+                  <div 
+                    key={idx}
+                    className="relative cursor-pointer"
+                    onClick={() => { setShowConfetti(true); setTimeout(() => setShowConfetti(false), 200); }}
+                  >
+                    <ConfettiEffect trigger={showConfetti} />
+                    <a
+                      href={s.url || undefined}
+                      title={s.title}
+                      className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#BBCCD7]/40 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-white/10"
+                    >
+                      {s.icon}
+                    </a>
+                  </div>
+                );
+              }
+
+              return (
+                <a
+                  key={idx}
+                  href={s.url || undefined}
+                  title={s.title}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#BBCCD7]/40 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-white/10"
+                >
+                  {s.icon}
+                </a>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 items-center">
-          {contactLinks.map((s, idx) => {
-            const isExternal = !s.url?.startsWith('mailto:') && !s.url?.startsWith('tel:');
-            
-            // If it's the email link, wrap it with confetti effect for fun interactive micro-experience!
-            if (s.title === "Email Me") {
-              return (
-                <div 
-                  key={idx}
-                  className="relative"
-                  onClick={() => { setShowConfetti(true); setTimeout(() => setShowConfetti(false), 200); }}
-                >
-                  <ConfettiEffect trigger={showConfetti} />
-                  <a
-                    href={s.url || undefined}
-                    title={s.title}
-                    className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#BBCCD7]/40 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-white/10"
-                  >
-                    {s.icon}
-                  </a>
+        {/* Leave a Review Form Side */}
+        <div className="w-full max-w-sm ml-auto bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-zinc-800 via-zinc-400 to-zinc-800"></div>
+          <h3 className="text-lg font-bold mb-5 text-center tracking-wide uppercase text-white">Leave a Review</h3>
+          
+          {submitted ? (
+             <div className="text-center py-6">
+               <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">✓</div>
+               <h4 className="font-bold text-base mb-1 text-white">Thank You!</h4>
+               <p className="text-xs text-[#D7E2EA]/60">Your review is pending approval.</p>
+               <button onClick={() => setSubmitted(false)} className="mt-4 text-[10px] text-[#D7E2EA]/40 uppercase tracking-wider hover:text-white transition">Write another</button>
+             </div>
+          ) : (
+            <form onSubmit={handleReviewSubmit} className="flex flex-col gap-3">
+              <div>
+                <input 
+                  type="text" 
+                  required
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-white/30 transition placeholder-white/20 text-white"
+                  placeholder="Your Name"
+                />
+              </div>
+              
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-semibold tracking-wider text-[#D7E2EA]/50 uppercase">Rating</span>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      className={`transition ${star <= rating ? 'text-amber-400' : 'text-white/20 hover:text-white/40'}`}
+                    >
+                      <Star size={18} fill={star <= rating ? "currentColor" : "none"} strokeWidth={star <= rating ? 0 : 2} />
+                    </button>
+                  ))}
                 </div>
-              );
-            }
+              </div>
 
-            return (
-              <a
-                key={idx}
-                href={s.url || undefined}
-                title={s.title}
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noopener noreferrer" : undefined}
-                className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#BBCCD7]/40 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-white/10"
+              <div>
+                <textarea 
+                  required
+                  value={comment}
+                  onChange={e => setComment(e.target.value)}
+                  rows={3}
+                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-white/30 transition placeholder-white/20 text-white resize-none"
+                  placeholder="Working with Sahil was amazing because..."
+                />
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full mt-2 bg-white text-black font-bold uppercase tracking-widest text-[10px] py-3 rounded-lg hover:bg-zinc-200 transition"
               >
-                {s.icon}
-              </a>
-            );
-          })}
+                Submit Review
+              </button>
+            </form>
+          )}
         </div>
       </div>
-      <div className="max-w-[900px] mx-auto border-t border-white/5 mt-16 pt-8 text-center text-xs text-[#D7E2EA]/30">
+
+      <div className="max-w-[1200px] mx-auto border-t border-white/5 mt-16 pt-8 text-center text-xs text-[#D7E2EA]/30">
         &copy; {new Date().getFullYear()} Sahil Thorat. All rights reserved.
       </div>
     </footer>

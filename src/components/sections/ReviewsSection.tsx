@@ -1,55 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FadeIn } from '../FadeIn';
-import { defaultData, updateSection, getData } from '../../lib/store';
+import { defaultData } from '../../lib/store';
 import { Star } from 'lucide-react';
-import { db } from '../../lib/firebase';
-import { ref, set } from 'firebase/database';
 
 interface ReviewsSectionProps {
   reviews: typeof defaultData.reviews;
 }
 
 export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
-  const [name, setName] = useState('');
-  const [comment, setComment] = useState('');
-  const [rating, setRating] = useState(5);
-  const [submitted, setSubmitted] = useState(false);
-
   const approvedReviews = (reviews || []).filter(r => r.status === 'approved');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !comment.trim()) return;
-
-    const newReview = {
-      id: `rev_${Date.now()}`,
-      clientName: name,
-      logoUrl: '',
-      rating,
-      comment,
-      status: 'pending', // Needs admin approval
-      date: new Date().toISOString(),
-    };
-
-    // Use live reviews prop (not hardcoded defaultData)
-    const updatedReviews = [newReview, ...(reviews || [])];
-
-    // Save to localStorage cache
-    updateSection('reviews', updatedReviews);
-
-    // Sync to Firebase so admin sees it in the panel
-    try {
-      const portfolioRef = ref(db, 'portfolio_content');
-      const current = getData();
-      await set(portfolioRef, { ...current, reviews: updatedReviews });
-    } catch (err) {
-      console.error('Failed to sync review to Firebase:', err);
-    }
-
-    setSubmitted(true);
-    setName('');
-    setComment('');
-  };
 
   return (
     <section id="reviews" className="bg-[#0C0C0C] text-[#D7E2EA] py-16 sm:py-20 md:py-24 px-0 w-full border-t border-white/5 relative z-20 overflow-hidden">
@@ -64,7 +23,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
 
       {/* Reviews Marquee */}
       {approvedReviews.length > 0 && (
-        <div className="relative flex overflow-x-hidden group mb-16 w-full">
+        <div className="relative flex overflow-x-hidden group mb-4 w-full">
           <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#0C0C0C] to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#0C0C0C] to-transparent z-10 pointer-events-none" />
           
@@ -99,70 +58,6 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
           </div>
         </div>
       )}
-
-      {/* Leave a Review Form - Compact & Right Aligned */}
-      <div className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 md:px-10 flex justify-end">
-        <FadeIn delay={0.2} y={30} className="w-full max-w-sm bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-zinc-800 via-zinc-400 to-zinc-800"></div>
-          <h3 className="text-lg font-bold mb-5 text-center tracking-wide uppercase">Leave a Review</h3>
-          
-          {submitted ? (
-             <div className="text-center py-6">
-               <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">✓</div>
-               <h4 className="font-bold text-base mb-1">Thank You!</h4>
-               <p className="text-xs text-[#D7E2EA]/60">Your review is pending approval.</p>
-               <button onClick={() => setSubmitted(false)} className="mt-4 text-[10px] text-[#D7E2EA]/40 uppercase tracking-wider hover:text-white transition">Write another</button>
-             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <div>
-                <input 
-                  type="text" 
-                  required
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-white/30 transition placeholder-white/20 text-white"
-                  placeholder="Your Name"
-                />
-              </div>
-              
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-semibold tracking-wider text-[#D7E2EA]/50 uppercase">Rating</span>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setRating(star)}
-                      className={`transition ${star <= rating ? 'text-amber-400' : 'text-white/20 hover:text-white/40'}`}
-                    >
-                      <Star size={18} fill={star <= rating ? "currentColor" : "none"} strokeWidth={star <= rating ? 0 : 2} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <textarea 
-                  required
-                  value={comment}
-                  onChange={e => setComment(e.target.value)}
-                  rows={3}
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-white/30 transition placeholder-white/20 text-white resize-none"
-                  placeholder="Working with Sahil was amazing because..."
-                />
-              </div>
-
-              <button 
-                type="submit"
-                className="w-full mt-2 bg-white text-black font-bold uppercase tracking-widest text-[10px] py-3 rounded-lg hover:bg-zinc-200 transition"
-              >
-                Submit Review
-              </button>
-            </form>
-          )}
-        </FadeIn>
-      </div>
     </section>
   );
 };
