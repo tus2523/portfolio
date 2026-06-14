@@ -94,8 +94,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const processUpload = async (file: File) => {
     if (file.size > 5 * 1024 * 1024) { setError("File too large. Max 5MB."); return; }
-    const ok = ["image/jpeg","image/png","image/webp","image/gif","image/svg+xml"];
-    if (!ok.includes(file.type)) { setError("Only JPG, PNG, WebP, GIF, SVG allowed."); return; }
+    const ok = ["image/jpeg","image/png","image/webp","image/avif","image/gif","image/svg+xml"];
+    if (!ok.includes(file.type)) { setError("Only JPG, PNG, WebP, AVIF, GIF, SVG allowed."); return; }
 
     setError(null); setUploading(true); setProgress(0);
     try {
@@ -185,7 +185,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               <span className="text-xs text-[#D7E2EA]/60">
                 Drag &amp; drop ya <span className="text-[#a855f7] font-semibold">browse</span>
               </span>
-              <span className="text-[10px] text-[#D7E2EA]/30">JPG · PNG · WebP · SVG (max 5 MB)</span>
+              <span className="text-[10px] text-[#D7E2EA]/30">JPG · PNG · WebP · AVIF · SVG (max 5 MB)</span>
             </div>
           )}
         </div>
