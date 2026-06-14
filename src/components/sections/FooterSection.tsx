@@ -72,7 +72,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   };
 
   return (
-    <footer id="contact" className="bg-texture-metal border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20">
+    <footer id="contact" className="bg-[#0C0C0C] border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20">
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         {/* Contact Info Side */}
         <div className="flex flex-col gap-8">

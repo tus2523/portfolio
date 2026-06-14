@@ -26,7 +26,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ data, theme = 'light
   const isLight = theme === 'light';
 
   return (
-    <section id="about" className={`${isLight ? 'bg-texture-paper text-[#0C0C0C]' : 'bg-texture-metal text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative z-20 flex flex-col items-center justify-center gap-10 overflow-hidden shadow-inner transition-colors duration-500`}>
+    <section id="about" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative z-20 flex flex-col items-center justify-center gap-10 overflow-hidden shadow-inner transition-colors duration-500`}>
       {/* Floating Decorative 3D Glass Assets */}
       <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="top-[5%] md:top-[8%] left-[2%] sm:left-[4%] md:left-[6%]" rotation={-8} delay={0.2} lightBg={isLight} />
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="top-[5%] md:top-[8%] right-[2%] sm:right-[4%] md:right-[6%]" rotation={12} delay={0.4} lightBg={isLight} />

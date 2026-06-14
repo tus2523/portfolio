@@ -161,40 +161,5 @@
 }
 
 
-/* ─── PREMIUM MATERIAL TEXTURE BACKGROUNDS ─── */
-.bg-texture-paper {
-  position: relative;
-  background-color: #FAF9F6 !important; /* Premium alabaster warm off-white */
-}
-.bg-texture-paper::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: url('/bg_paper.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.04; /* Barely perceptible — feel only, not visible */
-}
-.bg-texture-paper > * { position: relative; z-index: 1; }
 
-.bg-texture-metal {
-  position: relative;
-  background-color: #0C0C0D !important; /* Premium deep metal grey */
-}
-.bg-texture-metal::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: url('/bg_metal.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.035; /* Ultra subtle — just enough grain feel */
-}
-.bg-texture-metal > * { position: relative; z-index: 1; }
 

@@ -86,7 +86,7 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
 
 
   return (
-    <section id="campaigns" className={`${isLight ? 'bg-texture-paper text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-texture-metal text-[#D7E2EA] border-white/5'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative z-20 border-t shadow-inner -mt-10 overflow-hidden transition-colors duration-500`}>
+    <section id="campaigns" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-[#0C0C0C] text-[#D7E2EA] border-white/5'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative z-20 border-t shadow-inner -mt-10 overflow-hidden transition-colors duration-500`}>
       {/* Floating Decorative 3D Glass Assets */}
       <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="top-[35%] left-[2%] sm:left-[4%]" rotation={-10} delay={1.4} lightBg={isLight} />
       <FloatingEmoji src={GLASS_HEART} alt="Heart" className="top-[50%] right-[2%] sm:right-[4%]" rotation={8} delay={1.6} lightBg={isLight} />
