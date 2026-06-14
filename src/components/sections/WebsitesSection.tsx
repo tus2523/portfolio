@@ -38,13 +38,17 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites }) =>
               >
                 <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/5 bg-zinc-900">
                   <img
-                    src={
-                      site.previewUrl ||
-                      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop"
-                    }
+                    src={site.previewUrl || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop"}
                     alt={site.title}
-                    className="w-full h-full object-cover group-hover:scale-[1.05] transition duration-700"
+                    className="w-full h-full object-cover group-hover:scale-[1.05] transition duration-700 bg-zinc-800"
                     loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      if (!target.dataset.failed) {
+                        target.dataset.failed = 'true';
+                        target.src = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop";
+                      }
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center backdrop-blur-sm">
                     <span className="bg-white/10 border border-white/20 text-white rounded-full px-4 py-2 text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5">
