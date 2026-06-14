@@ -204,7 +204,7 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
                                       target="_blank" 
                                       rel="noopener noreferrer"
                                       className={`text-xs underline mt-0.5 inline-block font-semibold ${
-                                        isLight ? 'text-purple-700 hover:text-purple-905 hover:underline' : 'text-[#BBCCD7] hover:text-white'
+                                        isLight ? 'text-purple-700 hover:text-purple-900 hover:underline' : 'text-[#BBCCD7] hover:text-white'
                                       }`}
                                     >
                                       {handle}

@@ -146,7 +146,7 @@ export const VideoProjectRow: React.FC<VideoProjectRowProps> = ({ project, onSel
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleMouseUpOrLeave}
-          className="flex gap-4 overflow-x-hidden cursor-grab active:cursor-grabbing select-none py-5 scrollbar-none max-w-fit mx-auto w-full"
+          className="flex gap-4 overflow-x-auto md:overflow-x-hidden cursor-grab active:cursor-grabbing select-none py-5 scrollbar-none max-w-fit mx-auto w-full"
           style={{ scrollbarWidth: 'none' }}
         >
           {vids.map((v: any) => {

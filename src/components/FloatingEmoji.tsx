@@ -28,7 +28,7 @@ export const FloatingEmoji: React.FC<FloatingEmojiProps> = ({
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.8, delay }}
-      className={`absolute select-none z-10 w-[50px] md:w-[120px] lg:w-[160px] aspect-square cursor-grab active:cursor-grabbing touch-none ${className}`}
+      className={`hidden sm:block absolute select-none z-10 w-[50px] md:w-[120px] lg:w-[160px] aspect-square cursor-grab active:cursor-grabbing touch-none ${className}`}
       style={{
         mixBlendMode: lightBg ? 'multiply' : 'screen',
         filter: lightBg ? 'invert(1)' : 'none',
