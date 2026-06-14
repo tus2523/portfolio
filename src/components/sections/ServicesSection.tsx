@@ -37,11 +37,14 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
   useEffect(() => {
     if (activeService) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [activeService]);
   const isLight = theme === 'light';
