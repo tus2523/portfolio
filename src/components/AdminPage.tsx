@@ -81,8 +81,26 @@ const SortableNavItem = ({ id, label, icon, active, onClick }: { id: string, lab
     </div>
   );
 };
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
+  constructor(props: any) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  render() {
+    if (this.state.hasError) {
+      return <div className="p-10 text-red-500 bg-black min-h-screen"><h1 className="text-2xl font-bold">Error in AdminPage</h1><pre className="mt-4 text-xs whitespace-pre-wrap">{this.state.error?.stack}</pre></div>;
+    }
+    return this.props.children;
+  }
+}
 
 export const AdminPage: React.FC = () => {
+  return (
+    <ErrorBoundary>
+      <AdminPageInner />
+    </ErrorBoundary>
+  );
+};
+
+const AdminPageInner: React.FC = () => {
   const [tab, setTab] = useState('stats');
   const [data, setData] = useState<typeof defaultData>(() => getData());
   const [saved, setSaved] = useState('');
@@ -91,6 +109,13 @@ export const AdminPage: React.FC = () => {
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [showPass, setShowPass] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const currentOrder = data.settings?.sectionOrder || ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'];
 
   useEffect(() => {
     setIsMounted(true);
@@ -210,13 +235,6 @@ export const AdminPage: React.FC = () => {
     }
   };
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
-
-  const currentOrder = data.settings?.sectionOrder || ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'];
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
@@ -237,16 +255,19 @@ export const AdminPage: React.FC = () => {
     }
   };
 
-  const renderNavItem = (n: typeof NAV[0]) => (
-    <button
-      key={n.id}
-      onClick={() => setTab(n.id)}
-      className={`flex items-center gap-2 md:gap-3 px-3 py-2 md:p-3 md:pl-8 rounded-lg md:rounded-l-none md:rounded-r-lg text-xs md:text-sm transition text-left border-b-2 md:border-b-0 md:border-l-2 shrink-0 ${tab === n.id ? 'bg-[#7621B0]/15 text-white font-semibold border-[#7621B0]' : 'text-[#D7E2EA]/60 hover:bg-[#181818] border-transparent'}`}
-    >
-      <span>{n.icon}</span>
-      {n.label}
-    </button>
-  );
+  const renderNavItem = (n: typeof NAV[0]) => {
+    if (!n) return null;
+    return (
+      <button
+        key={n.id}
+        onClick={() => setTab(n.id)}
+        className={`flex items-center gap-2 md:gap-3 px-3 py-2 md:p-3 md:pl-8 rounded-lg md:rounded-l-none md:rounded-r-lg text-xs md:text-sm transition text-left border-b-2 md:border-b-0 md:border-l-2 shrink-0 ${tab === n.id ? 'bg-[#7621B0]/15 text-white font-semibold border-[#7621B0]' : 'text-[#D7E2EA]/60 hover:bg-[#181818] border-transparent'}`}
+      >
+        <span>{n.icon}</span>
+        {n.label}
+      </button>
+    );
+  };
 
   return (
     <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-[#0C0C0C] text-[#D7E2EA] font-sans overflow-hidden">
