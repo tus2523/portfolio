@@ -8,9 +8,9 @@ export const InteractiveGlow: React.FC = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Smooth springs for delayed cursor-following ambient blob
-  const springX = useSpring(mouseX, { stiffness: 25, damping: 20 });
-  const springY = useSpring(mouseY, { stiffness: 25, damping: 20 });
+  // Smooth springs for cursor-following spotlight
+  const springX = useSpring(mouseX, { stiffness: 45, damping: 30 });
+  const springY = useSpring(mouseY, { stiffness: 45, damping: 30 });
 
   useEffect(() => {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -43,43 +43,29 @@ export const InteractiveGlow: React.FC = () => {
 
   return (
     <>
-      {/* 1. Subtle GPU-composited cursor spotlight */}
+      {/* 1. Extremely subtle, premium GPU-composited cursor spotlight */}
       {!isMobile && (
         <motion.div
-          className="fixed pointer-events-none z-[2] w-[1100px] h-[1100px] rounded-full"
+          className="fixed pointer-events-none z-[2] w-[500px] h-[500px] rounded-full"
           style={{
             x: springX,
             y: springY,
             translateX: '-50%',
             translateY: '-50%',
-            background: 'radial-gradient(circle, rgba(20, 80, 255, 0.09) 0%, rgba(187, 204, 215, 0.03) 45%, transparent 80%)',
+            background: 'radial-gradient(circle, rgba(120, 119, 198, 0.07) 0%, rgba(120, 119, 198, 0) 75%)',
             opacity,
             willChange: 'transform, opacity',
           }}
         />
       )}
       
-      {/* 2. Drifting ambient mesh glows */}
-      <div className="fixed inset-0 pointer-events-none z-[0] overflow-hidden select-none opacity-40">
+      {/* 2. Drifting static ambient mesh glows (No distracting cursor follower blobs) */}
+      <div className="fixed inset-0 pointer-events-none z-[0] overflow-hidden select-none opacity-30">
         {/* Blob 1: Violet/Indigo (Slow Drift) */}
         <div className="absolute top-[-20%] left-[-20%] w-[60vw] h-[60vw] rounded-full bg-indigo-600/10 blur-[130px] animate-blob-slow" />
         
         {/* Blob 2: Cyan (Slow Drift) */}
         <div className="absolute bottom-[-20%] right-[-20%] w-[65vw] h-[65vw] rounded-full bg-cyan-500/10 blur-[140px] animate-blob-reverse" />
-        
-        {/* Blob 3: Amber/Pink (Cursor Follower with Spring Lag) */}
-        {!isMobile && (
-          <motion.div
-            className="absolute w-[45vw] h-[45vw] rounded-full bg-pink-500/5 blur-[120px]"
-            style={{
-              x: springX,
-              y: springY,
-              translateX: '-50%',
-              translateY: '-50%',
-              willChange: 'transform',
-            }}
-          />
-        )}
       </div>
     </>
   );
