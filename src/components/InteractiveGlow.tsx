@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export const InteractiveGlow: React.FC = () => {
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
   const [isMobile, setIsMobile] = useState(true);
   
@@ -18,15 +17,21 @@ export const InteractiveGlow: React.FC = () => {
     setIsMobile(isTouch);
     if (isTouch) return;
 
+    let opacitySet = false;
     const handleMouseMove = (e: MouseEvent) => {
-      setCoords({ x: e.clientX, y: e.clientY });
-      setOpacity(1);
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+      if (!opacitySet) {
+        setOpacity(1);
+        opacitySet = true;
+      }
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
 
     const handleMouseLeave = () => {
       setOpacity(0);
+      opacitySet = false;
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -46,7 +51,7 @@ export const InteractiveGlow: React.FC = () => {
           className="fixed inset-0 pointer-events-none z-[2] transition-opacity duration-300"
           style={{
             opacity,
-            background: `radial-gradient(550px circle at ${coords.x}px ${coords.y}px, rgba(20, 80, 255, 0.09), rgba(187, 204, 215, 0.03) 45%, transparent 80%)`,
+            background: 'radial-gradient(550px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(20, 80, 255, 0.09), rgba(187, 204, 215, 0.03) 45%, transparent 80%)',
           }}
         />
       )}
