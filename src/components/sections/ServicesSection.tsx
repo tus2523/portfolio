@@ -15,9 +15,6 @@ const getAssetUrl = (path: string) => {
 const GLASS_CAMERA = getAssetUrl('glass_camera.png');
 const GLASS_MEGAPHONE = getAssetUrl('glass_megaphone.png');
 
-interface ServicesSectionProps {
-  data: typeof defaultData;
-}
 
 const SERVICES = [
   {
@@ -58,8 +55,14 @@ const SERVICES = [
   },
 ];
 
-export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
+export interface ServicesSectionProps {
+  data: typeof defaultData;
+  theme?: 'light' | 'dark';
+}
+
+export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 'dark' }) => {
   const [activeService, setActiveService] = useState<typeof SERVICES[0] | null>(null);
+  const isLight = theme === 'light';
 
   const getWhatsAppLink = (serviceName: string) => {
     const phone = data.settings?.whatsappPhone || '8082812805';
@@ -70,14 +73,14 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
   };
 
   return (
-    <section className="bg-[#0C0C0C] text-[#D7E2EA] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative z-20 shadow-2xl overflow-hidden bg-grid-pattern">
+    <section className={`${isLight ? 'bg-white text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative z-20 shadow-2xl overflow-hidden bg-grid-pattern transition-colors duration-500`}>
       {/* Floating Decorative 3D Glass Assets */}
-      <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[25%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} />
-      <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={18} delay={1.2} />
+      <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[25%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={isLight} />
+      <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={18} delay={1.2} lightBg={isLight} />
 
       <div className="max-w-[1400px] mx-auto flex flex-col items-center">
         <FadeIn delay={0} y={40} className="mb-8 text-center">
-          <h2 className="hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide">
+          <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide ${isLight ? 'text-[#0C0C0C]' : ''} transition-colors duration-500`}>
             Services
           </h2>
         </FadeIn>

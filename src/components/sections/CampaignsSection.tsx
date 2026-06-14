@@ -59,6 +59,7 @@ interface BrandLogo {
 interface CampaignsSectionProps {
   campaigns: CampaignsData;
   brandLogos?: BrandLogo[];
+  theme?: 'light' | 'dark';
 }
 
 function extractInstagramHandle(url: string | undefined): string {
@@ -67,9 +68,11 @@ function extractInstagramHandle(url: string | undefined): string {
   return m ? '@' + m[1] : '';
 }
 
-export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, brandLogos = [] }) => {
+export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, brandLogos = [], theme = 'light' }) => {
   const [activeBrandState, setActiveBrandState] = useState<string>('');
   const [openCampaignIdx, setOpenCampaignIdx] = useState<number | null>(null);
+  
+  const isLight = theme === 'light';
 
   // Derive activeBrand dynamically to avoid cascading useEffect state updates
   const activeBrand = activeBrandState && campaigns.brands.includes(activeBrandState)
@@ -83,23 +86,23 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
 
 
   return (
-    <section id="campaigns" className="bg-[#F4F3F6] text-[#0C0C0C] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative z-20 border-t border-[#0C0C0C]/5 shadow-inner -mt-10 overflow-hidden">
+    <section id="campaigns" className={`${isLight ? 'bg-[#F4F3F6] text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-[#0C0C0C] text-[#D7E2EA] border-white/5'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative z-20 border-t shadow-inner -mt-10 overflow-hidden transition-colors duration-500`}>
       {/* Floating Decorative 3D Glass Assets */}
-      <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="top-[35%] left-[2%] sm:left-[4%]" rotation={-10} delay={1.4} lightBg={true} />
-      <FloatingEmoji src={GLASS_HEART} alt="Heart" className="top-[50%] right-[2%] sm:right-[4%]" rotation={8} delay={1.6} lightBg={true} />
+      <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="top-[35%] left-[2%] sm:left-[4%]" rotation={-10} delay={1.4} lightBg={isLight} />
+      <FloatingEmoji src={GLASS_HEART} alt="Heart" className="top-[50%] right-[2%] sm:right-[4%]" rotation={8} delay={1.6} lightBg={isLight} />
 
       <div className="max-w-[1400px] mx-auto flex flex-col items-center">
         <FadeIn delay={0} y={40} className="mb-10 text-center">
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold text-[#0C0C0C]/55 mb-2">Influencer Marketing</p>
-          <h2 className="font-black uppercase text-[#0C0C0C] text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide">
+          <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2`}>Influencer Marketing</p>
+          <h2 className={`font-black uppercase ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'} text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide transition-colors duration-500`}>
             Campaigns
           </h2>
         </FadeIn>
         {/* Brand Logos Marquee */}
         {brandLogos && brandLogos.length > 0 && (
           <div className="w-full overflow-hidden mb-12 relative group">
-            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#F4F3F6] to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#F4F3F6] to-transparent z-10 pointer-events-none" />
+            <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#F4F3F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none transition-colors duration-500`} />
+            <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#F4F3F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none transition-colors duration-500`} />
             
             <div className="animate-marquee flex whitespace-nowrap group-hover:[animation-play-state:paused] items-center gap-12 sm:gap-20 opacity-60 hover:opacity-100 transition-opacity duration-300 py-4">
               {[...brandLogos, ...brandLogos, ...brandLogos, ...brandLogos].map((brand, idx) => (
@@ -107,7 +110,7 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
                   {brand.logoUrl ? (
                     <img src={brand.logoUrl} alt={brand.name} className="h-10 sm:h-14 object-contain max-w-[140px]" />
                   ) : (
-                    <span className="text-xl sm:text-2xl font-bold text-[#0C0C0C]/50">{brand.name}</span>
+                    <span className={`text-xl sm:text-2xl font-bold ${isLight ? 'text-[#0C0C0C]/50' : 'text-[#D7E2EA]/50'}`}>{brand.name}</span>
                   )}
                 </div>
               ))}

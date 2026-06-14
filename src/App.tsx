@@ -247,14 +247,60 @@ function MainApp() {
         </div>
       </section>
 
-      <AboutSection data={data} />
-      <ServicesSection data={data} />
-      <CampaignsSection campaigns={campaigns} brandLogos={(data as any).brandLogos || []} />
-      <ProjectsSection videoProjects={data.videoProjects || []} onSelectVideo={(video) => setLightbox(video)} />
-      <WebsitesSection websites={data.websites || []} />
-      <ExperienceSection experience={data.experience || []} />
-      <SkillsSection skills={data.skills || []} />
-      <ReviewsSection reviews={data.reviews || []} />
+      {(() => {
+        const order = data.settings?.sectionOrder || ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'];
+        let visibleIndex = 0; // To alternate themes
+
+        return order.map((sectionId) => {
+          let hasContent = true;
+          let content = null;
+
+          switch (sectionId) {
+            case 'about':
+              hasContent = !!(data.about?.bio || data.about?.photoUrl);
+              content = hasContent ? <AboutSection key="about" data={data} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              break;
+            case 'services':
+              hasContent = true; // Services are static
+              content = <ServicesSection key="services" data={data} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} />;
+              break;
+            case 'campaigns':
+              hasContent = campaigns.brands && campaigns.brands.length > 0;
+              content = hasContent ? <CampaignsSection key="campaigns" campaigns={campaigns} brandLogos={(data as any).brandLogos || []} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              break;
+            case 'videos':
+              hasContent = data.videoProjects && data.videoProjects.length > 0;
+              content = hasContent ? <ProjectsSection key="videos" videoProjects={data.videoProjects || []} onSelectVideo={(video) => setLightbox(video)} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              break;
+            case 'websites':
+              hasContent = data.websites && data.websites.length > 0;
+              content = hasContent ? <WebsitesSection key="websites" websites={data.websites || []} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              break;
+            case 'experience':
+              hasContent = data.experience && data.experience.length > 0;
+              content = hasContent ? <ExperienceSection key="experience" experience={data.experience || []} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              break;
+            case 'skills':
+              hasContent = data.skills && data.skills.length > 0;
+              content = hasContent ? <SkillsSection key="skills" skills={data.skills || []} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              break;
+            case 'reviews':
+              const approvedReviews = (data.reviews || []).filter(r => r.status === 'approved');
+              hasContent = approvedReviews.length > 0;
+              content = hasContent ? <ReviewsSection key="reviews" reviews={data.reviews || []} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              break;
+            default:
+              return null;
+          }
+
+          if (hasContent && content) {
+            visibleIndex++;
+            return content;
+          }
+          return null;
+        });
+      })()}
+
       <FooterSection data={data} />
 
       {/* Video Lightbox */}

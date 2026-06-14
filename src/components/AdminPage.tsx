@@ -38,6 +38,7 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 const NAV = [
   { id: 'stats',        icon: '📊', label: 'Hero Stats'     },
   { id: 'about',       icon: '👤', label: 'About'          },
+  { id: 'services',    icon: '✨', label: 'Services'       },
   { id: 'campaigns',   icon: '📋', label: 'Campaigns'      },
   { id: 'brand-logos', icon: '🏷️', label: 'Brand Logos'    },
   { id: 'videos',      icon: '🎬', label: 'Video Projects' },
@@ -48,6 +49,38 @@ const NAV = [
   { id: 'settings',    icon: '⚙️', label: 'Settings'       },
   { id: 'seed',        icon: '🗄️', label: 'Seed Data'      },
 ];
+
+const SortableNavItem = ({ id, label, icon, active, onClick }: { id: string, label: string, icon: string, active: boolean, onClick: () => void }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center w-full relative group">
+      {/* Drag Handle */}
+      <div 
+        {...attributes} 
+        {...listeners}
+        className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center cursor-grab active:cursor-grabbing text-[#D7E2EA]/20 hover:text-[#D7E2EA]/60 transition opacity-0 group-hover:opacity-100 md:opacity-100"
+      >
+        <span className="text-[10px]">⋮⋮</span>
+      </div>
+
+      <button
+        onClick={onClick}
+        className={`flex-1 flex items-center gap-2 md:gap-3 px-3 py-2 md:p-3 md:pl-8 rounded-lg md:rounded-l-none md:rounded-r-lg text-xs md:text-sm transition text-left border-b-2 md:border-b-0 md:border-l-2 shrink-0 ${active ? 'bg-[#7621B0]/15 text-white font-semibold border-[#7621B0]' : 'text-[#D7E2EA]/60 hover:bg-[#181818] border-transparent'}`}
+      >
+        <span>{icon}</span>
+        {label}
+      </button>
+    </div>
+  );
+};
 
 export const AdminPage: React.FC = () => {
   const [tab, setTab] = useState('stats');
@@ -177,6 +210,44 @@ export const AdminPage: React.FC = () => {
     }
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const currentOrder = data.settings?.sectionOrder || ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'];
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = currentOrder.indexOf(active.id as string);
+      const newIndex = currentOrder.indexOf(over.id as string);
+      const newOrder = arrayMove(currentOrder, oldIndex, newIndex);
+      
+      const newSettings = { ...data.settings, sectionOrder: newOrder };
+      setData({ ...data, settings: newSettings });
+      
+      try {
+        const portfolioRef = ref(db, 'portfolio_content');
+        set(portfolioRef, { ...data, settings: newSettings });
+        flash('Layout order saved!');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const renderNavItem = (n: typeof NAV[0]) => (
+    <button
+      key={n.id}
+      onClick={() => setTab(n.id)}
+      className={`flex items-center gap-2 md:gap-3 px-3 py-2 md:p-3 md:pl-8 rounded-lg md:rounded-l-none md:rounded-r-lg text-xs md:text-sm transition text-left border-b-2 md:border-b-0 md:border-l-2 shrink-0 ${tab === n.id ? 'bg-[#7621B0]/15 text-white font-semibold border-[#7621B0]' : 'text-[#D7E2EA]/60 hover:bg-[#181818] border-transparent'}`}
+    >
+      <span>{n.icon}</span>
+      {n.label}
+    </button>
+  );
+
   return (
     <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-[#0C0C0C] text-[#D7E2EA] font-sans overflow-hidden">
       <aside className="w-full md:w-64 bg-[#121212] border-b md:border-b-0 md:border-r border-[#222] flex flex-col justify-between h-auto md:h-full z-30 shrink-0">
@@ -193,17 +264,35 @@ export const AdminPage: React.FC = () => {
               Logout
             </button>
           </div>
+          
           <nav className="flex flex-row md:flex-col gap-1.5 md:gap-1 mt-2 md:mt-8 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 scrollbar-none whitespace-nowrap w-full">
-            {NAV.map(n => (
-              <button
-                key={n.id}
-                onClick={() => setTab(n.id)}
-                className={`flex items-center gap-2 md:gap-3 px-3 py-2 md:p-3 rounded-lg md:rounded-l-none md:rounded-r-lg text-xs md:text-sm transition text-left border-b-2 md:border-b-0 md:border-l-2 shrink-0 ${tab === n.id ? 'bg-[#7621B0]/15 text-white font-semibold border-[#7621B0]' : 'text-[#D7E2EA]/60 hover:bg-[#181818] border-transparent'}`}
-              >
-                <span>{n.icon}</span>
-                {n.label}
-              </button>
-            ))}
+            <div className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/30 md:mb-1 md:ml-3 hidden md:block">Pinned</div>
+            {renderNavItem(NAV.find(n => n.id === 'stats')!)}
+            {renderNavItem(NAV.find(n => n.id === 'brand-logos')!)}
+            
+            <div className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/30 md:mt-4 md:mb-1 md:ml-3 hidden md:block">Website Order</div>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={currentOrder} strategy={verticalListSortingStrategy}>
+                {currentOrder.map(id => {
+                  const n = NAV.find(item => item.id === id);
+                  if (!n) return null;
+                  return (
+                    <SortableNavItem 
+                      key={n.id} 
+                      id={n.id} 
+                      label={n.label} 
+                      icon={n.icon} 
+                      active={tab === n.id} 
+                      onClick={() => setTab(n.id)} 
+                    />
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
+
+            <div className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/30 md:mt-4 md:mb-1 md:ml-3 hidden md:block">System</div>
+            {renderNavItem(NAV.find(n => n.id === 'settings')!)}
+            {renderNavItem(NAV.find(n => n.id === 'seed')!)}
           </nav>
         </div>
         {/* Logout button on desktop footer */}
@@ -226,13 +315,21 @@ export const AdminPage: React.FC = () => {
 
         {tab === 'stats'        && <HeroStats      data={data} save={save} />}
         {tab === 'campaigns'    && <Campaigns      data={data} saveCampaigns={saveCampaigns} />}
+        {tab === 'brand-logos'  && <BrandLogosManagement data={data} save={save} />}
         {tab === 'videos'       && <VideoProjects  data={data} save={save} flash={flash} />}
         {tab === 'websites'     && <WebsitesManagement data={data} save={save} />}
-        {tab === 'brand-logos'  && <BrandLogosManagement data={data} save={save} />}
-        {tab === 'reviews'      && <ReviewsManagement  data={data} save={save} />}
         {tab === 'experience'   && <Experience     data={data} save={save} />}
         {tab === 'skills'       && <Skills         data={data} save={save} />}
+        {tab === 'reviews'      && <ReviewsManagement  data={data} save={save} />}
         {tab === 'about'        && <About          data={data} save={save} />}
+        {tab === 'services'     && (
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-bold">Services</h2>
+            <div className="bg-[#121212] border border-[#222] p-8 rounded-xl text-center">
+              <p className="text-[#D7E2EA]/60">The Services section is currently static and managed via code. You can drag and drop this tab in the sidebar to reorder where it appears on the website.</p>
+            </div>
+          </div>
+        )}
         {tab === 'settings'     && <Settings       data={data} save={save} />}
         {tab === 'seed'         && <SeedData       setData={setData} flash={flash} />}
       </main>

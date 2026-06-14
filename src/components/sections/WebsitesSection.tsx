@@ -7,18 +7,21 @@ import { defaultData } from '../../lib/store';
 
 interface WebsitesSectionProps {
   websites: typeof defaultData.websites;
+  theme?: 'light' | 'dark';
 }
 
-export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites }) => {
+export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, theme = 'dark' }) => {
+  const isLight = theme === 'light';
+
   return (
     <section
       id="websites"
-      className="bg-[#121212] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden"
+      className={`${isLight ? 'bg-white text-[#0C0C0C]' : 'bg-[#121212] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
     >
       <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12">
         <FadeIn delay={0} y={40}>
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold text-[#D7E2EA]/40 mb-2 text-center">Digital Experiences</p>
-          <h2 className="hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide text-center text-[#D7E2EA]">
+          <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2 text-center`}>Digital Experiences</p>
+          <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide text-center ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'} transition-colors duration-500`}>
             Websites Built
           </h2>
         </FadeIn>

@@ -16,20 +16,22 @@ const GLASS_MEGAPHONE = getAssetUrl('glass_megaphone.png');
 
 interface ExperienceSectionProps {
   experience: typeof defaultData.experience;
+  theme?: 'light' | 'dark';
 }
 
-export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience }) => {
+export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience, theme = 'light' }) => {
   const [activeExp, setActiveExp] = useState<any | null>(null);
+  const isLight = theme === 'light';
 
   return (
-    <section id="experience" className="bg-[#F8F9FA] text-[#0C0C0C] py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative z-20 border-t border-[#0C0C0C]/5 shadow-inner overflow-hidden">
+    <section id="experience" className={`${isLight ? 'bg-[#F8F9FA] text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-[#0C0C0C] text-[#D7E2EA] border-white/5'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative z-20 border-t shadow-inner overflow-hidden transition-colors duration-500`}>
       {/* Floating Decorative 3D Glass Assets */}
-      <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[30%] left-[2%] sm:left-[4%]" rotation={-8} delay={2.2} lightBg={true} />
-      <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[30%] right-[2%] sm:right-[4%]" rotation={12} delay={2.4} lightBg={true} />
+      <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[30%] left-[2%] sm:left-[4%]" rotation={-8} delay={2.2} lightBg={isLight} />
+      <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[30%] right-[2%] sm:right-[4%]" rotation={12} delay={2.4} lightBg={isLight} />
 
       <div className="max-w-5xl mx-auto flex flex-col items-center mb-12 text-center">
-        <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold text-[#0C0C0C]/50 mb-2">My Career Journey</p>
-        <h2 className="font-black uppercase text-[#0C0C0C] text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide">
+        <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/50' : 'text-[#D7E2EA]/40'} mb-2`}>My Career Journey</p>
+        <h2 className={`font-black uppercase ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'} text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide transition-colors duration-500`}>
           Experience
         </h2>
       </div>

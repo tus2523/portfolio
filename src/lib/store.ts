@@ -205,6 +205,7 @@ export const defaultData = {
     whatsappApiKey: '',
     footerHeading: "Let's work together",
     footerBio: "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions.",
+    sectionOrder: ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'],
   },
   brandLogos: [] as { id: string; name: string; logoUrl: string }[],
 };
