@@ -3,6 +3,17 @@ import { FadeIn } from '../FadeIn';
 import { defaultData } from '../../lib/store';
 import { Star } from 'lucide-react';
 import { InfiniteMarquee } from '../InfiniteMarquee';
+import { FloatingEmoji } from '../FloatingEmoji';
+
+const getAssetUrl = (path: string) => {
+  const base = import.meta.env.BASE_URL || '/';
+  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  return `${cleanBase}${cleanPath}`;
+};
+
+const GLASS_QUOTE = getAssetUrl('glass_quote.png');
+const GLASS_HEART = getAssetUrl('glass_heart.png');
 
 interface ReviewsSectionProps {
   reviews: typeof defaultData.reviews;
@@ -50,6 +61,9 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
 
   return (
     <section id="reviews" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-0 w-full border-t border-white/5 relative z-20 overflow-hidden transition-colors duration-500`}>
+      {/* Floating 3D Glass Assets */}
+      <FloatingEmoji src={GLASS_QUOTE} alt="Quote" className="top-[25%] left-[2%] sm:left-[4%]" rotation={-10} delay={0.6} lightBg={isLight} />
+      <FloatingEmoji src={GLASS_HEART} alt="Heart" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={12} delay={0.8} lightBg={isLight} />
       <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center px-5 sm:px-8 md:px-10">
         <FadeIn delay={0} y={40} className="mb-12 text-center">
           <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2`}>What they say</p>

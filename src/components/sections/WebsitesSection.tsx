@@ -2,8 +2,18 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { FadeIn } from '../FadeIn';
-
+import { FloatingEmoji } from '../FloatingEmoji';
 import { defaultData } from '../../lib/store';
+
+const getAssetUrl = (path: string) => {
+  const base = import.meta.env.BASE_URL || '/';
+  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  return `${cleanBase}${cleanPath}`;
+};
+
+const GLASS_LAPTOP = getAssetUrl('glass_laptop.png');
+const GLASS_SPARKLES = getAssetUrl('glass_sparkles.png');
 
 interface WebsitesSectionProps {
   websites: typeof defaultData.websites;
@@ -18,6 +28,9 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, them
       id="websites"
       className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
     >
+      {/* Floating 3D Glass Assets */}
+      <FloatingEmoji src={GLASS_LAPTOP} alt="Laptop" className="top-[25%] left-[2%] sm:left-[4%]" rotation={10} delay={0.5} lightBg={isLight} />
+      <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={-15} delay={0.7} lightBg={isLight} />
       <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12">
         <FadeIn delay={0} y={40}>
           <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2 text-center`}>Digital Experiences</p>

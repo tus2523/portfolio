@@ -18,6 +18,18 @@ const WhatsApp = ({ size = 24 }: { size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
 );
 
+import { FloatingEmoji } from '../FloatingEmoji';
+
+const getAssetUrl = (path: string) => {
+  const base = import.meta.env.BASE_URL || '/';
+  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  return `${cleanBase}${cleanPath}`;
+};
+
+const GLASS_ROCKET = getAssetUrl('glass_rocket.png');
+const GLASS_TROPHY = getAssetUrl('glass_trophy.png');
+
 interface FooterSectionProps {
   data: typeof defaultData;
 }
@@ -72,7 +84,10 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   };
 
   return (
-    <footer id="contact" className="bg-[#0C0C0C] border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20">
+    <footer id="contact" className="bg-[#0C0C0C] border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20 overflow-hidden">
+      {/* Floating 3D Glass Assets */}
+      <FloatingEmoji src={GLASS_ROCKET} alt="Rocket" className="top-[10%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={false} />
+      <FloatingEmoji src={GLASS_TROPHY} alt="Trophy" className="bottom-[15%] right-[2%] sm:right-[4%]" rotation={12} delay={1.2} lightBg={false} />
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         {/* Contact Info Side */}
         <div className="flex flex-col gap-8">
