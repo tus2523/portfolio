@@ -95,6 +95,25 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
             Campaigns
           </h2>
         </FadeIn>
+        {/* Brand Logos Marquee */}
+        {brandLogos && brandLogos.length > 0 && (
+          <div className="w-full overflow-hidden mb-12 relative group">
+            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#F4F3F6] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#F4F3F6] to-transparent z-10 pointer-events-none" />
+            
+            <div className="animate-marquee flex whitespace-nowrap group-hover:[animation-play-state:paused] items-center gap-12 sm:gap-20 opacity-60 hover:opacity-100 transition-opacity duration-300 py-4">
+              {[...brandLogos, ...brandLogos, ...brandLogos, ...brandLogos].map((brand, idx) => (
+                <div key={`${brand.id}-${idx}`} className="flex-shrink-0 flex items-center justify-center grayscale hover:grayscale-0 transition duration-300">
+                  {brand.logoUrl ? (
+                    <img src={brand.logoUrl} alt={brand.name} className="h-10 sm:h-14 object-contain max-w-[140px]" />
+                  ) : (
+                    <span className="text-xl sm:text-2xl font-bold text-[#0C0C0C]/50">{brand.name}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         {campaigns.brands && campaigns.brands.length > 0 ? (
           <div className="w-full flex flex-col items-center">

@@ -40,7 +40,7 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites }) =>
                   <img
                     src={
                       site.previewUrl ||
-                      `https://image.thum.io/get/width/800/crop/450/noanimate/${encodeURIComponent(site.url)}`
+                      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop"
                     }
                     alt={site.title}
                     className="w-full h-full object-cover group-hover:scale-[1.05] transition duration-700"
