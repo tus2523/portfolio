@@ -4,11 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0C0C0C" />
+
+    <!-- DNS prefetch for external services -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://i.ytimg.com" />
+    <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com" />
+
+    <!-- Font: preconnect then load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+
     <title>Sahil Thorat | Portfolio</title>
     <meta name="description" content="Sahil Thorat — Influencer Marketing Executive, Video Editor, and Event Coordinator based in Mumbai." />
+    <meta property="og:title" content="Sahil Thorat | Portfolio" />
+    <meta property="og:description" content="Content Producer · Influencer Marketer · Video Editor based in Mumbai." />
+    <meta name="robots" content="index, follow" />
+
+    <style>
+      /* Prevent FOUT flash — show dark bg immediately */
+      html, body { background: #0C0C0C; margin: 0; padding: 0; overflow-x: hidden; }
+      #root { min-height: 100vh; }
+    </style>
   </head>
   <body>
     <div id="root"></div>

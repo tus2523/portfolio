@@ -188,8 +188,11 @@ function MainApp() {
     return () => clearTimeout(timer);
   }, [data.settings]);
 
-  // Global click ripple effect
+  // Global click ripple effect — desktop only
   useEffect(() => {
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isMobile) return; // Skip on mobile — not worth the DOM cost
+
     const handleClick = (e: MouseEvent) => {
       const el = document.createElement('span');
       el.className = 'global-click-ripple';
@@ -248,7 +251,7 @@ function MainApp() {
   }
 
   return (
-    <div className="bg-[#0C0C0C] text-[#D7E2EA] font-kanit overflow-x-clip min-h-screen w-full relative select-none">
+    <div className="bg-[#0C0C0C] text-[#D7E2EA] font-kanit overflow-x-hidden min-h-screen w-full relative select-none">
       <AnimatePresence>
         {!loaded && <LoadingScreen onComplete={() => setLoaded(true)} />}
       </AnimatePresence>

@@ -13,22 +13,23 @@ interface FadeInProps {
 }
 
 const motionComponents: Record<string, any> = {
-  div: motion.div,
-  nav: motion.nav,
-  p: motion.p,
+  div:     motion.div,
+  nav:     motion.nav,
+  p:       motion.p,
   section: motion.section,
-  span: motion.span,
+  span:    motion.span,
 };
 
-const VIEWPORT_CONFIG = { once: true, margin: "50px", amount: 0 };
-const WHILE_IN_VIEW_CONFIG = { opacity: 1, x: 0, y: 0 };
+// Shared config objects — prevents re-creation on every render
+const VIEWPORT_CONFIG = { once: true, margin: '0px', amount: 0.05 };
+const WHILE_IN_VIEW_CONFIG = { opacity: 1, x: 0, y: 0, filter: 'blur(0px)' };
 
 export const FadeIn: React.FC<FadeInProps> = ({
   children,
   delay = 0,
-  duration = 0.7,
+  duration = 0.65,
   x = 0,
-  y = 30,
+  y = 28,
   as = 'div',
   className = '',
   style
@@ -37,7 +38,7 @@ export const FadeIn: React.FC<FadeInProps> = ({
 
   return (
     <Component
-      initial={{ opacity: 0, x, y }}
+      initial={{ opacity: 0, x, y, filter: 'blur(4px)' }}
       whileInView={WHILE_IN_VIEW_CONFIG}
       viewport={VIEWPORT_CONFIG}
       transition={{

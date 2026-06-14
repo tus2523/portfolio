@@ -52,8 +52,8 @@ export const MarqueeRow: React.FC<MarqueeRowProps> = ({ videos, direction, onSel
   
   const scrollX = useRef(0);
   
-  // Slower auto-scroll speed: 0.25px per frame (approx 15px/sec at 60fps)
-  const autoScrollSpeed = direction === 'left' ? 0.25 : -0.25;
+  // Auto-scroll speed: 0.5px per frame at 60fps
+  const autoScrollSpeed = direction === 'left' ? 0.5 : -0.5;
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -225,7 +225,12 @@ export const MarqueeRow: React.FC<MarqueeRowProps> = ({ videos, direction, onSel
       <div
         ref={scrollRef}
         className="flex gap-4 sm:gap-6 whitespace-nowrap overflow-x-hidden scrollbar-none"
-        style={{ scrollbarWidth: 'none' }}
+        style={{
+          scrollbarWidth: 'none',
+          willChange: 'scroll-position',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden' as any,
+        }}
       >
         {tripledVideos.map((video, idx) => {
           const thumb = getYoutubeThumbnail(video.url) || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600";

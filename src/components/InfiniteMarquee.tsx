@@ -3,10 +3,9 @@ import React, { useRef, useEffect } from 'react';
 interface InfiniteMarqueeProps {
   children: React.ReactNode[];
   direction?: 'left' | 'right';
-  speed?: number; // px per frame at 60fps, default 0.8 (fast)
+  speed?: number;
   pauseOnHover?: boolean;
   className?: string;
-  itemClassName?: string;
   gap?: string;
 }
 
@@ -30,26 +29,27 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
   const lastTime = useRef(0);
   const animationFrameId = useRef<number | null>(null);
   const scrollX = useRef(0);
+  const hasInit = useRef(false);
+  const lastFrameTime = useRef(performance.now());
 
   const autoScrollSpeed = direction === 'left' ? speed : -speed;
 
-  // Triple items to ensure seamless infinite loop
+  // Triple items for seamless loop
   const items = React.Children.toArray(children);
   const tripled = [...items, ...items, ...items];
-
   const childrenKey = items.length;
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
-    let hasInit = false;
-    let lastFrameTime = performance.now();
+    hasInit.current = false;
+    lastFrameTime.current = performance.now();
 
     const loop = (now: number) => {
       if (!el) return;
-      const deltaTime = Math.min(now - lastFrameTime, 50);
-      lastFrameTime = now;
+      const deltaTime = Math.min(now - lastFrameTime.current, 50); // Cap at 50ms to handle tab switches
+      lastFrameTime.current = now;
 
       const singleWidth = el.scrollWidth / 3;
       if (singleWidth <= 0) {
@@ -57,21 +57,21 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
         return;
       }
 
-      if (!hasInit) {
+      if (!hasInit.current) {
         scrollX.current = singleWidth;
         el.scrollLeft = Math.round(scrollX.current);
-        hasInit = true;
+        hasInit.current = true;
       }
 
       if (isDragging.current) {
         scrollX.current = el.scrollLeft;
       }
 
-      // Seamless wrap-around
+      // Seamless wrap-around — prevents jump/jerk
       if (scrollX.current >= singleWidth * 2) {
         scrollX.current -= singleWidth;
         el.scrollLeft = Math.round(scrollX.current);
-      } else if (scrollX.current <= singleWidth - 100) {
+      } else if (scrollX.current <= singleWidth - 50) {
         scrollX.current += singleWidth;
         el.scrollLeft = Math.round(scrollX.current);
       }
@@ -80,7 +80,7 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
         if (Math.abs(velocity.current) > 0.05) {
           scrollX.current += velocity.current;
           el.scrollLeft = Math.round(scrollX.current);
-          velocity.current *= 0.93;
+          velocity.current *= 0.92; // Smooth deceleration
         } else {
           velocity.current = 0;
           if (!isHovered.current || !pauseOnHover) {
@@ -95,6 +95,7 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
     };
 
     animationFrameId.current = requestAnimationFrame(loop);
+
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
     };
@@ -123,7 +124,7 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
     scrollRef.current.scrollLeft = Math.round(scrollX.current);
     if (dt > 0) {
       const inst = -(clientX - lastX.current) / dt * 16.666;
-      velocity.current = velocity.current * 0.4 + inst * 0.6;
+      velocity.current = velocity.current * 0.3 + inst * 0.7;
     }
     lastX.current = clientX;
     lastTime.current = now;
@@ -145,8 +146,8 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
   };
 
   const onTouchStart = (e: React.TouchEvent) => handleStart(e.touches[0].clientX);
-  const onTouchMove = (e: React.TouchEvent) => handleMove(e.touches[0].clientX);
-  const onTouchEnd = () => handleEnd();
+  const onTouchMove  = (e: React.TouchEvent) => handleMove(e.touches[0].clientX);
+  const onTouchEnd   = () => handleEnd();
 
   return (
     <div
@@ -161,7 +162,12 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
       <div
         ref={scrollRef}
         className={`flex whitespace-nowrap overflow-x-hidden scrollbar-none ${gap}`}
-        style={{ scrollbarWidth: 'none' }}
+        style={{
+          scrollbarWidth: 'none',
+          willChange: 'scroll-position',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
       >
         {tripled.map((child, idx) => (
           <div key={idx} className="flex-shrink-0 whitespace-normal">
