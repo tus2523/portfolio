@@ -48,6 +48,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
               key={project.id}
               project={project}
               onSelectVideo={onSelectVideo}
+              theme={theme}
             />
           ))
         ) : (

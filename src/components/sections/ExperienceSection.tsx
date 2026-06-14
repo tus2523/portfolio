@@ -39,13 +39,17 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
       {experience && experience.length > 0 ? (
         <div className="max-w-5xl mx-auto relative pl-4 sm:pl-8">
           {/* Vertical Timeline Axis Line */}
-          <div className="absolute left-[20px] sm:left-[28px] top-2 bottom-2 w-[1px] bg-[#0C0C0C]/15" />
+          <div className={`absolute left-[20px] sm:left-[28px] top-2 bottom-2 w-[1px] ${isLight ? 'bg-[#0C0C0C]/15' : 'bg-white/15'}`} />
           
           <div className="flex flex-col gap-8">
             {experience.map((ex) => (
               <div key={ex.id} className="relative pl-8 sm:pl-12 group">
                 {/* Timeline Node Bullet */}
-                <div className="absolute left-[15px] sm:left-[23px] top-[26px] w-[11px] h-[11px] bg-[#0C0C0C] rounded-full border border-white shadow-[0_0_8px_rgba(12,12,12,0.25)] z-10 group-hover:scale-125 group-hover:bg-[#BBCCD7] transition duration-300" />
+                <div className={`absolute left-[15px] sm:left-[23px] top-[26px] w-[11px] h-[11px] rounded-full border z-10 group-hover:scale-125 transition duration-300 ${
+                  isLight 
+                    ? 'bg-[#0C0C0C] border-white shadow-[0_0_8px_rgba(12,12,12,0.25)] group-hover:bg-[#BBCCD7]' 
+                    : 'bg-[#D7E2EA] border-[#0C0C0C] shadow-[0_0_8px_rgba(255,255,255,0.15)] group-hover:bg-white'
+                }`} />
                 
                 {/* Timeline Card */}
                 <motion.div

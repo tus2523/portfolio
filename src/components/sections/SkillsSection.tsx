@@ -49,7 +49,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, theme = 'd
           ))}
         </div>
       ) : (
-        <div className="text-center text-[#D7E2EA]/30 py-8 italic">No skills added.</div>
+        <div className={`text-center ${isLight ? 'text-[#0C0C0C]/35' : 'text-[#D7E2EA]/30'} py-8 italic`}>No skills added.</div>
       )}
     </section>
   );

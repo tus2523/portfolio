@@ -135,8 +135,12 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
                     }}
                     className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-200 border flex items-center justify-center ${
                       activeBrand === brand 
-                        ? 'bg-[#0C0C0C] text-white border-[#0C0C0C] shadow-lg shadow-black/10' 
-                        : 'bg-white/70 text-[#0C0C0C]/60 border-[#0C0C0C]/10 hover:border-[#0C0C0C]/35 hover:text-[#0C0C0C] shadow-sm'
+                        ? (isLight 
+                            ? 'bg-[#0C0C0C] text-white border-[#0C0C0C] shadow-lg shadow-black/10' 
+                            : 'bg-white text-[#0C0C0C] border-white shadow-lg shadow-white/10')
+                        : (isLight 
+                            ? 'bg-white/70 text-[#0C0C0C]/60 border-[#0C0C0C]/10 hover:border-[#0C0C0C]/35 hover:text-[#0C0C0C] shadow-sm' 
+                            : 'bg-white/5 text-[#D7E2EA]/60 border-white/10 hover:border-white/30 hover:text-white shadow-sm')
                     }`}
                   >
                     {logo}
@@ -147,12 +151,14 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
             </div>
 
             {/* Accordion campaigns */}
-            <div className="w-full border border-white/80 rounded-[32px] overflow-hidden bg-white/40 backdrop-blur-md shadow-2xl max-h-[65vh] overflow-y-auto scrollbar-thin">
+            <div className={`w-full border rounded-[32px] overflow-hidden backdrop-blur-md shadow-2xl max-h-[65vh] overflow-y-auto scrollbar-thin ${
+              isLight ? 'border-black/10 bg-white/40' : 'border-white/10 bg-white/5'
+            }`}>
               {Object.keys((campaigns && campaigns.grouped && activeBrand && campaigns.grouped[activeBrand]) || {}).map((campaignName, idx) => {
                 const creators = (campaigns && campaigns.grouped && activeBrand && campaigns.grouped[activeBrand][campaignName]) || [];
                 const isOpen = openCampaignIdx === idx;
                 return (
-                  <div key={idx} className="border-b border-[#0C0C0C]/10 last:border-b-0">
+                  <div key={idx} className={`border-b ${isLight ? 'border-[#0C0C0C]/10' : 'border-white/10'} last:border-b-0`}>
                     <button
                       type="button"
                       onClick={(e) => {
@@ -160,34 +166,46 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
                         e.stopPropagation();
                         setOpenCampaignIdx(isOpen ? null : idx);
                       }}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-white/30 transition duration-200"
+                      className={`w-full flex items-center justify-between p-5 text-left ${isLight ? 'hover:bg-[#0C0C0C]/5' : 'hover:bg-white/5'} transition duration-200`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className={`text-xs text-[#0C0C0C]/55 transition-transform duration-300 ${isOpen ? 'rotate-90 text-[#0C0C0C]' : ''}`}>
+                        <span className={`text-xs transition-transform duration-300 ${
+                          isLight 
+                            ? `text-[#0C0C0C]/55 ${isOpen ? 'rotate-90 text-[#0C0C0C]' : ''}` 
+                            : `text-[#D7E2EA]/40 ${isOpen ? 'rotate-90 text-white' : ''}`
+                        }`}>
                           ▶
                         </span>
-                        <span className="font-bold text-sm sm:text-base text-[#0C0C0C]">{campaignName}</span>
+                        <span className={`font-bold text-sm sm:text-base ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'}`}>{campaignName}</span>
                       </div>
-                      <span className="text-xs text-[#0C0C0C]/50 font-medium">
+                      <span className={`text-xs font-medium ${isLight ? 'text-[#0C0C0C]/50' : 'text-[#D7E2EA]/40'}`}>
                         {creators.length} creator{creators.length !== 1 ? 's' : ''}
                       </span>
                     </button>
                     
                     {isOpen && (
-                      <div className="bg-white/30 border-t border-[#0C0C0C]/5 p-5 max-h-[400px] overflow-y-auto scrollbar-thin">
+                      <div className={`border-t p-5 max-h-[400px] overflow-y-auto scrollbar-thin ${
+                        isLight ? 'bg-white/30 border-[#0C0C0C]/5' : 'bg-black/20 border-white/5'
+                      }`}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                           {creators.map((c: any, cidx: number) => {
                             const handle = extractInstagramHandle(c.profile);
                             return (
-                              <div key={cidx} className="bg-white/80 border border-white/90 rounded-2xl p-4 flex flex-col justify-between gap-3 premium-shadow-sm hover-card-glow hover:bg-white transition duration-200 group/creator">
+                              <div key={cidx} className={`border rounded-2xl p-4 flex flex-col justify-between gap-3 premium-shadow-sm hover-card-glow transition duration-200 group/creator ${
+                                isLight 
+                                  ? 'bg-white/80 border-[#0C0C0C]/5 hover:bg-white text-[#0C0C0C]' 
+                                  : 'bg-[#0C0C0C]/60 border-white/5 hover:bg-black text-[#D7E2EA] hover-card-glow-dark'
+                              }`}>
                                 <div>
-                                  <div className="font-bold text-sm text-[#0C0C0C]">{c.creator}</div>
+                                  <div className={`font-bold text-sm ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'}`}>{c.creator}</div>
                                   {handle && (
                                     <a 
                                       href={c.profile} 
                                       target="_blank" 
                                       rel="noopener noreferrer"
-                                      className="text-xs text-[#0C0C0C]/65 hover:text-[#0C0C0C] underline mt-0.5 inline-block font-semibold"
+                                      className={`text-xs underline mt-0.5 inline-block font-semibold ${
+                                        isLight ? 'text-purple-700 hover:text-purple-905 hover:underline' : 'text-[#BBCCD7] hover:text-white'
+                                      }`}
                                     >
                                       {handle}
                                     </a>
@@ -198,7 +216,9 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
                                     href={c.liveLink} 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    className="w-full py-2 bg-[#0C0C0C] text-white hover:bg-black/90 rounded-xl text-[10px] font-bold uppercase tracking-wider transition duration-200 flex items-center justify-center gap-1"
+                                    className={`w-full py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition duration-200 flex items-center justify-center gap-1 ${
+                                      isLight ? 'bg-[#0C0C0C] text-white hover:bg-black/90' : 'bg-white text-black hover:bg-[#D7E2EA]'
+                                    }`}
                                   >
                                     View Post <ArrowUpRight size={10} />
                                   </a>
@@ -215,7 +235,7 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
             </div>
           </div>
         ) : (
-          <div className="text-center text-[#0C0C0C]/40 py-8 font-medium">No campaigns loaded. Connect a campaign Google Sheet in the admin panel.</div>
+          <div className={`text-center py-8 font-medium ${isLight ? 'text-[#0C0C0C]/40' : 'text-[#D7E2EA]/40'}`}>No campaigns loaded. Connect a campaign Google Sheet in the admin panel.</div>
         )}
       </div>
     </section>

@@ -16,44 +16,14 @@ const GLASS_CAMERA = getAssetUrl('glass_camera.png');
 const GLASS_MEGAPHONE = getAssetUrl('glass_megaphone.png');
 
 
-const SERVICES = [
-  {
-    number: "01",
-    name: "Influencer Campaigns",
-    description: "Executing and managing campaign briefs for major brands like ICICI Bank, My11Circle, Flipkart, Sony SAB, and Tata Motors.",
-    details: "End-to-end influencer marketing execution. We formulate tailored campaign strategies, scout matching content creators, coordinate briefs, manage deliveries, and track campaign ROI and conversion rates.",
-  },
-  {
-    number: "02",
-    name: "Video Production",
-    description: "Coordinating events, shoot management, and editing celebrity BTS, music videos, reels, and high-energy brand content.",
-    details: "High-end post-production, color grading, and creative editing. Experienced in directing shoots, managing video editing timelines, crafting celebrity BTS content, and editing high-engagement YouTube and Instagram Reels.",
-  },
-  {
-    number: "03",
-    name: "Artist Management",
-    description: "Managing underground and commercial music creators, coordinating live stage schedules, and handling bookings.",
-    details: "Empowering artists and content creators to focus on their art. We handle scheduling, stage coordination, commercial brand negotiations, performance bookings, and creator career strategy.",
-  },
-  {
-    number: "04",
-    name: "Brand Integration",
-    description: "Formulating cohesive strategies that naturally bridge the creative flow of creators with the marketing guidelines of corporate clients.",
-    details: "Building the strategic bridge between brand identity and creator authenticity. We design natural integrations that fit organic content while satisfying brand campaign guidelines.",
-  },
-  {
-    number: "05",
-    name: "Media Planning",
-    description: "Setting up campaign structures, analyzing creator reach and reporting metrics, and developing conversion-focused brand briefs.",
-    details: "Data-driven media campaigns. We analyze reach metrics, design detailed campaign briefs, establish key performance indicators, and present thorough analytical reports post-execution.",
-  },
-  {
-    number: "06",
-    name: "Website Development",
-    description: "Designing and developing modern portfolio stores, beat-selling landing pages, and studio websites with responsive layouts.",
-    details: "Interactive frontend experiences tailored for creative brands. Specializing in high-performance portfolios, beatstores, and recording studio landing pages built with clean code and premium animations.",
-  },
-];
+const IconMap: { [key: string]: React.ComponentType<any> } = {
+  sparkles: Sparkles,
+  video: Video,
+  user: User,
+  film: Film,
+  briefcase: Briefcase,
+  globe: Globe,
+};
 
 export interface ServicesSectionProps {
   data: typeof defaultData;
@@ -61,7 +31,8 @@ export interface ServicesSectionProps {
 }
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 'dark' }) => {
-  const [activeService, setActiveService] = useState<typeof SERVICES[0] | null>(null);
+  const servicesList = data.services || [];
+  const [activeService, setActiveService] = useState<any | null>(null);
   const isLight = theme === 'light';
 
   const getWhatsAppLink = (serviceName: string) => {
@@ -86,20 +57,15 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
         </FadeIn>
 
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {SERVICES.map((service, idx) => {
-            const icons = [
-              <Sparkles key="s" size={28} className="text-[#BBCCD7]" />,
-              <Video key="v" size={28} className="text-[#BBCCD7]" />,
-              <User key="u" size={28} className="text-[#BBCCD7]" />,
-              <Film key="f" size={28} className="text-[#BBCCD7]" />,
-              <Briefcase key="b" size={28} className="text-[#BBCCD7]" />,
-              <Globe key="g" size={28} className="text-[#BBCCD7]" />
-            ];
-            const icon = icons[idx] || icons[0];
+          {servicesList.map((service, idx) => {
+            const iconClassName = isLight ? "text-purple-700" : "text-[#BBCCD7]";
+            const IconComp = IconMap[service.icon] || Sparkles;
+            const icon = <IconComp size={28} className={iconClassName} />;
+            const serviceNumber = String(idx + 1).padStart(2, '0');
 
             return (
               <FadeIn
-                key={service.number}
+                key={service.id || idx}
                 delay={idx * 0.06}
                 y={20}
                 className="shadow-xl"
@@ -108,42 +74,46 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
                   onClick={() => setActiveService(service)}
                   whileHover={{ y: -6, scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                  className="bg-white/5 border border-white/5 hover:border-[#BBCCD7]/35 hover:bg-white/10 rounded-[24px] p-6 flex flex-col justify-between gap-4 group relative overflow-hidden hover-card-glow-dark cursor-pointer"
+                  className={`border rounded-[24px] p-6 flex flex-col justify-between gap-4 group relative overflow-hidden cursor-pointer ${
+                    isLight 
+                      ? 'bg-black/5 border-black/5 hover:border-black/20 hover:bg-black/10 hover-card-glow' 
+                      : 'bg-white/5 border-white/5 hover:border-[#BBCCD7]/35 hover:bg-white/10 hover-card-glow-dark'
+                  }`}
                   style={{ minHeight: '250px' }}
                 >
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#BBCCD7]/5 to-transparent rounded-bl-full pointer-events-none" />
+                  <div className={`absolute top-0 right-0 w-20 h-20 rounded-bl-full pointer-events-none ${isLight ? 'bg-gradient-to-br from-black/5 to-transparent' : 'bg-gradient-to-br from-[#BBCCD7]/5 to-transparent'}`} />
                   
                   <div className="flex flex-col gap-4">
                     <div className="flex justify-between items-center w-full">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${isLight ? 'bg-black/5 border-black/10' : 'bg-white/5 border-white/10'}`}>
                         {icon}
                       </div>
-                      <span className="font-mono text-[10px] font-bold text-[#BBCCD7]/30 tracking-widest">
-                        {service.number}
+                      <span className={`font-mono text-[10px] font-bold tracking-widest ${isLight ? 'text-black/30' : 'text-[#BBCCD7]/30'}`}>
+                        {serviceNumber}
                       </span>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <h3 className="font-bold uppercase text-white text-sm sm:text-base tracking-wide">
+                      <h3 className={`font-bold uppercase text-sm sm:text-base tracking-wide ${isLight ? 'text-[#0C0C0C]' : 'text-white'}`}>
                         {service.name}
                       </h3>
-                      <p className="font-light leading-relaxed text-[#D7E2EA]/70 text-xs sm:text-sm">
+                      <p className={`font-light leading-relaxed text-xs sm:text-sm ${isLight ? 'text-[#0C0C0C]/70' : 'text-[#D7E2EA]/70'}`}>
                         {service.description}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center mt-auto pt-4 border-t border-white/5">
+                  <div className={`flex justify-between items-center mt-auto pt-4 border-t ${isLight ? 'border-black/5' : 'border-white/5'}`}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         window.open(getWhatsAppLink(service.name), '_blank', 'noopener,noreferrer');
                       }}
-                      className="text-[10px] font-bold uppercase tracking-widest text-[#BBCCD7] hover:text-white flex items-center gap-1 transition"
+                      className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 transition ${isLight ? 'text-purple-700 hover:text-purple-900' : 'text-[#BBCCD7] hover:text-white'}`}
                     >
                       Inquire <ArrowRight size={10} />
                     </button>
                     
-                    <span className="text-[10px] font-medium text-[#D7E2EA]/30 group-hover:text-[#BBCCD7]/50 transition">
+                    <span className={`text-[10px] font-medium transition ${isLight ? 'text-[#0C0C0C]/35 group-hover:text-black' : 'text-[#D7E2EA]/30 group-hover:text-[#BBCCD7]/50'}`}>
                       View details →
                     </span>
                   </div>
@@ -177,17 +147,15 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
 
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
-                  {SERVICES.findIndex(s => s.name === activeService.name) !== -1 ? [
-                    <Sparkles key="s" size={24} className="text-[#BBCCD7]" />,
-                    <Video key="v" size={24} className="text-[#BBCCD7]" />,
-                    <User key="u" size={24} className="text-[#BBCCD7]" />,
-                    <Film key="f" size={24} className="text-[#BBCCD7]" />,
-                    <Briefcase key="b" size={24} className="text-[#BBCCD7]" />,
-                    <Globe key="g" size={24} className="text-[#BBCCD7]" />
-                  ][SERVICES.findIndex(s => s.name === activeService.name)] : null}
+                  {(() => {
+                    const IconComp = IconMap[activeService.icon] || Sparkles;
+                    return <IconComp size={24} className="text-[#BBCCD7]" />;
+                  })()}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[9px] uppercase tracking-widest text-[#BBCCD7]/40 font-bold">Service {activeService.number}</span>
+                  <span className="text-[9px] uppercase tracking-widest text-[#BBCCD7]/40 font-bold">
+                    Service {String(servicesList.findIndex(s => s.id === activeService.id) + 1).padStart(2, '0')}
+                  </span>
                   <h3 className="text-base sm:text-lg font-bold uppercase text-white tracking-wide">{activeService.name}</h3>
                 </div>
               </div>

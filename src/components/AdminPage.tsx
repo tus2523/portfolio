@@ -203,8 +203,8 @@ const AdminPageInner: React.FC = () => {
     setData(updated);
     
     try {
-      const portfolioRef = ref(db, 'portfolio_content');
-      await set(portfolioRef, updated);
+      const sectionRef = ref(db, `portfolio_content/${section}`);
+      await set(sectionRef, val);
       flash('Synced live to Firebase! ✨');
     } catch (err) {
       console.error(err);
@@ -246,8 +246,8 @@ const AdminPageInner: React.FC = () => {
       setData({ ...data, settings: newSettings });
       
       try {
-        const portfolioRef = ref(db, 'portfolio_content');
-        set(portfolioRef, { ...data, settings: newSettings });
+        const settingsRef = ref(db, 'portfolio_content/settings');
+        set(settingsRef, newSettings);
         flash('Layout order saved!');
       } catch (e) {
         console.error(e);
@@ -343,14 +343,7 @@ const AdminPageInner: React.FC = () => {
         {tab === 'skills'       && <Skills         data={data} save={save} />}
         {tab === 'reviews'      && <ReviewsManagement  data={data} save={save} />}
         {tab === 'about'        && <About          data={data} save={save} />}
-        {tab === 'services'     && (
-          <div className="flex flex-col gap-6">
-            <h2 className="text-2xl font-bold">Services</h2>
-            <div className="bg-[#121212] border border-[#222] p-8 rounded-xl text-center">
-              <p className="text-[#D7E2EA]/60">The Services section is currently static and managed via code. You can drag and drop this tab in the sidebar to reorder where it appears on the website.</p>
-            </div>
-          </div>
-        )}
+        {tab === 'services'     && <ServicesManagement data={data} save={save} />}
         {tab === 'settings'     && <Settings       data={data} save={save} />}
         {tab === 'seed'         && <SeedData       setData={setData} flash={flash} />}
       </main>
@@ -1588,3 +1581,125 @@ const ReviewsManagement: React.FC<{ data: typeof defaultData; save: (s: string, 
     </div>
   );
 };
+
+// ─── SERVICES MANAGEMENT SUBCOMPONENT ────────────────────────────────
+const ServicesManagement: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
+  const [items, setItems] = useState<any[]>([]);
+  const [modal, setModal] = useState<{ isEdit: boolean; id?: string } | null>(null);
+  const [form, setForm] = useState({ name: '', icon: 'sparkles', description: '', details: '' });
+
+  useEffect(() => setItems((data as any).services || []), [(data as any).services]);
+
+  const persist = (updated: any) => {
+    setItems(updated);
+    save('services', updated);
+  };
+
+  const openAdd = () => {
+    setForm({ name: '', icon: 'sparkles', description: '', details: '' });
+    setModal({ isEdit: false });
+  };
+
+  const openEdit = (item: any) => {
+    setForm({ name: item.name, icon: item.icon || 'sparkles', description: item.description || '', details: item.details || '' });
+    setModal({ isEdit: true, id: item.id });
+  };
+
+  const saveItem = () => {
+    if (modal?.isEdit) {
+      persist(items.map((i: any) => i.id === modal.id ? { ...i, ...form } : i));
+    } else {
+      persist([...items, { id: uid(), ...form }]);
+    }
+    setModal(null);
+  };
+
+  const deleteItem = (id: string) => {
+    if (!confirm('Are you sure you want to delete this service?')) return;
+    persist(items.filter((i: any) => i.id !== id));
+  };
+
+  const getIconLabel = (ic: string) => {
+    switch(ic) {
+      case 'sparkles': return '✨ Sparkles';
+      case 'video': return '🎬 Video';
+      case 'user': return '👤 User';
+      case 'film': return '🎞️ Film';
+      case 'briefcase': return '💼 Briefcase';
+      case 'globe': return '🌐 Globe';
+      default: return '✨ Sparkles';
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Services</h2>
+        <button onClick={openAdd} className="bg-[#7621B0] text-white font-semibold py-2 px-4 rounded-lg uppercase tracking-wider text-xs hover:bg-[#611a93]">
+          + Add Service
+        </button>
+      </div>
+      <p className="text-sm text-[#D7E2EA]/50 mb-6 font-sans">Apne brands and clients ke liye custom services define karein. Ye dynamic list homepage services grid pe render hogi.</p>
+
+      <div className="flex flex-col gap-3">
+        {items.map((item: any, idx: number) => (
+          <div key={item.id} className="bg-[#121212] border border-[#222] p-4 rounded-xl flex justify-between items-center gap-4">
+            <div className="flex items-center gap-3 truncate">
+              <span className="font-mono text-xs text-[#D7E2EA]/35 shrink-0">{String(idx + 1).padStart(2, '0')}</span>
+              <span className="text-base shrink-0">{getIconLabel(item.icon)}</span>
+              <div className="truncate">
+                <span className="font-semibold text-[#D7E2EA] block truncate">{item.name}</span>
+                <span className="text-xs text-[#D7E2EA]/50 truncate block">{item.description}</span>
+              </div>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              <button onClick={() => openEdit(item)} className="text-xs text-[#D7E2EA]/50 hover:text-[#D7E2EA]">Edit</button>
+              <button onClick={() => deleteItem(item.id)} className="text-xs text-red-500 hover:text-red-400">Delete</button>
+            </div>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <div className="text-center text-[#D7E2EA]/30 py-12 italic">Koi custom service add nahi ki. Upar "+ Add Service" click karein.</div>
+        )}
+      </div>
+
+      {modal && (
+        <div className="fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50">
+          <div className="bg-[#121212] p-6 rounded-2xl w-full max-w-lg border border-[#222]">
+            <h3 className="text-xl font-bold mb-4">{modal.isEdit ? 'Edit Service' : 'Add Service'}</h3>
+            <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin">
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/40 font-semibold">Service Name</label>
+                <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm text-[#D7E2EA]" placeholder="Service Name" value={form.name} onChange={e => setForm(p => ({...p, name: e.target.value}))} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/40 font-semibold">Icon Picker</label>
+                <select className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm text-[#D7E2EA]" value={form.icon} onChange={e => setForm(p => ({...p, icon: e.target.value}))}>
+                  <option value="sparkles">✨ Sparkles</option>
+                  <option value="video">🎬 Video</option>
+                  <option value="user">👤 User</option>
+                  <option value="film">🎞️ Film</option>
+                  <option value="briefcase">💼 Briefcase</option>
+                  <option value="globe">🌐 Globe</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/40 font-semibold">Short Description (Grid)</label>
+                <textarea className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm h-16 text-[#D7E2EA] resize-none" placeholder="Short description shown on grid cards..." value={form.description} onChange={e => setForm(p => ({...p, description: e.target.value}))} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/40 font-semibold">Detailed Description (Popup Modal)</label>
+                <textarea className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm h-28 text-[#D7E2EA] resize-none font-sans leading-relaxed" placeholder="Detailed description shown inside popup modal details..." value={form.details} onChange={e => setForm(p => ({...p, details: e.target.value}))} />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setModal(null)} className="px-4 py-2 border border-[#333] rounded text-xs">Cancel</button>
+              <button onClick={saveItem} className="px-4 py-2 bg-[#7621B0] rounded text-xs font-bold hover:bg-[#611a93] transition">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+

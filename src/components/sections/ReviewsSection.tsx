@@ -51,8 +51,8 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
                     )}
                   </div>
                   <div className="truncate">
-                    <h4 className="font-bold text-sm text-white truncate">{review.clientName}</h4>
-                    <span className="text-[10px] text-[#D7E2EA]/40 font-semibold uppercase tracking-wider">Client</span>
+                    <h4 className={`font-bold text-sm truncate ${isLight ? 'text-[#0C0C0C]' : 'text-white'}`}>{review.clientName}</h4>
+                    <span className={`text-[10px] ${isLight ? 'text-[#0C0C0C]/40' : 'text-[#D7E2EA]/40'} font-semibold uppercase tracking-wider`}>Client</span>
                   </div>
                 </div>
               </div>

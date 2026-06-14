@@ -5,9 +5,10 @@ import { getYoutubeThumbnail } from '../lib/store';
 interface VideoProjectRowProps {
   project: any;
   onSelectVideo: (video: any) => void;
+  theme?: 'light' | 'dark';
 }
 
-export const VideoProjectRow: React.FC<VideoProjectRowProps> = ({ project, onSelectVideo }) => {
+export const VideoProjectRow: React.FC<VideoProjectRowProps> = ({ project, onSelectVideo, theme = 'dark' }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDown = useRef(false);
   const startX = useRef(0);
@@ -87,25 +88,31 @@ export const VideoProjectRow: React.FC<VideoProjectRowProps> = ({ project, onSel
 
   if (vids.length === 0) return null;
 
+  const isLight = theme === 'light';
+
   return (
-    <div className="w-full flex flex-col gap-4 border-b border-white/5 pb-8 mb-8 last:border-b-0 last:pb-0 last:mb-0">
+    <div className={`w-full flex flex-col gap-4 border-b ${isLight ? 'border-black/5' : 'border-white/5'} pb-8 mb-8 last:border-b-0 last:pb-0 last:mb-0`}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex flex-wrap gap-1 mb-1.5">
             {(project.tags || []).map((t: string) => (
-              <span key={t} className="text-[8px] bg-white/5 border border-white/10 text-[#BBCCD7] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span key={t} className={`text-[8px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                isLight 
+                  ? 'bg-black/5 border-black/10 text-purple-700' 
+                  : 'bg-white/5 border border-white/10 text-[#BBCCD7]'
+              }`}>
                 {t}
               </span>
             ))}
           </div>
-          <h4 className="text-lg sm:text-xl font-bold uppercase tracking-wide text-[#D7E2EA]">
+          <h4 className={`text-lg sm:text-xl font-bold uppercase tracking-wide ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'}`}>
             {project.title}
           </h4>
-          <p className="text-xs text-[#D7E2EA]/50 font-light max-w-2xl mt-0.5 leading-relaxed">
+          <p className={`text-xs font-light max-w-2xl mt-0.5 leading-relaxed ${isLight ? 'text-[#0C0C0C]/60' : 'text-[#D7E2EA]/50'}`}>
             {project.description}
           </p>
         </div>
-        <span className="text-[9px] uppercase tracking-widest text-[#D7E2EA]/30 font-semibold font-mono">
+        <span className={`text-[9px] uppercase tracking-widest font-semibold font-mono ${isLight ? 'text-[#0C0C0C]/40' : 'text-[#D7E2EA]/30'}`}>
           {vids.length} cut{vids.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -150,9 +157,13 @@ export const VideoProjectRow: React.FC<VideoProjectRowProps> = ({ project, onSel
                 onClick={() => onSelectVideo(v)}
                 whileHover={{ y: -6, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                className="flex-shrink-0 w-[240px] sm:w-[280px] bg-white/5 border border-white/5 hover:border-[#BBCCD7]/30 hover:bg-white/10 rounded-2xl p-2.5 flex flex-col gap-2.5 group transition duration-300 cursor-pointer shadow-lg hover-card-glow-dark"
+                className={`flex-shrink-0 w-[240px] sm:w-[280px] border rounded-2xl p-2.5 flex flex-col gap-2.5 group transition duration-300 cursor-pointer shadow-lg ${
+                  isLight 
+                    ? 'bg-black/5 border-black/5 hover:border-black/20 hover:bg-black/10 hover-card-glow' 
+                    : 'bg-white/5 border-white/5 hover:border-[#BBCCD7]/30 hover:bg-white/10 hover-card-glow-dark'
+                }`}
               >
-                <div className="relative aspect-video rounded-xl overflow-hidden border border-white/5 bg-zinc-900 pointer-events-none">
+                <div className={`relative aspect-video rounded-xl overflow-hidden bg-zinc-900 pointer-events-none border ${isLight ? 'border-black/5' : 'border-white/5'}`}>
                   <img
                     src={thumb}
                     alt={v.title}
@@ -163,7 +174,9 @@ export const VideoProjectRow: React.FC<VideoProjectRowProps> = ({ project, onSel
                     <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full p-2.5 text-[9px] font-bold tracking-wider uppercase">▶ PLAY</span>
                   </div>
                 </div>
-                <span className="text-xs font-semibold truncate text-[#D7E2EA] group-hover:text-white transition duration-200 px-1">
+                <span className={`text-xs font-semibold truncate transition duration-200 px-1 ${
+                  isLight ? 'text-[#0C0C0C] group-hover:text-black' : 'text-[#D7E2EA] group-hover:text-white'
+                }`}>
                   {v.title}
                 </span>
               </motion.div>

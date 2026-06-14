@@ -208,6 +208,50 @@ export const defaultData = {
     sectionOrder: ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'],
   },
   brandLogos: [] as { id: string; name: string; logoUrl: string }[],
+  services: [
+    {
+      id: 'ser1',
+      name: "Influencer Campaigns",
+      icon: "sparkles",
+      description: "Executing and managing campaign briefs for major brands like ICICI Bank, My11Circle, Flipkart, Sony SAB, and Tata Motors.",
+      details: "End-to-end influencer marketing execution. We formulate tailored campaign strategies, scout matching content creators, coordinate briefs, manage deliveries, and track campaign ROI and conversion rates.",
+    },
+    {
+      id: 'ser2',
+      name: "Video Production",
+      icon: "video",
+      description: "Coordinating events, shoot management, and editing celebrity BTS, music videos, reels, and high-energy brand content.",
+      details: "High-end post-production, color grading, and creative editing. Experienced in directing shoots, managing video editing timelines, crafting celebrity BTS content, and editing high-engagement YouTube and Instagram Reels.",
+    },
+    {
+      id: 'ser3',
+      name: "Artist Management",
+      icon: "user",
+      description: "Managing underground and commercial music creators, coordinating live stage schedules, and handling bookings.",
+      details: "Empowering artists and content creators to focus on their art. We handle scheduling, stage coordination, commercial brand negotiations, performance bookings, and creator career strategy.",
+    },
+    {
+      id: 'ser4',
+      name: "Brand Integration",
+      icon: "film",
+      description: "Formulating cohesive strategies that naturally bridge the creative flow of creators with the marketing guidelines of corporate clients.",
+      details: "Building the strategic bridge between brand identity and creator authenticity. We design natural integrations that fit organic content while satisfying brand campaign guidelines.",
+    },
+    {
+      id: 'ser5',
+      name: "Media Planning",
+      icon: "briefcase",
+      description: "Setting up campaign structures, analyzing creator reach and reporting metrics, and developing conversion-focused brand briefs.",
+      details: "Data-driven media campaigns. We analyze reach metrics, design detailed campaign briefs, establish key performance indicators, and present thorough analytical reports post-execution.",
+    },
+    {
+      id: 'ser6',
+      name: "Website Development",
+      icon: "globe",
+      description: "Designing and developing modern portfolio stores, beat-selling landing pages, and studio websites with responsive layouts.",
+      details: "Interactive frontend experiences tailored for creative brands. Specializing in high-performance portfolios, beatstores, and recording studio landing pages built with clean code and premium animations.",
+    },
+  ],
 };
 
 /* ─── Auth ───────────────────────────────────────────────────────── */
@@ -254,6 +298,7 @@ export function getData(): typeof defaultData {
       skills: stored.skills ?? defaultData.skills,
       settings: { ...defaultData.settings, ...(stored.settings || {}) },
       brandLogos: stored.brandLogos ?? defaultData.brandLogos,
+      services: stored.services ?? defaultData.services,
     };
   } catch (err) {
     console.warn("Store: Falling back to default data due to error:", err);

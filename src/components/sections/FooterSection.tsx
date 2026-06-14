@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, Star } from 'lucide-react';
 import { ConfettiEffect } from '../ConfettiEffect';
-import { defaultData, updateSection, getData } from '../../lib/store';
+import { defaultData, updateSection } from '../../lib/store';
 import { db } from '../../lib/firebase';
 import { ref, set } from 'firebase/database';
 
@@ -60,9 +60,8 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
     updateSection('reviews', updatedReviews);
 
     try {
-      const portfolioRef = ref(db, 'portfolio_content');
-      const current = getData();
-      await set(portfolioRef, { ...current, reviews: updatedReviews });
+      const reviewsRef = ref(db, 'portfolio_content/reviews');
+      await set(reviewsRef, updatedReviews);
     } catch (err) {
       console.error('Failed to sync review to Firebase:', err);
     }
