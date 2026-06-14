@@ -22,7 +22,7 @@ const motionComponents: Record<string, any> = {
 
 // Shared config objects — prevents re-creation on every render
 const VIEWPORT_CONFIG = { once: true, margin: '0px', amount: 0.05 };
-const WHILE_IN_VIEW_CONFIG = { opacity: 1, x: 0, y: 0, filter: 'blur(0px)' };
+const WHILE_IN_VIEW_CONFIG = { opacity: 1, x: 0, y: 0 };
 
 export const FadeIn: React.FC<FadeInProps> = ({
   children,
@@ -38,7 +38,7 @@ export const FadeIn: React.FC<FadeInProps> = ({
 
   return (
     <Component
-      initial={{ opacity: 0, x, y, filter: 'blur(4px)' }}
+      initial={{ opacity: 0, x, y }}
       whileInView={WHILE_IN_VIEW_CONFIG}
       viewport={VIEWPORT_CONFIG}
       transition={{

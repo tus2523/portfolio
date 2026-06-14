@@ -19,8 +19,6 @@ export const InteractiveGlow: React.FC = () => {
 
     let opacitySet = false;
     const handleMouseMove = (e: MouseEvent) => {
-      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
       if (!opacitySet) {
         setOpacity(1);
         opacitySet = true;
@@ -45,13 +43,18 @@ export const InteractiveGlow: React.FC = () => {
 
   return (
     <>
-      {/* 1. Subtle cursor spotlight */}
+      {/* 1. Subtle GPU-composited cursor spotlight */}
       {!isMobile && (
-        <div
-          className="fixed inset-0 pointer-events-none z-[2] transition-opacity duration-300"
+        <motion.div
+          className="fixed pointer-events-none z-[2] w-[1100px] h-[1100px] rounded-full"
           style={{
+            x: springX,
+            y: springY,
+            translateX: '-50%',
+            translateY: '-50%',
+            background: 'radial-gradient(circle, rgba(20, 80, 255, 0.09) 0%, rgba(187, 204, 215, 0.03) 45%, transparent 80%)',
             opacity,
-            background: 'radial-gradient(550px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(20, 80, 255, 0.09), rgba(187, 204, 215, 0.03) 45%, transparent 80%)',
+            willChange: 'transform, opacity',
           }}
         />
       )}
@@ -73,6 +76,7 @@ export const InteractiveGlow: React.FC = () => {
               y: springY,
               translateX: '-50%',
               translateY: '-50%',
+              willChange: 'transform',
             }}
           />
         )}

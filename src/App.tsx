@@ -251,7 +251,7 @@ function MainApp() {
   }
 
   return (
-    <div className="bg-[#0C0C0C] text-[#D7E2EA] font-kanit overflow-x-hidden min-h-screen w-full relative select-none">
+    <div className="bg-[#0C0C0C] text-[#D7E2EA] font-kanit overflow-x-clip min-h-screen w-full relative select-none">
       <AnimatePresence>
         {!loaded && <LoadingScreen onComplete={() => setLoaded(true)} />}
       </AnimatePresence>

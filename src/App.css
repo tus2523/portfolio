@@ -14,8 +14,6 @@ html {
 
 body {
   overflow-x: hidden;
-  /* Prevent layout shift from scrollbar appearing */
-  scrollbar-gutter: stable;
 }
 
 /* Prevent CLS on images */
@@ -219,9 +217,4 @@ img {
   -webkit-backface-visibility: hidden;
 }
 
-/* ─── SECTION TRANSITIONS — no layout jump ─── */
-.transition-colors {
-  transition-property: background-color, border-color, color !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transition-duration: 500ms !important;
-}
+
