@@ -58,7 +58,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
   };
 
   return (
-    <section className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative z-20 shadow-2xl overflow-hidden bg-grid-pattern transition-colors duration-500`}>
+    <section className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 w-full relative ${activeService ? 'z-[99999]' : 'z-20'} shadow-2xl overflow-hidden bg-grid-pattern transition-colors duration-500`}>
       {/* Floating Decorative 3D Glass Assets */}
       <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[25%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={isLight} />
       <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={18} delay={1.2} lightBg={isLight} />

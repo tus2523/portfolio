@@ -38,7 +38,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
   }, [activeExp]);
 
   return (
-    <section id="experience" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-[#0C0C0C] text-[#D7E2EA] border-white/5'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative z-20 border-t shadow-inner overflow-hidden transition-colors duration-500`}>
+    <section id="experience" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-[#0C0C0C] text-[#D7E2EA] border-white/5'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative ${activeExp ? 'z-[99999]' : 'z-20'} border-t shadow-inner overflow-hidden transition-colors duration-500`}>
       {/* Floating Decorative 3D Glass Assets */}
       <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[30%] left-[2%] sm:left-[4%]" rotation={-8} delay={2.2} lightBg={isLight} />
       <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[30%] right-[2%] sm:right-[4%]" rotation={12} delay={2.4} lightBg={isLight} />
