@@ -99,44 +99,22 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
             Campaigns
           </h2>
         </FadeIn>
-        {/* Brand Logos Marquee — dual row, fast, draggable */}
+        {/* Brand Logos Marquee — single row, fast, draggable */}
         {brandLogos && brandLogos.length > 0 && (
-          <div className="w-full mb-12 flex flex-col gap-4">
-            {/* Row 1 — left */}
-            <div className="relative w-full">
-              <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-              <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-              <InfiniteMarquee direction="left" speed={1.1} gap="gap-0">
-                {brandLogos.map((brand, idx) => (
-                  <div key={`l1-${brand.id}-${idx}`} className="flex-shrink-0 flex items-center justify-center px-8 sm:px-12 py-3 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                    {brand.logoUrl ? (
-                      <img src={brand.logoUrl} alt={brand.name} className="h-9 sm:h-12 object-contain max-w-[120px]" />
-                    ) : (
-                      <span className={`text-xl sm:text-2xl font-bold ${isLight ? 'text-[#0C0C0C]/50' : 'text-[#D7E2EA]/50'}`}>{brand.name}</span>
-                    )}
-                  </div>
-                ))}
-              </InfiniteMarquee>
-            </div>
-
-            {/* Row 2 — right (reversed order) */}
-            {brandLogos.length > 1 && (
-              <div className="relative w-full">
-                <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-                <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-                <InfiniteMarquee direction="right" speed={0.85} gap="gap-0">
-                  {[...brandLogos].reverse().map((brand, idx) => (
-                    <div key={`l2-${brand.id}-${idx}`} className="flex-shrink-0 flex items-center justify-center px-8 sm:px-12 py-3 opacity-50 hover:opacity-100 transition-opacity duration-300">
-                      {brand.logoUrl ? (
-                        <img src={brand.logoUrl} alt={brand.name} className="h-9 sm:h-12 object-contain max-w-[120px]" />
-                      ) : (
-                        <span className={`text-xl sm:text-2xl font-bold ${isLight ? 'text-[#0C0C0C]/40' : 'text-[#D7E2EA]/40'}`}>{brand.name}</span>
-                      )}
-                    </div>
-                  ))}
-                </InfiniteMarquee>
-              </div>
-            )}
+          <div className="relative w-full mb-12">
+            <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
+            <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
+            <InfiniteMarquee direction="left" speed={1.1} gap="gap-0">
+              {brandLogos.map((brand, idx) => (
+                <div key={`l1-${brand.id}-${idx}`} className="flex-shrink-0 flex items-center justify-center px-8 sm:px-12 py-3 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                  {brand.logoUrl ? (
+                    <img src={brand.logoUrl} alt={brand.name} className="h-9 sm:h-12 object-contain max-w-[120px]" />
+                  ) : (
+                    <span className={`text-xl sm:text-2xl font-bold ${isLight ? 'text-[#0C0C0C]/50' : 'text-[#D7E2EA]/50'}`}>{brand.name}</span>
+                  )}
+                </div>
+              ))}
+            </InfiniteMarquee>
           </div>
         )}
         

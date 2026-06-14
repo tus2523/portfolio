@@ -13,9 +13,6 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
   const approvedReviews = (reviews || []).filter(r => r.status === 'approved');
   const isLight = theme === 'light';
 
-  // Split into two rows for alternating direction effect
-  const row1 = approvedReviews.length > 0 ? approvedReviews : [];
-  const row2 = approvedReviews.length > 0 ? [...approvedReviews].reverse() : [];
 
   const ReviewCard = ({ review }: { review: typeof approvedReviews[0] }) => (
     <div
@@ -63,25 +60,12 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
       </div>
 
       {approvedReviews.length > 0 && (
-        <div className="flex flex-col gap-5 w-full">
-          {/* Fade edges */}
-          <div className="relative w-full">
-            <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-            <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-            <InfiniteMarquee direction="left" speed={0.9} gap="gap-0">
-              {row1.map((review, idx) => <ReviewCard key={`r1-${review.id}-${idx}`} review={review} />)}
-            </InfiniteMarquee>
-          </div>
-
-          {row2.length > 1 && (
-            <div className="relative w-full">
-              <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-              <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-              <InfiniteMarquee direction="right" speed={0.75} gap="gap-0">
-                {row2.map((review, idx) => <ReviewCard key={`r2-${review.id}-${idx}`} review={review} />)}
-              </InfiniteMarquee>
-            </div>
-          )}
+        <div className="relative w-full">
+          <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
+          <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
+          <InfiniteMarquee direction="left" speed={0.9} gap="gap-0">
+            {approvedReviews.map((review, idx) => <ReviewCard key={`r-${review.id}-${idx}`} review={review} />)}
+          </InfiniteMarquee>
         </div>
       )}
     </section>
