@@ -37,14 +37,14 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 
 const NAV = [
   { id: 'stats',        icon: '📊', label: 'Hero Stats'     },
+  { id: 'about',       icon: '👤', label: 'About'          },
   { id: 'campaigns',   icon: '📋', label: 'Campaigns'      },
-  { id: 'videos',      icon: '🎬', label: 'Video Projects' },
-  { id: 'websites',    icon: '🌐', label: 'Websites'       },
   { id: 'brand-logos', icon: '🏷️', label: 'Brand Logos'    },
-  { id: 'reviews',     icon: '⭐', label: 'Reviews'        },
+  { id: 'videos',      icon: '🎬', label: 'Video Projects' },
+  { id: 'websites',    icon: '🌐', label: 'Websites Built' },
   { id: 'experience',  icon: '💼', label: 'Experience'     },
   { id: 'skills',      icon: '🛠️', label: 'Skills'         },
-  { id: 'about',       icon: '👤', label: 'About'          },
+  { id: 'reviews',     icon: '⭐', label: 'Reviews'        },
   { id: 'settings',    icon: '⚙️', label: 'Settings'       },
   { id: 'seed',        icon: '🗄️', label: 'Seed Data'      },
 ];
@@ -926,30 +926,56 @@ const Experience: React.FC<{ data: typeof defaultData; save: (s: string, v: any)
 // ─── SKILLS SUBCOMPONENT ────────────────────────────────────────────
 
 const Skills: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
-  const [text, setText] = useState((data.skills || []).join(', '));
+  const [items, setItems] = useState<string[]>([]);
+  const [newSkill, setNewSkill] = useState('');
 
-  useEffect(() => {
-    setText((data.skills || []).join(', '));
-  }, [data.skills]);
+  useEffect(() => setItems(data.skills || []), [data.skills]);
 
-  const handleSave = () => {
-    const arr = text.split(',').map(s => s.trim()).filter(Boolean);
-    save('skills', arr);
+  const persist = (updated: string[]) => {
+    setItems(updated);
+    save('skills', updated);
+  };
+
+  const handleAdd = () => {
+    if (!newSkill.trim()) return;
+    persist([...items, newSkill.trim()]);
+    setNewSkill('');
+  };
+
+  const handleRemove = (idx: number) => {
+    const updated = [...items];
+    updated.splice(idx, 1);
+    persist(updated);
   };
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Skills &amp; Expertise</h2>
       <div className="bg-[#121212] border border-[#222] p-6 rounded-xl mb-6">
-        <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40 block mb-2">Skills List (Comma Separated)</label>
-        <textarea
-          className="w-full bg-[#0C0C0C] border border-[#222] rounded-lg p-3 text-[#D7E2EA] text-sm h-40 leading-relaxed font-mono"
-          value={text}
-          onChange={e => setText(e.target.value)}
-        />
-        <button onClick={handleSave} className="bg-[#7621B0] px-6 py-3 rounded-lg font-semibold uppercase tracking-widest text-xs hover:bg-[#611a93] transition mt-4 shadow-lg shadow-purple-900/20">
-          Save Skills
-        </button>
+        <div className="flex gap-3 mb-6">
+          <input
+            className="flex-1 bg-[#0C0C0C] border border-[#222] rounded-lg p-3 text-[#D7E2EA] text-sm"
+            placeholder="Add a new skill (e.g. Premiere Pro)"
+            value={newSkill}
+            onChange={e => setNewSkill(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleAdd()}
+          />
+          <button onClick={handleAdd} className="bg-[#7621B0] px-6 py-3 rounded-lg font-semibold uppercase tracking-widest text-xs hover:bg-[#611a93] transition shadow-lg shadow-purple-900/20 whitespace-nowrap">
+            + Add
+          </button>
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          {items.map((skill, idx) => (
+            <div key={idx} className="flex items-center gap-2 bg-[#0C0C0C] border border-[#333] px-3 py-1.5 rounded-full group">
+              <span className="text-sm text-[#D7E2EA]">{skill}</span>
+              <button onClick={() => handleRemove(idx)} className="text-[#D7E2EA]/40 hover:text-red-400 transition ml-1">
+                ✕
+              </button>
+            </div>
+          ))}
+          {items.length === 0 && <span className="text-sm text-[#D7E2EA]/30 italic">No skills added yet.</span>}
+        </div>
       </div>
     </div>
   );
