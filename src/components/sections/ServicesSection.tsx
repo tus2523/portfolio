@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Film, Video, User, Briefcase, Globe, MessageSquare, ArrowRight } from 'lucide-react';
 import { FadeIn } from '../FadeIn';
@@ -33,6 +33,17 @@ export interface ServicesSectionProps {
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 'dark' }) => {
   const servicesList = data.services || [];
   const [activeService, setActiveService] = useState<any | null>(null);
+
+  useEffect(() => {
+    if (activeService) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activeService]);
   const isLight = theme === 'light';
 
   const getWhatsAppLink = (serviceName: string) => {

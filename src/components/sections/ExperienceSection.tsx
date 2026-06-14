@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Briefcase, Calendar, MapPin } from 'lucide-react';
 import { FloatingEmoji } from '../FloatingEmoji';
@@ -22,6 +22,17 @@ interface ExperienceSectionProps {
 export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience, theme = 'light' }) => {
   const [activeExp, setActiveExp] = useState<any | null>(null);
   const isLight = theme === 'light';
+
+  useEffect(() => {
+    if (activeExp) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activeExp]);
 
   return (
     <section id="experience" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-[#0C0C0C] text-[#D7E2EA] border-white/5'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative z-20 border-t shadow-inner overflow-hidden transition-colors duration-500`}>

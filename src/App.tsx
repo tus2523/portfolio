@@ -188,6 +188,18 @@ function MainApp() {
     return () => clearTimeout(timer);
   }, [data.settings]);
 
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (lightbox) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [lightbox]);
+
   // Global click ripple effect — desktop only
   useEffect(() => {
     const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
