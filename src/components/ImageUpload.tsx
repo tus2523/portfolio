@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Upload, Trash2, Loader2, X } from "lucide-react";
 
 // ── Cloudinary config ──────────────────────────────────────────────────
-const CLOUD_NAME    = "dlgkpl4re";
+const CLOUD_NAME    = "digkpl4re";
 const UPLOAD_PRESET = "axuqgwb1";
 const MAX_SIDE      = 1920;   // px — full HD, sharp on any screen
 const JPEG_QUALITY  = 0.92;   // high quality
