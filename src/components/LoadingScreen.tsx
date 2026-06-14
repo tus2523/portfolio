@@ -152,16 +152,16 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: NAME.length * 0.04 + 0.1, duration: 0.5 }}
-                className="flex items-center gap-3"
+                className="flex items-center gap-3 px-4 justify-center"
               >
-                <div className="h-[1px] w-10 bg-[#BBCCD7]/40" />
+                <div className="hidden sm:block h-[1px] w-10 bg-[#BBCCD7]/40 shrink-0" />
                 <span
-                  className="text-[#BBCCD7]/60 text-[10px] uppercase tracking-[0.4em] font-semibold"
+                  className="text-[#BBCCD7]/60 text-[8px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.4em] font-semibold text-center whitespace-nowrap"
                   style={{ fontFamily: 'Kanit, sans-serif' }}
                 >
                   Content Producer · Influencer Marketer
                 </span>
-                <div className="h-[1px] w-10 bg-[#BBCCD7]/40" />
+                <div className="hidden sm:block h-[1px] w-10 bg-[#BBCCD7]/40 shrink-0" />
               </motion.div>
             </div>
           )}
