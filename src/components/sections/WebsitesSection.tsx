@@ -12,7 +12,7 @@ const getAssetUrl = (path: string) => {
   return `${cleanBase}${cleanPath}`;
 };
 
-const GLASS_LAPTOP = getAssetUrl('glass_laptop.png');
+const GLASS_CAMERA = getAssetUrl('glass_camera.png');
 const GLASS_SPARKLES = getAssetUrl('glass_sparkles.png');
 
 interface WebsitesSectionProps {
@@ -29,7 +29,7 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, them
       className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
     >
       {/* Floating 3D Glass Assets */}
-      <FloatingEmoji src={GLASS_LAPTOP} alt="Laptop" className="top-[25%] left-[2%] sm:left-[4%]" rotation={10} delay={0.5} lightBg={isLight} />
+      <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[25%] left-[2%] sm:left-[4%]" rotation={10} delay={0.5} lightBg={isLight} />
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={-15} delay={0.7} lightBg={isLight} />
       <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12">
         <FadeIn delay={0} y={40}>

@@ -27,8 +27,8 @@ const getAssetUrl = (path: string) => {
   return `${cleanBase}${cleanPath}`;
 };
 
-const GLASS_ROCKET = getAssetUrl('glass_rocket.png');
-const GLASS_TROPHY = getAssetUrl('glass_trophy.png');
+const GLASS_SPARKLES = getAssetUrl('glass_sparkles.png');
+const GLASS_HEART = getAssetUrl('glass_heart.png');
 
 interface FooterSectionProps {
   data: typeof defaultData;
@@ -86,8 +86,8 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   return (
     <footer id="contact" className="bg-[#0C0C0C] border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20 overflow-hidden">
       {/* Floating 3D Glass Assets */}
-      <FloatingEmoji src={GLASS_ROCKET} alt="Rocket" className="top-[10%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={false} />
-      <FloatingEmoji src={GLASS_TROPHY} alt="Trophy" className="bottom-[15%] right-[2%] sm:right-[4%]" rotation={12} delay={1.2} lightBg={false} />
+      <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="top-[10%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={false} />
+      <FloatingEmoji src={GLASS_HEART} alt="Heart" className="bottom-[15%] right-[2%] sm:right-[4%]" rotation={12} delay={1.2} lightBg={false} />
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         {/* Contact Info Side */}
         <div className="flex flex-col gap-8">
