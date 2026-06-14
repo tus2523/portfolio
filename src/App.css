@@ -170,7 +170,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  opacity: 0.04;
+  opacity: 0.09; /* Increased opacity for clear visibility */
   pointer-events: none;
   z-index: 1;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='paper-noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-noise)'/%3E%3C/svg%3E");
@@ -180,15 +180,15 @@
   position: relative;
   background-color: #0C0C0D !important; /* Premium deep metal grey */
   background-image: 
-    linear-gradient(90deg, rgba(255,255,255,0.003) 50%, transparent 50%),
-    linear-gradient(rgba(255,255,255,0.003) 50%, transparent 50%);
+    linear-gradient(90deg, rgba(255,255,255,0.015) 50%, transparent 50%),
+    linear-gradient(rgba(255,255,255,0.015) 50%, transparent 50%);
   background-size: 4px 4px;
 }
 .bg-texture-metal::before {
   content: '';
   position: absolute;
   inset: 0;
-  opacity: 0.02;
+  opacity: 0.05; /* Increased opacity for clear visibility */
   pointer-events: none;
   z-index: 1;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='metal-noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23metal-noise)'/%3E%3C/svg%3E");
