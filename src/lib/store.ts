@@ -203,6 +203,7 @@ export const defaultData = {
   settings: {
     whatsappPhone: '8082812805',
     whatsappApiKey: '',
+    footerHeading: "Let's work together",
   },
   brandLogos: [] as { id: string; name: string; logoUrl: string }[],
 };

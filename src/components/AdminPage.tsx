@@ -1035,13 +1035,15 @@ const About: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => v
 const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
   const [form, setForm] = useState({ 
     whatsappPhone: (data.settings as any)?.whatsappPhone || '8082812805', 
-    whatsappApiKey: (data.settings as any)?.whatsappApiKey || '' 
+    whatsappApiKey: (data.settings as any)?.whatsappApiKey || '',
+    footerHeading: (data.settings as any)?.footerHeading || "Let's work together"
   });
 
   useEffect(() => {
     setForm({ 
       whatsappPhone: (data.settings as any)?.whatsappPhone || '8082812805', 
-      whatsappApiKey: (data.settings as any)?.whatsappApiKey || '' 
+      whatsappApiKey: (data.settings as any)?.whatsappApiKey || '',
+      footerHeading: (data.settings as any)?.footerHeading || "Let's work together"
     });
   }, [data.settings]);
 
@@ -1049,8 +1051,19 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">WhatsApp Alert Settings</h2>
+      <h2 className="text-2xl font-bold mb-6">Global Settings</h2>
       <div className="flex flex-col gap-5 bg-[#121212] border border-[#222] p-6 rounded-xl mb-6">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40">Footer CTA Heading</label>
+          <input
+            className="bg-[#0C0C0C] border border-[#222] rounded-lg p-3 text-[#D7E2EA] text-sm"
+            value={form.footerHeading}
+            onChange={e => setVal('footerHeading', e.target.value)}
+            placeholder="e.g. Let's work together"
+          />
+          <p className="text-[10px] text-[#D7E2EA]/40 mt-0.5">This text appears at the very bottom of the website above the email/whatsapp buttons.</p>
+        </div>
+
         <div className="flex flex-col gap-1.5">
           <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40">WhatsApp Phone Number</label>
           <input

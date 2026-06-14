@@ -79,7 +79,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
         <div className="flex flex-col gap-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-[#D7E2EA] mb-4">
-              Let&apos;s Work Together
+              {data.settings?.footerHeading || "Let's Work Together"}
             </h2>
             <p className="text-sm sm:text-base font-light leading-relaxed text-[#D7E2EA]/60 max-w-md">
               {data.about?.bio}
