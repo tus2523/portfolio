@@ -82,7 +82,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
               {data.settings?.footerHeading || "Let's Work Together"}
             </h2>
             <p className="text-sm sm:text-base font-light leading-relaxed text-[#D7E2EA]/60 max-w-md">
-              {data.about?.bio}
+              {data.settings?.footerBio || "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."}
             </p>
           </div>
 

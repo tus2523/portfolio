@@ -1036,14 +1036,16 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
   const [form, setForm] = useState({ 
     whatsappPhone: (data.settings as any)?.whatsappPhone || '8082812805', 
     whatsappApiKey: (data.settings as any)?.whatsappApiKey || '',
-    footerHeading: (data.settings as any)?.footerHeading || "Let's work together"
+    footerHeading: (data.settings as any)?.footerHeading || "Let's work together",
+    footerBio: (data.settings as any)?.footerBio || "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."
   });
 
   useEffect(() => {
     setForm({ 
       whatsappPhone: (data.settings as any)?.whatsappPhone || '8082812805', 
       whatsappApiKey: (data.settings as any)?.whatsappApiKey || '',
-      footerHeading: (data.settings as any)?.footerHeading || "Let's work together"
+      footerHeading: (data.settings as any)?.footerHeading || "Let's work together",
+      footerBio: (data.settings as any)?.footerBio || "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."
     });
   }, [data.settings]);
 
@@ -1060,6 +1062,16 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
             value={form.footerHeading}
             onChange={e => setVal('footerHeading', e.target.value)}
             placeholder="e.g. Let's work together"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40">Footer CTA Bio</label>
+          <textarea
+            className="bg-[#0C0C0C] border border-[#222] rounded-lg p-3 text-[#D7E2EA] text-sm h-24"
+            value={form.footerBio}
+            onChange={e => setVal('footerBio', e.target.value)}
+            placeholder="Short bio/text for the footer"
           />
           <p className="text-[10px] text-[#D7E2EA]/40 mt-0.5">This text appears at the very bottom of the website above the email/whatsapp buttons.</p>
         </div>
