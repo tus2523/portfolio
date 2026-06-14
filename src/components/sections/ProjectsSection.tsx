@@ -26,7 +26,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
   return (
     <section
       id="projects"
-      className={`${isLight ? 'bg-white text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
+      className={`${isLight ? 'bg-texture-paper text-[#0C0C0C]' : 'bg-texture-metal text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
     >
       {/* Floating Decorative 3D Glass Assets */}
       <FloatingEmoji src={GLASS_CLAPPERBOARD} alt="Clapperboard" className="top-[20%] left-[2%] sm:left-[4%]" rotation={15} delay={1.8} lightBg={isLight} />

@@ -13,7 +13,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
   const isLight = theme === 'light';
 
   return (
-    <section id="reviews" className={`${isLight ? 'bg-white text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-0 w-full border-t border-white/5 relative z-20 overflow-hidden transition-colors duration-500`}>
+    <section id="reviews" className={`${isLight ? 'bg-texture-paper text-[#0C0C0C]' : 'bg-texture-metal text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-0 w-full border-t border-white/5 relative z-20 overflow-hidden transition-colors duration-500`}>
       <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center px-5 sm:px-8 md:px-10">
         <FadeIn delay={0} y={40} className="mb-12 text-center">
           <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2`}>What they say</p>

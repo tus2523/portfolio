@@ -23,7 +23,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, theme = 'd
   const isLight = theme === 'light';
 
   return (
-    <section id="skills" className={`${isLight ? 'bg-white text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full border-t border-white/5 relative z-20 overflow-hidden bg-grid-pattern transition-colors duration-500`}>
+    <section id="skills" className={`${isLight ? 'bg-texture-paper text-[#0C0C0C]' : 'bg-texture-metal text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full border-t border-white/5 relative z-20 overflow-hidden bg-grid-pattern transition-colors duration-500`}>
       <FloatingParticles />
       {/* Floating Decorative 3D Glass Assets */}
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="top-[20%] left-[3%] sm:left-[6%]" rotation={-12} delay={2.6} lightBg={isLight} />

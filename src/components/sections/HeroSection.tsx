@@ -22,7 +22,16 @@ interface HeroSectionProps {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
   return (
-    <section className="min-h-screen w-full flex flex-col justify-between relative overflow-hidden py-6">
+    <section className="min-h-screen w-full flex flex-col justify-between relative overflow-hidden py-6 bg-[#0C0C0D]">
+      {/* Dynamic Ambient Motion Gradient Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[10%] left-[10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full bg-gradient-to-br from-[#7621B0]/15 via-[#B600A8]/10 to-transparent blur-[80px] sm:blur-[140px] animate-blob-slow" />
+        <div className="absolute bottom-[10%] right-[10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full bg-gradient-to-br from-[#BE4C00]/10 via-[#7621B0]/15 to-transparent blur-[80px] sm:blur-[140px] animate-blob-reverse" />
+        <div className="absolute top-[40%] right-[20%] w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] rounded-full bg-gradient-to-br from-indigo-900/10 via-[#B600A8]/10 to-transparent blur-[80px] sm:blur-[140px] animate-blob-slow" style={{ animationDelay: '-7s' }} />
+        {/* Subtle mesh background grid */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.25]" />
+      </div>
+
       <FloatingParticles />
       {/* Parallax Floating 3D Glass Assets */}
       <ParallaxEmoji src={GLASS_CLAPPERBOARD} alt="Clapperboard" className="top-[25%] left-[2%] sm:left-[5%] md:left-[8%]" rotation={-12} delay={0} parallaxY={-90} />
@@ -47,7 +56,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
       </FadeIn>
 
       {/* Hero Heading Container */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full z-0 px-6 mt-12 sm:mt-8">
+      <div className="flex-1 flex flex-col items-center justify-center w-full z-10 px-6 mt-12 sm:mt-8">
         <FadeIn delay={0.15} y={40} as="div" className="w-full text-center">
           <h1 className="hero-heading font-black uppercase tracking-wide leading-[0.9] text-[clamp(2.5rem,11.5vw,180px)] whitespace-normal lg:whitespace-nowrap mt-2">
             Hi, i&apos;m sahil

@@ -16,7 +16,7 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, them
   return (
     <section
       id="websites"
-      className={`${isLight ? 'bg-white text-[#0C0C0C]' : 'bg-[#121212] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
+      className={`${isLight ? 'bg-texture-paper text-[#0C0C0C]' : 'bg-texture-metal text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
     >
       <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12">
         <FadeIn delay={0} y={40}>
