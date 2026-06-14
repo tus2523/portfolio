@@ -106,7 +106,7 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
             
             <div className="animate-marquee flex whitespace-nowrap group-hover:[animation-play-state:paused] items-center gap-12 sm:gap-20 opacity-60 hover:opacity-100 transition-opacity duration-300 py-4">
               {[...brandLogos, ...brandLogos, ...brandLogos, ...brandLogos].map((brand, idx) => (
-                <div key={`${brand.id}-${idx}`} className="flex-shrink-0 flex items-center justify-center grayscale hover:grayscale-0 transition duration-300">
+                <div key={`${brand.id}-${idx}`} className="flex-shrink-0 flex items-center justify-center transition duration-300">
                   {brand.logoUrl ? (
                     <img src={brand.logoUrl} alt={brand.name} className="h-10 sm:h-14 object-contain max-w-[140px]" />
                   ) : (
