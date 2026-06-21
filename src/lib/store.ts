@@ -423,7 +423,7 @@ export function getYoutubeId(url: string | undefined): string | null {
 
 export function getInstagramId(url: string | undefined): string | null {
   if (!url) return null;
-  const m = url.match(/(?:instagram\.com\/(?:p|reel|reels)\/)([A-Za-z0-9_-]+)/);
+  const m = url.match(/instagram\.com\/(?:[a-zA-Z0-9._]+\/)?(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/i);
   return m ? m[1] : null;
 }
 

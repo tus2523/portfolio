@@ -434,8 +434,12 @@ function MainApp() {
                       className="absolute top-0 left-0 w-full h-full border-none"
                     />
                     {/* Invisible overlays to block clickjacking / external YouTube redirect links */}
-                    <div className="absolute top-0 left-0 right-0 h-[15%] bg-transparent z-10 pointer-events-auto" title="Playback Controls" />
-                    <div className="absolute bottom-0 right-0 w-[20%] h-[15%] bg-transparent z-10 pointer-events-auto" />
+                    {/* 1. Top bar: covers video title, channel info, watch later & top share button */}
+                    <div className="absolute top-0 left-0 right-0 h-[16%] bg-white/[0.001] z-10 pointer-events-auto" />
+                    {/* 2. Bottom-left: covers bottom share button and watch later overlay clock */}
+                    <div className="absolute bottom-0 left-0 w-[15%] h-[16%] bg-white/[0.001] z-10 pointer-events-auto" />
+                    {/* 3. Bottom-right: covers watch on youtube redirect link and more videos logo */}
+                    <div className="absolute bottom-0 right-0 w-[28%] h-[16%] bg-white/[0.001] z-10 pointer-events-auto" />
                   </>
                 )}
               </div>
