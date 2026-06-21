@@ -48,7 +48,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                 doneRef.current = true;
                 setVisible(false);
                 setTimeout(onComplete, 400); // Matches the 0.4s exit transition duration
-              }, 350); // Matches the 0.35s white flash duration
+              }, 150); // Wait for the white flash to fully cover the screen (150ms)
             }, 900);
           }, NAME.length * 45 + 300);
         }, 80);
@@ -76,8 +76,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
             <motion.div
               className="absolute inset-0 bg-white z-50 pointer-events-none"
               initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 0.35, times: [0, 0.3, 1] }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
             />
           )}
 
