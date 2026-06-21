@@ -220,6 +220,58 @@ function MainApp() {
     return () => window.removeEventListener('click', handleClick);
   }, []);
 
+  // Content Protection: Disable Right-click, Copy Shortcuts, Save, Dragging & Inspect Element
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+
+      // Copy: Cmd+C or Ctrl+C
+      if (cmdOrCtrl && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+      }
+      // Cut: Cmd+X or Ctrl+X
+      if (cmdOrCtrl && (e.key === 'x' || e.key === 'X')) {
+        e.preventDefault();
+      }
+      // View Source: Cmd+U or Ctrl+U
+      if (cmdOrCtrl && (e.key === 'u' || e.key === 'U')) {
+        e.preventDefault();
+      }
+      // Save Page: Cmd+S or Ctrl+S
+      if (cmdOrCtrl && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+      }
+      // Inspect: F12, Ctrl+Shift+I, Ctrl+Shift+J
+      if (
+        e.key === 'F12' ||
+        (cmdOrCtrl && e.shiftKey && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J'))
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    const handleDragStart = (e: DragEvent) => {
+      if (e.target instanceof HTMLImageElement) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('contextmenu', handleContextMenu);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('dragstart', handleDragStart);
+
+    return () => {
+      window.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('dragstart', handleDragStart);
+    };
+  }, []);
+
   // Flatten all videos across projects for the top marquee transition
   const marqueeVideos = useMemo(() => {
     if (!data.videoProjects) return [];
