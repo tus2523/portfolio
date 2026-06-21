@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { db } from './lib/firebase';
 import { ref, onValue } from 'firebase/database';
-import { getData, saveData, getYoutubeId, defaultData } from './lib/store';
+import { getData, saveData, getYoutubeId, getInstagramId, defaultData } from './lib/store';
 import { AdminPage } from './components/AdminPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { ScrollProgressBar } from './components/ScrollProgressBar';
@@ -393,36 +393,56 @@ function MainApp() {
       <FooterSection data={data} />
 
       {/* Video Lightbox */}
-      {lightbox && (
-        <div 
-          onClick={() => setLightbox(null)}
-          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
-        >
+      {lightbox && (() => {
+        const ytId = getYoutubeId(lightbox.url);
+        const instaId = getInstagramId(lightbox.url);
+        const isInstagram = !!instaId;
+
+        return (
           <div 
-            onClick={e => e.stopPropagation()} 
-            className="w-full max-w-4xl relative"
+            onClick={() => setLightbox(null)}
+            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
           >
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-sm font-semibold tracking-wider text-[#D7E2EA]/70 truncate max-w-[80%]">{lightbox.title}</span>
-              <button 
-                type="button"
-                onClick={() => setLightbox(null)} 
-                className="bg-white/5 border border-white/10 text-white rounded-full w-9 h-9 flex items-center justify-center hover:bg-white/10 transition"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 bg-black">
-              <iframe 
-                src={`https://www.youtube.com/embed/${getYoutubeId(lightbox.url)}?autoplay=1`} 
-                allow="autoplay; encrypted-media" 
-                allowFullScreen 
-                className="absolute top-0 left-0 w-full h-full border-none"
-              />
+            <div 
+              onClick={e => e.stopPropagation()} 
+              className={`w-full ${isInstagram ? 'max-w-[400px]' : 'max-w-4xl'} relative`}
+            >
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm font-semibold tracking-wider text-[#D7E2EA]/70 truncate max-w-[80%]">{lightbox.title}</span>
+                <button 
+                  type="button"
+                  onClick={() => setLightbox(null)} 
+                  className="bg-white/5 border border-white/10 text-white rounded-full w-9 h-9 flex items-center justify-center hover:bg-white/10 transition"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className={`relative w-full ${isInstagram ? 'aspect-[9/16] h-[75vh]' : 'aspect-video'} rounded-3xl overflow-hidden border border-white/10 bg-black`}>
+                {isInstagram ? (
+                  <iframe 
+                    src={`https://www.instagram.com/reel/${instaId}/embed/`} 
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full border-none"
+                    style={{ background: '#000' }}
+                  />
+                ) : (
+                  <>
+                    <iframe 
+                      src={`https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`} 
+                      allow="autoplay; encrypted-media" 
+                      allowFullScreen 
+                      className="absolute top-0 left-0 w-full h-full border-none"
+                    />
+                    {/* Invisible overlays to block clickjacking / external YouTube redirect links */}
+                    <div className="absolute top-0 left-0 right-0 h-[15%] bg-transparent z-10 pointer-events-auto" title="Playback Controls" />
+                    <div className="absolute bottom-0 right-0 w-[20%] h-[15%] bg-transparent z-10 pointer-events-auto" />
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

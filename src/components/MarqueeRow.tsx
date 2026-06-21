@@ -7,6 +7,7 @@ export interface MarqueeVideo {
   title: string;
   tags?: string[];
   projectTitle?: string;
+  thumbnailUrl?: string;
 }
 
 const FALLBACK_MARQUEE_VIDEOS: MarqueeVideo[] = [
@@ -233,7 +234,7 @@ export const MarqueeRow: React.FC<MarqueeRowProps> = ({ videos, direction, onSel
         }}
       >
         {tripledVideos.map((video, idx) => {
-          const thumb = getYoutubeThumbnail(video.url) || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600";
+          const thumb = video.thumbnailUrl || getYoutubeThumbnail(video.url) || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600";
           return (
             <div
               key={`${video.id}-${idx}`}
