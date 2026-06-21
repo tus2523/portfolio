@@ -31,11 +31,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     const bgColors = ['#0C0C0C', '#0a0a12', '#111', '#0C0C0C', '#0a0814', '#111', '#0C0C0C', '#080808'];
 
     const frameInterval = setInterval(() => {
-      idx++;
-      setFrameIdx(idx);
-      setBg(bgColors[idx % bgColors.length]);
-
-      if (idx >= FLASH_FRAMES.length) {
+      if (idx >= FLASH_FRAMES.length - 1) {
         clearInterval(frameInterval);
 
         // Short blank between phases
@@ -51,11 +47,15 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
               setTimeout(() => {
                 doneRef.current = true;
                 setVisible(false);
-                setTimeout(onComplete, 400);
-              }, 350);
+                setTimeout(onComplete, 400); // Matches the 0.4s exit transition duration
+              }, 350); // Matches the 0.35s white flash duration
             }, 900);
           }, NAME.length * 45 + 300);
         }, 80);
+      } else {
+        idx++;
+        setFrameIdx(idx);
+        setBg(bgColors[idx % bgColors.length]);
       }
     }, 110); // 110ms per frame — ultra fast
 
@@ -77,7 +77,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
               className="absolute inset-0 bg-white z-50 pointer-events-none"
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 0.5, times: [0, 0.3, 1] }}
+              transition={{ duration: 0.35, times: [0, 0.3, 1] }}
             />
           )}
 
@@ -120,31 +120,50 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
           {(phase === 'assemble' || phase === 'hold') && (
             <div className="flex flex-col items-center gap-5 z-20">
               {/* Letters slamming in */}
-              <div className="flex flex-wrap justify-center leading-none" aria-label={NAME}>
-                {NAME.split('').map((letter, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: -80, rotateX: -90, filter: 'blur(4px)' }}
-                    animate={{ opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)' }}
-                    transition={{
-                      delay: i * 0.04,
-                      duration: 0.35,
-                      type: 'spring',
-                      stiffness: 280,
-                      damping: 22,
-                    }}
-                    className="inline-block font-black text-white uppercase"
-                    style={{
-                      fontFamily: 'Kanit, sans-serif',
-                      fontSize: 'clamp(2.2rem, 7.5vw, 90px)',
-                      letterSpacing: letter === ' ' ? '0.15em' : '-0.01em',
-                      width: letter === ' ' ? '0.4em' : 'auto',
-                      textShadow: '0 0 40px rgba(187,204,215,0.3)',
-                    }}
-                  >
-                    {letter === ' ' ? '\u00A0' : letter}
-                  </motion.span>
-                ))}
+              <div 
+                className="flex flex-wrap justify-center leading-none gap-x-[0.35em] md:gap-x-[0.4em]" 
+                aria-label={NAME}
+              >
+                {(() => {
+                  let globalIdx = 0;
+                  return NAME.split(' ').map((word, wordIdx) => {
+                    const letters = word.split('');
+                    const wordEl = (
+                      <span key={wordIdx} className="inline-flex whitespace-nowrap">
+                        {letters.map((letter) => {
+                          const currentIdx = globalIdx;
+                          globalIdx++;
+                          return (
+                            <motion.span
+                              key={currentIdx}
+                              initial={{ opacity: 0, y: -80, rotateX: -90 }}
+                              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                              transition={{
+                                delay: currentIdx * 0.04,
+                                duration: 0.35,
+                                type: 'spring',
+                                stiffness: 280,
+                                damping: 22,
+                              }}
+                              className="inline-block font-black text-white uppercase"
+                              style={{
+                                fontFamily: 'Kanit, sans-serif',
+                                fontSize: 'clamp(2.2rem, 7.5vw, 90px)',
+                                letterSpacing: '-0.01em',
+                                textShadow: '0 0 40px rgba(187,204,215,0.3)',
+                              }}
+                            >
+                              {letter}
+                            </motion.span>
+                          );
+                        })}
+                      </span>
+                    );
+                    // Add 1 to globalIdx to account for the space between words
+                    globalIdx++;
+                    return wordEl;
+                  });
+                })()}
               </div>
 
               {/* Tagline slides up after letters */}
