@@ -36,9 +36,11 @@ function MainApp() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const instaId = getInstagramId(video.url);
     if (isMobile && instaId) {
-      // Mimic a direct user anchor click to bypass OS security blocks on programmatic redirects
+      const isReel = video.url.includes('/reel/') || video.url.includes('/reels/');
+      const deepLink = `https://www.instagram.com/_n/${isReel ? 'reel' : 'p'}/${instaId}/`;
+      
       const link = document.createElement('a');
-      link.href = video.url;
+      link.href = deepLink;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       document.body.appendChild(link);
