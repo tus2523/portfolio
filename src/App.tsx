@@ -41,8 +41,7 @@ function MainApp() {
       
       const link = document.createElement('a');
       link.href = deepLink;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
+      link.target = '_self';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
