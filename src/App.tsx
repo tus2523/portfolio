@@ -31,6 +31,16 @@ function MainApp() {
   const [dbError, setDbError] = useState(false);
   const [dbDeleted, setDbDeleted] = useState(false);
 
+  const handleSelectVideo = (video: any) => {
+    if (!video || !video.url) return;
+    const instaId = getInstagramId(video.url);
+    if (instaId) {
+      window.open(video.url, '_blank', 'noopener,noreferrer');
+    } else {
+      setLightbox(video);
+    }
+  };
+
   // Sync Database Content
   useEffect(() => {
     setData(getData());
@@ -331,8 +341,8 @@ function MainApp() {
       {/* Reel Previews Marquee Transition */}
       <section className="bg-[#0C0C0C] py-6 border-b border-white/5 overflow-hidden w-full flex flex-col gap-4 relative z-20">
         <div className="flex flex-col gap-4 w-full">
-          <MarqueeRow videos={row1Videos} direction="left" onSelectVideo={(video) => setLightbox(video)} />
-          <MarqueeRow videos={row2Videos} direction="right" onSelectVideo={(video) => setLightbox(video)} />
+          <MarqueeRow videos={row1Videos} direction="left" onSelectVideo={handleSelectVideo} />
+          <MarqueeRow videos={row2Videos} direction="right" onSelectVideo={handleSelectVideo} />
         </div>
       </section>
 
@@ -360,14 +370,14 @@ function MainApp() {
                   key="campaigns" 
                   campaigns={campaigns} 
                   brandLogos={(data as any).brandLogos || []} 
-                  onSelectVideo={(video) => setLightbox(video)}
+                  onSelectVideo={handleSelectVideo}
                   theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} 
                 />
               ) : null;
               break;
             case 'videos':
               hasContent = data.videoProjects && data.videoProjects.length > 0;
-              content = hasContent ? <ProjectsSection key="videos" videoProjects={data.videoProjects || []} onSelectVideo={(video) => setLightbox(video)} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              content = hasContent ? <ProjectsSection key="videos" videoProjects={data.videoProjects || []} onSelectVideo={handleSelectVideo} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
               break;
             case 'websites':
               hasContent = data.websites && data.websites.length > 0;
@@ -403,8 +413,7 @@ function MainApp() {
       {/* Video Lightbox */}
       {lightbox && (() => {
         const ytId = getYoutubeId(lightbox.url);
-        const instaId = getInstagramId(lightbox.url);
-        const isInstagram = !!instaId;
+        const isShort = !!lightbox.url && lightbox.url.includes('/shorts/');
 
         return (
           <div 
@@ -413,7 +422,7 @@ function MainApp() {
           >
             <div 
               onClick={e => e.stopPropagation()} 
-              className={`w-full ${isInstagram ? 'max-w-[400px]' : 'max-w-4xl'} relative`}
+              className={`w-full ${isShort ? 'max-w-[400px]' : 'max-w-4xl'} relative`}
             >
               <div className="flex justify-between items-center mb-3">
                 <span className="text-sm font-semibold tracking-wider text-[#D7E2EA]/70 truncate max-w-[80%]">{lightbox.title}</span>
@@ -425,31 +434,20 @@ function MainApp() {
                   ✕
                 </button>
               </div>
-              <div className={`relative w-full ${isInstagram ? 'aspect-[9/16] h-[75vh]' : 'aspect-video'} rounded-3xl overflow-hidden border border-white/10 bg-black`}>
-                {isInstagram ? (
-                  <iframe 
-                    src={`https://www.instagram.com/reel/${instaId}/embed/`} 
-                    allowFullScreen
-                    className="absolute top-0 left-0 w-full h-full border-none"
-                    style={{ background: '#000' }}
-                  />
-                ) : (
-                  <>
-                    <iframe 
-                      src={`https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`} 
-                      allow="autoplay; encrypted-media" 
-                      allowFullScreen 
-                      className="absolute top-0 left-0 w-full h-full border-none"
-                    />
-                    {/* Invisible overlays to block clickjacking / external YouTube redirect links */}
-                    {/* 1. Top bar: covers video title, channel info, watch later & top share button */}
-                    <div className="absolute top-0 left-0 right-0 h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
-                    {/* 2. Bottom-left: covers bottom share button and watch later overlay clock */}
-                    <div className="absolute bottom-0 left-0 w-[15%] h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
-                    {/* 3. Bottom-right: covers watch on youtube redirect link and more videos logo */}
-                    <div className="absolute bottom-0 right-0 w-[28%] h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
-                  </>
-                )}
+              <div className={`relative w-full ${isShort ? 'aspect-[9/16] h-[75vh]' : 'aspect-video'} rounded-3xl overflow-hidden border border-white/10 bg-black`}>
+                <iframe 
+                  src={`https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`} 
+                  allow="autoplay; encrypted-media" 
+                  allowFullScreen 
+                  className="absolute left-0 w-full border-none"
+                  style={{ top: '-60px', height: 'calc(100% + 60px)', background: '#000' }}
+                  sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
+                />
+                {/* Invisible overlays to block clickjacking / external YouTube redirect links */}
+                {/* 1. Bottom-left: covers bottom share button and watch later overlay clock */}
+                <div className="absolute bottom-0 left-0 w-[15%] h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
+                {/* 2. Bottom-right: covers watch on youtube redirect link and more videos logo */}
+                <div className="absolute bottom-0 right-0 w-[28%] h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
               </div>
             </div>
           </div>

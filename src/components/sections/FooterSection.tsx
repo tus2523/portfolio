@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, Star } from 'lucide-react';
 import { ConfettiEffect } from '../ConfettiEffect';
-import { defaultData, updateSection } from '../../lib/store';
+import { defaultData, updateSection, getWhatsAppLink } from '../../lib/store';
 import { db } from '../../lib/firebase';
 import { ref, set } from 'firebase/database';
 
@@ -41,9 +41,9 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   const [rating, setRating] = useState(5);
   const [submitted, setSubmitted] = useState(false);
 
-  const cleanPhone = (data.settings?.whatsappPhone || '').replace(/\D/g, '');
-  const waPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
-  const whatsappUrl = waPhone ? `https://wa.me/${waPhone}` : null;
+  const whatsappUrl = data.settings?.whatsappPhone
+    ? getWhatsAppLink(data.settings.whatsappPhone)
+    : null;
 
   const contactLinks = [
     { url: data.heroStats?.instagramUrl, icon: <Instagram size={18} />, title: "Instagram" },
@@ -88,7 +88,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
       {/* Floating 3D Glass Assets */}
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="top-[10%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={false} />
       <FloatingEmoji src={GLASS_HEART} alt="Heart" className="bottom-[15%] right-[2%] sm:right-[4%]" rotation={12} delay={1.2} lightBg={false} />
-      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start relative z-10">
         {/* Contact Info Side */}
         <div className="flex flex-col gap-8">
           <div>

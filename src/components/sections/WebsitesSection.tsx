@@ -31,7 +31,7 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, them
       {/* Floating 3D Glass Assets */}
       <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[25%] left-[2%] sm:left-[4%]" rotation={10} delay={0.5} lightBg={isLight} />
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={-15} delay={0.7} lightBg={isLight} />
-      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12">
+      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12 relative z-10">
         <FadeIn delay={0} y={40}>
           <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2 text-center`}>Digital Experiences</p>
           <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide text-center ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'} transition-colors duration-500`}>
@@ -40,7 +40,7 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, them
         </FadeIn>
       </div>
 
-      <div className="max-w-[1400px] mx-auto w-full flex flex-wrap justify-center gap-6 sm:gap-8">
+      <div className="max-w-[1400px] mx-auto w-full flex flex-wrap justify-center gap-6 sm:gap-8 relative z-10">
         {websites && websites.length > 0 ? (
           websites.map((site) => (
             <FadeIn key={site.id} y={20} className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] max-w-lg flex">

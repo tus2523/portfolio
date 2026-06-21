@@ -4,7 +4,7 @@ import { FloatingParticles } from '../FloatingParticles';
 import { ParallaxEmoji } from '../ParallaxEmoji';
 import { CountUp } from '../CountUp';
 import { ContactButton } from '../ContactButton';
-import { defaultData } from '../../lib/store';
+import { defaultData, getWhatsAppLink } from '../../lib/store';
 
 const getAssetUrl = (path: string) => {
   const base = import.meta.env.BASE_URL || '/';
@@ -38,7 +38,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
       <ParallaxEmoji src={GLASS_CAMERA} alt="Camera" className="top-[45%] right-[2%] sm:right-[5%] md:right-[8%]" rotation={15} delay={1.5} parallaxY={-60} />
 
       {/* Navbar */}
-      <FadeIn delay={0} y={-20} as="nav" className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 px-6 sm:px-12 md:px-16 lg:px-24 pt-4 w-full z-20">
+      <FadeIn delay={0} y={-20} as="nav" className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 px-6 sm:px-12 md:px-16 lg:px-24 pt-4 w-full relative z-20">
         <div className="font-bold text-base sm:text-lg md:text-xl text-[#D7E2EA] whitespace-nowrap">
           SAHIL THORAT<span className="text-[#BBCCD7]">.</span>
         </div>
@@ -56,7 +56,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
       </FadeIn>
 
       {/* Hero Heading Container */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full z-10 px-6 mt-12 sm:mt-8">
+      <div className="flex-1 flex flex-col items-center justify-center w-full relative z-10 px-6 mt-12 sm:mt-8">
         <FadeIn delay={0.15} y={40} as="div" className="w-full text-center">
           <h1 className="hero-heading font-black uppercase tracking-wide leading-[0.9] text-[clamp(2.5rem,11.5vw,180px)] whitespace-normal lg:whitespace-nowrap mt-2">
             Hi, i&apos;m sahil
@@ -84,10 +84,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
       </div>
 
       {/* Bottom bar */}
-      <div className="flex flex-col sm:flex-row justify-end items-start sm:items-end px-6 sm:px-12 md:px-16 lg:px-24 pb-4 w-full z-20">
+      <div className="flex flex-col sm:flex-row justify-end items-start sm:items-end px-6 sm:px-12 md:px-16 lg:px-24 pb-4 w-full relative z-20">
         <FadeIn delay={0.5} y={20} className="ml-auto">
           <a
-            href={`https://wa.me/${(data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '').length === 10 ? '91' + (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '') : (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '')}`}
+            href={getWhatsAppLink(data.settings?.whatsappPhone || '8082812805')}
             target="_blank"
             rel="noopener noreferrer"
           >

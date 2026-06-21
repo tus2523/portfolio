@@ -431,3 +431,19 @@ export function getYoutubeThumbnail(url: string | undefined): string | null {
   const id = getYoutubeId(url);
   return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 }
+
+export function getWhatsAppLink(phone: string, message?: string): string {
+  const cleanPhone = phone.replace(/\D/g, '');
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+  
+  const isMobile = typeof window !== 'undefined'
+    ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    : false;
+
+  const base = isMobile ? 'whatsapp://send' : 'https://api.whatsapp.com/send';
+  const query = message 
+    ? `?phone=${formattedPhone}&text=${encodeURIComponent(message)}` 
+    : `?phone=${formattedPhone}`;
+  return `${base}${query}`;
+}
+

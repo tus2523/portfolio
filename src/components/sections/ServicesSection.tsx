@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Film, Video, User, Briefcase, Globe, MessageSquare, ArrowRight } from 'lucide-react';
 import { FadeIn } from '../FadeIn';
 import { FloatingEmoji } from '../FloatingEmoji';
-import { defaultData } from '../../lib/store';
+import { defaultData, getWhatsAppLink } from '../../lib/store';
 
 const getAssetUrl = (path: string) => {
   const base = import.meta.env.BASE_URL || '/';
@@ -49,12 +49,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
   }, [activeService]);
   const isLight = theme === 'light';
 
-  const getWhatsAppLink = (serviceName: string) => {
-    const phone = data.settings?.whatsappPhone || '8082812805';
-    const cleanPhone = phone.replace(/\D/g, '');
-    const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+  const getServiceWhatsAppLink = (serviceName: string) => {
     const message = `Hi Sahil, I want to inquire about your "${serviceName}" service for my brand. Let's connect!`;
-    return `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+    return getWhatsAppLink(data.settings?.whatsappPhone || '8082812805', message);
   };
 
   return (
@@ -63,7 +60,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
       <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[25%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={isLight} />
       <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[25%] right-[2%] sm:right-[4%]" rotation={18} delay={1.2} lightBg={isLight} />
 
-      <div className="max-w-[1400px] mx-auto flex flex-col items-center">
+      <div className="max-w-[1400px] mx-auto flex flex-col items-center relative z-10">
         <FadeIn delay={0} y={40} className="mb-8 text-center">
           <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide ${isLight ? 'text-[#0C0C0C]' : ''} transition-colors duration-500`}>
             Services
@@ -120,7 +117,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(getWhatsAppLink(service.name), '_blank', 'noopener,noreferrer');
+                        window.open(getServiceWhatsAppLink(service.name), '_blank', 'noopener,noreferrer');
                       }}
                       className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 transition ${isLight ? 'text-purple-700 hover:text-purple-900' : 'text-[#BBCCD7] hover:text-white'}`}
                     >
@@ -184,7 +181,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data, theme = 
 
               <div className="flex flex-col sm:flex-row gap-3 mt-4">
                 <a
-                  href={getWhatsAppLink(activeService.name)}
+                  href={getServiceWhatsAppLink(activeService.name)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 py-3 bg-gradient-to-r from-green-600 to-emerald-500 border border-green-400/30 rounded-2xl text-xs font-bold uppercase tracking-wider text-white hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] transition flex items-center justify-center gap-2"

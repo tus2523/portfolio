@@ -93,7 +93,7 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
       <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="top-[35%] left-[2%] sm:left-[4%]" rotation={-10} delay={1.4} lightBg={isLight} />
       <FloatingEmoji src={GLASS_HEART} alt="Heart" className="top-[50%] right-[2%] sm:right-[4%]" rotation={8} delay={1.6} lightBg={isLight} />
 
-      <div className="max-w-[1400px] mx-auto flex flex-col items-center">
+      <div className="max-w-[1400px] mx-auto flex flex-col items-center relative z-10">
         <FadeIn delay={0} y={40} className="mb-10 text-center">
           <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2`}>Influencer Marketing</p>
           <h2 className={`font-black uppercase ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'} text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide transition-colors duration-500`}>

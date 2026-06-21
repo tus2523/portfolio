@@ -32,7 +32,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
       <FloatingEmoji src={GLASS_CLAPPERBOARD} alt="Clapperboard" className="top-[20%] left-[2%] sm:left-[4%]" rotation={15} delay={1.8} lightBg={isLight} />
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="bottom-[20%] right-[2%] sm:right-[4%]" rotation={-12} delay={2.0} lightBg={isLight} />
 
-      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12">
+      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12 relative z-10">
         <FadeIn delay={0} y={40}>
           <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2 text-center`}>Reel Cuts Portfolio</p>
           <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide text-center ${isLight ? 'text-[#0C0C0C]' : ''} transition-colors duration-500`}>
@@ -41,7 +41,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
         </FadeIn>
       </div>
 
-      <div className="max-w-[1400px] mx-auto w-full flex flex-col gap-10">
+      <div className="max-w-[1400px] mx-auto w-full flex flex-col gap-10 relative z-10">
         {videoProjects && videoProjects.length > 0 ? (
           videoProjects.map((project) => (
             <VideoProjectRow

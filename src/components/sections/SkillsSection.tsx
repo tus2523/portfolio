@@ -29,14 +29,14 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, theme = 'd
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="top-[20%] left-[3%] sm:left-[6%]" rotation={-12} delay={2.6} lightBg={isLight} />
       <FloatingEmoji src={GLASS_HEART} alt="Heart" className="bottom-[20%] right-[3%] sm:right-[6%]" rotation={15} delay={2.8} lightBg={isLight} />
 
-      <div className="flex flex-col items-center mb-10 text-center">
+      <div className="flex flex-col items-center mb-10 text-center relative z-10">
         <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2`}>What I bring to the table</p>
         <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide ${isLight ? 'text-[#0C0C0C]' : ''} transition-colors duration-500`}>
           Skills & Expertise
         </h2>
       </div>
       {skills && skills.length > 0 ? (
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5 max-w-6xl mx-auto px-4">
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5 max-w-6xl mx-auto px-4 relative z-10">
           {skills.map((skill) => (
             <FadeIn 
               key={skill} 

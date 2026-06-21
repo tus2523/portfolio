@@ -36,7 +36,7 @@ export const ParallaxEmoji: React.FC<ParallaxEmojiProps> = ({
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] }}
-      className={`hidden lg:block absolute select-none z-10 w-[60px] xl:w-[90px] aspect-square cursor-grab active:cursor-grabbing touch-none ${className}`}
+      className={`hidden lg:block absolute select-none z-[1] w-[60px] xl:w-[90px] aspect-square cursor-grab active:cursor-grabbing touch-none ${className}`}
       style={{ y, mixBlendMode: 'screen', willChange: 'transform' }}
     >
       <motion.div

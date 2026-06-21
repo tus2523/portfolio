@@ -43,7 +43,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
       <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[30%] left-[2%] sm:left-[4%]" rotation={-8} delay={2.2} lightBg={isLight} />
       <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[30%] right-[2%] sm:right-[4%]" rotation={12} delay={2.4} lightBg={isLight} />
 
-      <div className="max-w-5xl mx-auto flex flex-col items-center mb-12 text-center">
+      <div className="max-w-5xl mx-auto flex flex-col items-center mb-12 text-center relative z-10">
         <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/50' : 'text-[#D7E2EA]/40'} mb-2`}>My Career Journey</p>
         <h2 className={`font-black uppercase ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'} text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide transition-colors duration-500`}>
           Experience
@@ -51,7 +51,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
       </div>
       
       {experience && experience.length > 0 ? (
-        <div className="max-w-5xl mx-auto relative pl-4 sm:pl-8">
+        <div className="max-w-5xl mx-auto relative pl-4 sm:pl-8 z-10">
           {/* Vertical Timeline Axis Line */}
           <div className={`absolute left-[20px] sm:left-[28px] top-2 bottom-2 w-[1px] ${isLight ? 'bg-[#0C0C0C]/15' : 'bg-white/15'}`} />
           

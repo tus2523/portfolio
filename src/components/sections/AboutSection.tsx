@@ -3,7 +3,7 @@ import { FadeIn } from '../FadeIn';
 import { AnimatedText } from '../AnimatedText';
 import { ContactButton } from '../ContactButton';
 import { FloatingEmoji } from '../FloatingEmoji';
-import { defaultData } from '../../lib/store';
+import { defaultData, getWhatsAppLink } from '../../lib/store';
 
 const getAssetUrl = (path: string) => {
   const base = import.meta.env.BASE_URL || '/';
@@ -33,7 +33,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ data, theme = 'light
       <FloatingEmoji src={GLASS_CLAPPERBOARD} alt="Clapperboard" className="bottom-[12%] left-[4%] sm:left-[8%] md:left-[10%]" rotation={-15} delay={0.6} lightBg={isLight} />
       <FloatingEmoji src={GLASS_HEART} alt="Heart" className="bottom-[12%] right-[4%] sm:right-[8%] md:right-[10%]" rotation={10} delay={0.8} lightBg={isLight} />
 
-      <div className="flex flex-col items-center gap-8 max-w-7xl z-20 text-center w-full">
+      <div className="flex flex-col items-center gap-8 max-w-7xl relative z-10 text-center w-full">
         {/* Profile Photo */}
         {data.about?.photoUrl && (
           <FadeIn delay={0} y={30}>
@@ -65,9 +65,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ data, theme = 'light
         />
       </div>
 
-      <FadeIn delay={0} y={30} className="z-20">
+      <FadeIn delay={0} y={30} className="relative z-10">
         <a
-          href={`https://wa.me/${(data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '').length === 10 ? '91' + (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '') : (data.settings?.whatsappPhone || '8082812805').replace(/\D/g, '')}`}
+          href={getWhatsAppLink(data.settings?.whatsappPhone || '8082812805')}
           target="_blank"
           rel="noopener noreferrer"
         >
