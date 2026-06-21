@@ -355,7 +355,15 @@ function MainApp() {
               break;
             case 'campaigns':
               hasContent = campaigns.brands && campaigns.brands.length > 0;
-              content = hasContent ? <CampaignsSection key="campaigns" campaigns={campaigns} brandLogos={(data as any).brandLogos || []} theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} /> : null;
+              content = hasContent ? (
+                <CampaignsSection 
+                  key="campaigns" 
+                  campaigns={campaigns} 
+                  brandLogos={(data as any).brandLogos || []} 
+                  onSelectVideo={(video) => setLightbox(video)}
+                  theme={visibleIndex % 2 === 0 ? 'light' : 'dark'} 
+                />
+              ) : null;
               break;
             case 'videos':
               hasContent = data.videoProjects && data.videoProjects.length > 0;

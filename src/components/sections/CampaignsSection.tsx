@@ -60,6 +60,7 @@ interface BrandLogo {
 interface CampaignsSectionProps {
   campaigns: CampaignsData;
   brandLogos?: BrandLogo[];
+  onSelectVideo: (video: any) => void;
   theme?: 'light' | 'dark';
 }
 
@@ -69,7 +70,7 @@ function extractInstagramHandle(url: string | undefined): string {
   return m ? '@' + m[1] : '';
 }
 
-export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, brandLogos = [], theme = 'light' }) => {
+export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, brandLogos = [], onSelectVideo, theme = 'light' }) => {
   const [activeBrandState, setActiveBrandState] = useState<string>('');
   const [openCampaignIdx, setOpenCampaignIdx] = useState<number | null>(null);
   
@@ -212,16 +213,19 @@ export const CampaignsSection: React.FC<CampaignsSectionProps> = ({ campaigns, b
                                   )}
                                 </div>
                                 {c.liveLink && (
-                                  <a 
-                                    href={c.liveLink} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
+                                  <button 
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      onSelectVideo({ url: c.liveLink, title: `${c.creator} - ${campaignName}` });
+                                    }}
                                     className={`w-full py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition duration-200 flex items-center justify-center gap-1 ${
                                       isLight ? 'bg-[#0C0C0C] text-white hover:bg-black/90' : 'bg-white text-black hover:bg-[#D7E2EA]'
                                     }`}
                                   >
                                     View Post <ArrowUpRight size={10} />
-                                  </a>
+                                  </button>
                                 )}
                               </div>
                             );
