@@ -435,11 +435,11 @@ function MainApp() {
                     />
                     {/* Invisible overlays to block clickjacking / external YouTube redirect links */}
                     {/* 1. Top bar: covers video title, channel info, watch later & top share button */}
-                    <div className="absolute top-0 left-0 right-0 h-[16%] bg-white/[0.001] z-10 pointer-events-auto" />
+                    <div className="absolute top-0 left-0 right-0 h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
                     {/* 2. Bottom-left: covers bottom share button and watch later overlay clock */}
-                    <div className="absolute bottom-0 left-0 w-[15%] h-[16%] bg-white/[0.001] z-10 pointer-events-auto" />
+                    <div className="absolute bottom-0 left-0 w-[15%] h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
                     {/* 3. Bottom-right: covers watch on youtube redirect link and more videos logo */}
-                    <div className="absolute bottom-0 right-0 w-[28%] h-[16%] bg-white/[0.001] z-10 pointer-events-auto" />
+                    <div className="absolute bottom-0 right-0 w-[28%] h-[16%] z-10" style={{ backgroundColor: 'rgba(255,255,255,0.01)', pointerEvents: 'auto' }} />
                   </>
                 )}
               </div>
