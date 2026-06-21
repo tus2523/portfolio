@@ -36,14 +36,7 @@ function MainApp() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const instaId = getInstagramId(video.url);
     if (isMobile && instaId) {
-      const isReel = video.url.includes('/reel/') || video.url.includes('/reels/');
-      const deepLink = `instagram://${isReel ? 'reel' : 'p'}/${instaId}/`;
-      window.location.href = deepLink;
-      
-      // Fallback in case Instagram app is not installed
-      setTimeout(() => {
-        window.open(video.url, '_blank', 'noopener,noreferrer');
-      }, 1200);
+      window.open(video.url, '_blank', 'noopener,noreferrer');
     } else {
       setLightbox(video);
     }
