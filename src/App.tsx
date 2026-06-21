@@ -36,7 +36,14 @@ function MainApp() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const instaId = getInstagramId(video.url);
     if (isMobile && instaId) {
-      window.open(video.url, '_blank', 'noopener,noreferrer');
+      // Mimic a direct user anchor click to bypass OS security blocks on programmatic redirects
+      const link = document.createElement('a');
+      link.href = video.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } else {
       setLightbox(video);
     }
