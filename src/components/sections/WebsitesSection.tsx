@@ -88,12 +88,12 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, them
                       </span>
                     ))}
                   </div>
-                  <h4 className={`text-lg sm:text-xl font-bold uppercase tracking-wide transition duration-200 flex items-center justify-between mt-auto ${
+                  <h3 className={`text-lg sm:text-xl font-bold uppercase tracking-wide transition duration-200 flex items-center justify-between mt-auto ${
                     isLight ? 'text-[#0C0C0C] group-hover:text-black' : 'text-[#D7E2EA] group-hover:text-white'
                   }`}>
                     {site.title}
                     <ArrowUpRight size={16} className={`${isLight ? 'text-[#0C0C0C]/50 group-hover:text-black' : 'text-[#D7E2EA]/50 group-hover:text-white'} transition`} />
-                  </h4>
+                  </h3>
                   <p className={`text-xs font-light mt-1 line-clamp-2 ${isLight ? 'text-[#0C0C0C]/60' : 'text-[#D7E2EA]/60'}`}>
                     {site.description}
                   </p>
