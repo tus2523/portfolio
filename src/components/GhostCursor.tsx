@@ -13,13 +13,14 @@ type GhostCursorProps = {
 
 /**
  * High-Performance GhostCursor component compatible with both Mouse & Touch screens.
+ * Renders rich, clearly visible white smoke clouds trailing the cursor.
  */
 export const GhostCursor: React.FC<GhostCursorProps> = ({
   className,
   style,
   inertia = 0.45,
-  brightness = 0.8,
-  color = '#A0A5B5',
+  brightness = 1.4,
+  color = '#FFFFFF',
   mixBlendMode = 'screen',
   zIndex = 5
 }) => {
@@ -50,7 +51,7 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     uniform float iTime;
     uniform vec3  iResolution;
     uniform vec2  iMouse;
-    uniform vec2  iPrevMouse[16];
+    uniform vec2  iPrevMouse[20];
     uniform float iOpacity;
     uniform float iScale;
     uniform vec3  iBaseColor;
@@ -81,18 +82,19 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     }
 
     vec4 smokeBlob(vec2 p, vec2 mousePos, float intensity, float activity, float timeOffset) {
-      vec2 st = p * iScale * 2.0;
-      float n1 = fbm(st + vec2(iTime * 0.15 + timeOffset, -iTime * 0.1));
-      float smoke = fbm(st * 1.1 + vec2(n1 * 1.4, n1 * 1.2));
+      vec2 st = p * iScale * 2.2;
+      float n1 = fbm(st + vec2(iTime * 0.2 + timeOffset, -iTime * 0.15));
+      float smoke = fbm(st * 1.2 + vec2(n1 * 1.6, n1 * 1.3));
       
-      float radius = 0.35 + 0.25 * (1.0 / iScale);
+      float radius = 0.45 + 0.3 * (1.0 / iScale);
       float dist = length(p - mousePos);
       float distFactor = 1.0 - smoothstep(0.0, radius * activity, dist);
       
-      float density = pow(smoke, 2.0) * distFactor * 0.6;
-      vec3 smokeColor = mix(vec3(0.6, 0.65, 0.7), vec3(0.88, 0.92, 0.98), smoke);
+      // Rich visible smoke density
+      float density = pow(smoke, 1.4) * distFactor * 1.5;
+      vec3 smokeColor = mix(vec3(0.85, 0.9, 0.95), vec3(1.0, 1.0, 1.0), smoke);
 
-      return vec4(smokeColor * density * intensity, density * intensity * 0.5);
+      return vec4(smokeColor * density * intensity * 1.2, density * intensity * 0.85);
     }
 
     void main() {
@@ -102,24 +104,24 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       vec3 colorAcc = vec3(0.0);
       float alphaAcc = 0.0;
       
-      vec4 b = smokeBlob(uv, mouse, 1.0, iOpacity, 0.0);
+      vec4 b = smokeBlob(uv, mouse, 1.2, iOpacity, 0.0);
       colorAcc += b.rgb;
       alphaAcc += b.a;
 
-      for (int i = 0; i < 16; i++) {
+      for (int i = 0; i < 20; i++) {
         vec2 pm = (iPrevMouse[i] * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-        float progress = float(i) / 16.0;
-        float weight = pow(1.0 - progress, 1.5);
+        float progress = float(i) / 20.0;
+        float weight = pow(1.0 - progress, 1.3);
         
-        if (weight > 0.05) {
-          vec4 bt = smokeBlob(uv, pm, weight * 0.6, iOpacity, progress * 1.5);
+        if (weight > 0.02) {
+          vec4 bt = smokeBlob(uv, pm, weight * 0.85, iOpacity, progress * 1.8);
           colorAcc += bt.rgb;
           alphaAcc += bt.a;
         }
       }
 
-      colorAcc = clamp(colorAcc * iBrightness * iBaseColor, 0.0, 0.6);
-      float outAlpha = clamp(alphaAcc * iOpacity, 0.0, 0.5);
+      colorAcc = clamp(colorAcc * iBrightness * iBaseColor, 0.0, 1.0);
+      float outAlpha = clamp(alphaAcc * iOpacity, 0.0, 0.85);
       gl_FragColor = vec4(colorAcc, outAlpha);
     }
   `;
@@ -157,7 +159,7 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const geom = new THREE.PlaneGeometry(2, 2);
 
-    const maxTrail = 16;
+    const maxTrail = 20;
     trailBufRef.current = Array.from({ length: maxTrail }, () => new THREE.Vector2(0.5, 0.5));
     headRef.current = 0;
 
@@ -189,8 +191,8 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       const cssW = Math.max(1, Math.floor(rect.width));
       const cssH = Math.max(1, Math.floor(rect.height));
 
-      // 0.45 DPR for smooth mobile & desktop performance
-      const pixelRatio = 0.45;
+      // 0.5 DPR for crisp visible smoke rendering
+      const pixelRatio = 0.5;
       renderer.setPixelRatio(pixelRatio);
       renderer.setSize(cssW, cssH, false);
 
@@ -227,13 +229,13 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
         }
         
         const dt = now - lastMoveTimeRef.current;
-        if (dt > 800) {
-          const k = Math.min(1, (dt - 800) / 1000);
+        if (dt > 1000) {
+          const k = Math.min(1, (dt - 1000) / 1200);
           fadeOpacityRef.current = Math.max(0, 1 - k);
         }
       }
 
-      const N = 16;
+      const N = 20;
       headRef.current = (headRef.current + 1) % N;
       trailBufRef.current[headRef.current].copy(mat.uniforms.iMouse.value);
       
