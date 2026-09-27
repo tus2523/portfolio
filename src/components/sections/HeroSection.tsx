@@ -4,6 +4,7 @@ import { FloatingParticles } from '../FloatingParticles';
 import { ParallaxEmoji } from '../ParallaxEmoji';
 import { CountUp } from '../CountUp';
 import { ContactButton } from '../ContactButton';
+import { GhostCursor } from '../GhostCursor';
 import { defaultData, getWhatsAppLink } from '../../lib/store';
 
 const getAssetUrl = (path: string) => {
@@ -31,6 +32,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
         {/* Subtle mesh background grid */}
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.25]" />
       </div>
+
+      {/* Smoky WebGL Ghost Cursor Effect */}
+      <GhostCursor 
+        color="#B19EEF"
+        brightness={1.2}
+        bloomStrength={0.4}
+        bloomRadius={0.8}
+        trailLength={30}
+        inertia={0.4}
+        zIndex={5}
+      />
 
       <FloatingParticles />
       {/* Parallax Floating 3D Glass Assets */}
