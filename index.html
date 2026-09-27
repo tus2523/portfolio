@@ -76,8 +76,11 @@
     <!-- Skip to main content for screen readers and keyboard navigation -->
     <a href="#main-content" class="sr-only">Skip to main content</a>
 
-    <div id="root">
-      <!-- Semantic Static Fallback Content for Crawlers & Non-JS Bots -->
+    <!-- React Mounting Target Container -->
+    <div id="root"></div>
+
+    <!-- Noscript Static Fallback Content for Crawlers & Non-JS Bots -->
+    <noscript>
       <header>
         <nav aria-label="Main Navigation">
           <ul>
@@ -123,7 +126,7 @@
       <footer>
         <p>&copy; 2026 Sahil Thorat. All rights reserved.</p>
       </footer>
-    </div>
+    </noscript>
 
     <script type="module" src="/src/main.tsx"></script>
   </body>
