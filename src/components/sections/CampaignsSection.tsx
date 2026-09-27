@@ -14,22 +14,8 @@ const getAssetUrl = (path: string) => {
 const GLASS_MEGAPHONE = getAssetUrl('glass_megaphone.png');
 const GLASS_HEART = getAssetUrl('glass_heart.png');
 
-const getBrandLogo = (brandName: string, logos: { name: string; logoUrl: string }[]) => {
-  // Try to find a matching logo from admin-managed brand logos
-  const match = logos.find(
-    (l) => l.name && brandName && l.name.toLowerCase().includes(brandName.toLowerCase().split(' ')[0])
-  );
-  if (match?.logoUrl) {
-    return (
-      <img
-        src={match.logoUrl}
-        alt={match.name}
-        className="w-5 h-5 rounded object-contain mr-2 flex-shrink-0 bg-white/5"
-        onError={(e) => (e.currentTarget.style.display = 'none')}
-      />
-    );
-  }
-  // Fallback: coloured dot
+const getBrandLogo = (_brandName: string, _logos: { name: string; logoUrl: string }[]) => {
+  // Uniform dot indicator for brand tab buttons
   return <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40 mr-2 flex-shrink-0" />;
 };
 
