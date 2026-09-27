@@ -26,22 +26,22 @@ type GhostCursorProps = {
 };
 
 /**
- * GhostCursor component creates an enhanced, smoky WebGL cursor trail effect using Three.js shaders.
+ * GhostCursor component with rich, organic white smoke simulation shader.
  */
 export const GhostCursor: React.FC<GhostCursorProps> = ({
   className,
   style,
-  trailLength = 45,
-  inertia = 0.55,
-  grainIntensity = 0.08,
-  bloomStrength = 0.8,
-  bloomRadius = 1.0,
-  bloomThreshold = 0.01,
-  brightness = 1.8,
-  color = '#B19EEF',
+  trailLength = 60,
+  inertia = 0.65,
+  grainIntensity = 0.12,
+  bloomStrength = 0.6,
+  bloomRadius = 1.2,
+  bloomThreshold = 0.05,
+  brightness = 2.2,
+  color = '#FFFFFF',
   mixBlendMode = 'screen',
   edgeIntensity = 0,
-  maxDevicePixelRatio = 0.5,
+  maxDevicePixelRatio = 0.75,
   targetPixels,
   fadeDelayMs,
   fadeDurationMs,
@@ -71,9 +71,9 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     []
   );
 
-  const pixelBudget = targetPixels ?? (isTouch ? 0.9e6 : 1.3e6);
-  const fadeDelay = fadeDelayMs ?? (isTouch ? 500 : 1200);
-  const fadeDuration = fadeDurationMs ?? (isTouch ? 1000 : 1800);
+  const pixelBudget = targetPixels ?? (isTouch ? 0.9e6 : 1.5e6);
+  const fadeDelay = fadeDelayMs ?? (isTouch ? 500 : 1500);
+  const fadeDuration = fadeDurationMs ?? (isTouch ? 1000 : 2000);
 
   const baseVertexShader = `
     varying vec2 vUv;
@@ -105,35 +105,39 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
                  mix(hash(i + vec2(0.,1.)), hash(i + vec2(1.,1.)), f.x), f.y);
     }
 
+    // High detail Fractional Brownian Motion for dense, organic smoke turbulence
     float fbm(vec2 p){
       float v = 0.0;
       float a = 0.5;
-      mat2 m = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
-      for(int i=0;i<5;i++){
+      mat2 m = mat2(cos(0.4), sin(0.4), -sin(0.4), cos(0.4));
+      for(int i=0; i<6; i++){
         v += a * noise(p);
-        p = m * p * 2.0;
-        a *= 0.5;
+        p = m * p * 2.15;
+        a *= 0.48;
       }
       return v;
     }
 
-    vec3 tint1(vec3 base){ return mix(base, vec3(1.0, 0.8, 1.0), 0.25); }
-    vec3 tint2(vec3 base){ return mix(base, vec3(0.6, 0.8, 1.0), 0.35); }
-
-    vec4 blob(vec2 p, vec2 mousePos, float intensity, float activity) {
-      vec2 q = vec2(fbm(p * iScale + iTime * 0.15), fbm(p * iScale + vec2(5.2,1.3) + iTime * 0.15));
-      vec2 r = vec2(fbm(p * iScale + q * 1.8 + iTime * 0.2), fbm(p * iScale + q * 1.8 + vec2(8.3,2.8) + iTime * 0.2));
-      float smoke = fbm(p * iScale + r * 1.0);
+    // Dense volumetric white smoke puff calculation
+    vec4 smokeBlob(vec2 p, vec2 mousePos, float intensity, float activity, float timeOffset) {
+      vec2 st = p * iScale * 2.2;
       
-      float radius = 0.6 + 0.4 * (1.0 / iScale);
-      float distFactor = 1.0 - smoothstep(0.0, radius * activity, length(p - mousePos));
-      float alpha = pow(smoke, 2.0) * distFactor;
+      // Dynamic turbulent smoke swirl displacement
+      float n1 = fbm(st + vec2(iTime * 0.25 + timeOffset, -iTime * 0.2));
+      float n2 = fbm(st + vec2(-iTime * 0.2, iTime * 0.3) + vec2(n1 * 1.8, n1 * 1.2));
+      float smoke = fbm(st * 1.1 + vec2(n2 * 2.2, n1 * 2.0));
+      
+      float radius = 0.65 + 0.35 * (1.0 / iScale);
+      float dist = length(p - mousePos);
+      float distFactor = 1.0 - smoothstep(0.0, radius * activity, dist);
+      
+      // Organic smoke density formula
+      float density = pow(smoke, 1.8) * distFactor * 2.2;
+      
+      // Pure white smoke tone with soft silver highlight
+      vec3 smokeColor = mix(vec3(1.0), vec3(0.92, 0.95, 1.0), smoothstep(0.2, 0.8, smoke));
 
-      vec3 c1 = tint1(iBaseColor);
-      vec3 c2 = tint2(iBaseColor);
-      vec3 color = mix(c1, c2, sin(iTime * 0.8) * 0.5 + 0.5);
-
-      return vec4(color * alpha * intensity * 1.5, alpha * intensity);
+      return vec4(smokeColor * density * intensity, density * intensity);
     }
 
     void main() {
@@ -143,23 +147,26 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       vec3 colorAcc = vec3(0.0);
       float alphaAcc = 0.0;
       
-      vec4 b = blob(uv, mouse, 1.2, iOpacity);
+      // Head cursor smoke cloud
+      vec4 b = smokeBlob(uv, mouse, 1.6, iOpacity, 0.0);
       colorAcc += b.rgb;
       alphaAcc += b.a;
 
+      // Trailing smoke trail history
       for (int i = 0; i < MAX_TRAIL_LENGTH; i++) {
         vec2 pm = (iPrevMouse[i] * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-        float t = 1.0 - float(i) / float(MAX_TRAIL_LENGTH);
-        t = pow(t, 1.5);
+        float progress = float(i) / float(MAX_TRAIL_LENGTH);
+        float weight = 1.0 - progress;
+        weight = pow(weight, 1.2);
         
-        if (t > 0.01) {
-          vec4 bt = blob(uv, pm, t * 1.0, iOpacity);
+        if (weight > 0.01) {
+          vec4 bt = smokeBlob(uv, pm, weight * 1.4, iOpacity, progress * 3.0);
           colorAcc += bt.rgb;
           alphaAcc += bt.a;
         }
       }
 
-      colorAcc *= iBrightness;
+      colorAcc *= iBrightness * iBaseColor;
       
       vec2 uv01 = gl_FragCoord.xy / iResolution.xy;
       float edgeDist = min(min(uv01.x, 1.0 - uv01.x), min(uv01.y, 1.0 - uv01.y));
