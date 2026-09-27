@@ -3,33 +3,128 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0C0C0C" />
 
-    <!-- DNS prefetch for external services -->
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sahil-thorat-portfolio.vercel.app/" />
+
+    <!-- SEO Meta Tags -->
+    <title>Sahil Thorat | Influencer Marketing Executive &amp; Video Editor</title>
+    <meta name="description" content="Official portfolio of Sahil Thorat — Influencer Marketing Executive, Video Editor, and Content Producer based in Mumbai. View brand campaigns and projects." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Sahil Thorat" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahil-thorat-portfolio.vercel.app/" />
+    <meta property="og:title" content="Sahil Thorat | Influencer Marketing Executive &amp; Video Editor" />
+    <meta property="og:description" content="Content Producer · Influencer Marketer · Video Editor based in Mumbai." />
+    <meta property="og:image" content="https://sahil-thorat-portfolio.vercel.app/glass_clapperboard.png" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://sahil-thorat-portfolio.vercel.app/" />
+    <meta name="twitter:title" content="Sahil Thorat | Portfolio" />
+    <meta name="twitter:description" content="Influencer Marketing Executive, Video Editor, and Event Coordinator based in Mumbai." />
+    <meta name="twitter:image" content="https://sahil-thorat-portfolio.vercel.app/glass_clapperboard.png" />
+
+    <!-- DNS prefetch & font preconnect -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://i.ytimg.com" />
     <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com" />
 
-    <!-- Font: preconnect then load -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&amp;display=swap" rel="stylesheet" />
 
-    <title>Sahil Thorat | Portfolio</title>
-    <meta name="description" content="Sahil Thorat — Influencer Marketing Executive, Video Editor, and Event Coordinator based in Mumbai." />
-    <meta property="og:title" content="Sahil Thorat | Portfolio" />
-    <meta property="og:description" content="Content Producer · Influencer Marketer · Video Editor based in Mumbai." />
-    <meta name="robots" content="index, follow" />
+    <!-- Structured Data (JSON-LD) for E-E-A-T & Google Knowledge Graph -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Sahil Thorat",
+      "url": "https://sahil-thorat-portfolio.vercel.app/",
+      "image": "https://sahil-thorat-portfolio.vercel.app/glass_clapperboard.png",
+      "jobTitle": "Influencer Marketing Executive & Video Editor",
+      "description": "Influencer Marketing Executive, Video Editor, and Event Coordinator based in Mumbai.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Mumbai",
+        "addressCountry": "India"
+      },
+      "knowsAbout": [
+        "Influencer Marketing",
+        "Video Editing",
+        "Content Production",
+        "Brand Campaigns",
+        "Event Coordination"
+      ]
+    }
+    </script>
 
     <style>
       /* Prevent FOUT flash — show dark bg immediately */
       html, body { background: #0C0C0C; margin: 0; padding: 0; overflow-x: hidden; }
       #root { min-height: 100vh; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+      .sr-only:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; background: #fff; color: #000; padding: 8px; z-index: 9999; }
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Skip to main content for screen readers and keyboard navigation -->
+    <a href="#main-content" class="sr-only">Skip to main content</a>
+
+    <div id="root">
+      <!-- Semantic Static Fallback Content for Crawlers & Non-JS Bots -->
+      <header>
+        <nav aria-label="Main Navigation">
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#campaigns">Campaigns</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#websites">Websites</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main id="main-content">
+        <section>
+          <h1>Sahil Thorat — Portfolio</h1>
+          <p>
+            Welcome to the official portfolio of <strong>Sahil Thorat</strong>, an <strong>Influencer Marketing Executive</strong>, 
+            <strong>Video Editor</strong>, and <strong>Content Producer</strong> based in Mumbai, India.
+          </p>
+          <p>
+            I specialize in crafting high-impact brand campaigns, creative short-form and long-form video content, and coordinating large-scale influencer marketing initiatives.
+          </p>
+        </section>
+
+        <section id="services-fallback">
+          <h2>Core Expertise &amp; Services</h2>
+          <ul>
+            <li><strong>Influencer Marketing:</strong> Strategy, brand partnerships, campaign management, and creator onboarding.</li>
+            <li><strong>Video Editing:</strong> Short-form Reels/Shorts, brand commercials, YouTube video editing, and motion graphics.</li>
+            <li><strong>Content Production:</strong> Creative direction, scriptwriting, and end-to-end media production.</li>
+            <li><strong>Event Coordination:</strong> On-ground influencer management and event execution.</li>
+          </ul>
+        </section>
+
+        <section id="contact-fallback">
+          <h2>Get In Touch</h2>
+          <p>Open for freelance inquiries, brand collaborations, and full-time opportunities.</p>
+          <p>Location: Mumbai, India</p>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2026 Sahil Thorat. All rights reserved.</p>
+      </footer>
+    </div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
