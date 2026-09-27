@@ -12,9 +12,7 @@ type GhostCursorProps = {
 };
 
 /**
- * Ultra-Performance Optimized GhostCursor component.
- * - Disabled on touch/mobile devices to save battery & prevent lag.
- * - Hardware-accelerated 60FPS Desktop GLSL rendering.
+ * High-Performance GhostCursor component compatible with both Mouse & Touch screens.
  */
 export const GhostCursor: React.FC<GhostCursorProps> = ({
   className,
@@ -40,16 +38,6 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
   const pointerActiveRef = useRef(false);
   const runningRef = useRef(false);
 
-  const isTouch = useMemo(
-    () => typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0),
-    []
-  );
-
-  // If mobile touch device, return null (Mobile has no mouse cursor)
-  if (isTouch) {
-    return null;
-  }
-
   const baseVertexShader = `
     varying vec2 vUv;
     void main() {
@@ -62,7 +50,7 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     uniform float iTime;
     uniform vec3  iResolution;
     uniform vec2  iMouse;
-    uniform vec2  iPrevMouse[18];
+    uniform vec2  iPrevMouse[16];
     uniform float iOpacity;
     uniform float iScale;
     uniform vec3  iBaseColor;
@@ -79,7 +67,7 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
                  mix(hash(i + vec2(0.,1.)), hash(i + vec2(1.,1.)), f.x), f.y);
     }
 
-    // Ultra fast 3-octave FBM for 60FPS fluid smoke
+    // Fast 3-octave FBM smoke turbulence
     float fbm(vec2 p){
       float v = 0.0;
       float a = 0.5;
@@ -97,12 +85,12 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       float n1 = fbm(st + vec2(iTime * 0.15 + timeOffset, -iTime * 0.1));
       float smoke = fbm(st * 1.1 + vec2(n1 * 1.4, n1 * 1.2));
       
-      float radius = 0.35 + 0.2 * (1.0 / iScale);
+      float radius = 0.35 + 0.25 * (1.0 / iScale);
       float dist = length(p - mousePos);
       float distFactor = 1.0 - smoothstep(0.0, radius * activity, dist);
       
       float density = pow(smoke, 2.0) * distFactor * 0.6;
-      vec3 smokeColor = mix(vec3(0.6, 0.65, 0.7), vec3(0.85, 0.9, 0.95), smoke);
+      vec3 smokeColor = mix(vec3(0.6, 0.65, 0.7), vec3(0.88, 0.92, 0.98), smoke);
 
       return vec4(smokeColor * density * intensity, density * intensity * 0.5);
     }
@@ -118,9 +106,9 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       colorAcc += b.rgb;
       alphaAcc += b.a;
 
-      for (int i = 0; i < 18; i++) {
+      for (int i = 0; i < 16; i++) {
         vec2 pm = (iPrevMouse[i] * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-        float progress = float(i) / 18.0;
+        float progress = float(i) / 16.0;
         float weight = pow(1.0 - progress, 1.5);
         
         if (weight > 0.05) {
@@ -169,7 +157,7 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const geom = new THREE.PlaneGeometry(2, 2);
 
-    const maxTrail = 18;
+    const maxTrail = 16;
     trailBufRef.current = Array.from({ length: maxTrail }, () => new THREE.Vector2(0.5, 0.5));
     headRef.current = 0;
 
@@ -201,8 +189,8 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       const cssW = Math.max(1, Math.floor(rect.width));
       const cssH = Math.max(1, Math.floor(rect.height));
 
-      // Cap DPR to 0.5 for 60FPS performance on 4K / High DPI screens
-      const pixelRatio = 0.5;
+      // 0.45 DPR for smooth mobile & desktop performance
+      const pixelRatio = 0.45;
       renderer.setPixelRatio(pixelRatio);
       renderer.setSize(cssW, cssH, false);
 
@@ -239,13 +227,13 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
         }
         
         const dt = now - lastMoveTimeRef.current;
-        if (dt > 1000) {
-          const k = Math.min(1, (dt - 1000) / 1200);
+        if (dt > 800) {
+          const k = Math.min(1, (dt - 800) / 1000);
           fadeOpacityRef.current = Math.max(0, 1 - k);
         }
       }
 
-      const N = 18;
+      const N = 16;
       headRef.current = (headRef.current + 1) % N;
       trailBufRef.current[headRef.current].copy(mat.uniforms.iMouse.value);
       
@@ -276,15 +264,31 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       }
     };
 
-    const onPointerMove = (e: PointerEvent) => {
+    const setPosition = (clientX: number, clientY: number) => {
       const rect = parent.getBoundingClientRect();
-      const x = THREE.MathUtils.clamp((e.clientX - rect.left) / Math.max(1, rect.width), 0, 1);
-      const y = THREE.MathUtils.clamp(1 - (e.clientY - rect.top) / Math.max(1, rect.height), 0, 1);
+      const x = THREE.MathUtils.clamp((clientX - rect.left) / Math.max(1, rect.width), 0, 1);
+      const y = THREE.MathUtils.clamp(1 - (clientY - rect.top) / Math.max(1, rect.height), 0, 1);
       
       currentMouseRef.current.set(x, y);
       pointerActiveRef.current = true;
       lastMoveTimeRef.current = performance.now();
       ensureLoop();
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      setPosition(e.clientX, e.clientY);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) {
+        setPosition(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) {
+        setPosition(e.touches[0].clientX, e.touches[0].clientY);
+      }
     };
 
     const onPointerEnter = () => {
@@ -299,6 +303,8 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     };
 
     window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
     parent.addEventListener('pointerenter', onPointerEnter, { passive: true });
     parent.addEventListener('pointerleave', onPointerLeave, { passive: true });
     
@@ -310,6 +316,8 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       rafRef.current = null;
       
       window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchstart', onTouchStart);
       parent.removeEventListener('pointerenter', onPointerEnter);
       parent.removeEventListener('pointerleave', onPointerLeave);
       
