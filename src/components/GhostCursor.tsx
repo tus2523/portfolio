@@ -1,64 +1,38 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 
 type GhostCursorProps = {
   className?: string;
   style?: React.CSSProperties;
-  trailLength?: number;
   inertia?: number;
-  grainIntensity?: number;
-  bloomStrength?: number;
-  bloomRadius?: number;
-  bloomThreshold?: number;
   brightness?: number;
   color?: string;
   mixBlendMode?: React.CSSProperties['mixBlendMode'];
-  edgeIntensity?: number;
-  maxDevicePixelRatio?: number;
-  targetPixels?: number;
-  fadeDelayMs?: number;
-  fadeDurationMs?: number;
   zIndex?: number;
 };
 
 /**
- * GhostCursor component with controlled translucent white/grey smoke trail.
+ * Ultra-Performance Optimized GhostCursor component.
+ * - Disabled on touch/mobile devices to save battery & prevent lag.
+ * - Hardware-accelerated 60FPS Desktop GLSL rendering.
  */
 export const GhostCursor: React.FC<GhostCursorProps> = ({
   className,
   style,
-  trailLength = 40,
-  inertia = 0.5,
-  grainIntensity = 0.05,
-  bloomStrength = 0.08,
-  bloomRadius = 0.6,
-  bloomThreshold = 0.1,
+  inertia = 0.45,
   brightness = 0.8,
   color = '#A0A5B5',
   mixBlendMode = 'screen',
-  edgeIntensity = 0,
-  maxDevicePixelRatio = 0.75,
-  targetPixels,
-  fadeDelayMs,
-  fadeDurationMs,
-  zIndex = 10
+  zIndex = 5
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const composerRef = useRef<EffectComposer | null>(null);
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
-  const bloomPassRef = useRef<UnrealBloomPass | null>(null);
-  const filmPassRef = useRef<ShaderPass | null>(null);
   
   // Trail circular buffer
   const trailBufRef = useRef<THREE.Vector2[]>([]);
   const headRef = useRef(0);
   const rafRef = useRef<number | null>(null);
-  const resizeObsRef = useRef<ResizeObserver | null>(null);
   const currentMouseRef = useRef(new THREE.Vector2(0.5, 0.5));
   const velocityRef = useRef(new THREE.Vector2(0, 0));
   const fadeOpacityRef = useRef(1.0);
@@ -71,9 +45,10 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     []
   );
 
-  const pixelBudget = targetPixels ?? (isTouch ? 0.9e6 : 1.3e6);
-  const fadeDelay = fadeDelayMs ?? (isTouch ? 500 : 1000);
-  const fadeDuration = fadeDurationMs ?? (isTouch ? 1000 : 1500);
+  // If mobile touch device, return null (Mobile has no mouse cursor)
+  if (isTouch) {
+    return null;
+  }
 
   const baseVertexShader = `
     varying vec2 vUv;
@@ -87,12 +62,11 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     uniform float iTime;
     uniform vec3  iResolution;
     uniform vec2  iMouse;
-    uniform vec2  iPrevMouse[MAX_TRAIL_LENGTH];
+    uniform vec2  iPrevMouse[18];
     uniform float iOpacity;
     uniform float iScale;
     uniform vec3  iBaseColor;
     uniform float iBrightness;
-    uniform float iEdgeIntensity;
 
     varying vec2  vUv;
 
@@ -105,11 +79,12 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
                  mix(hash(i + vec2(0.,1.)), hash(i + vec2(1.,1.)), f.x), f.y);
     }
 
+    // Ultra fast 3-octave FBM for 60FPS fluid smoke
     float fbm(vec2 p){
       float v = 0.0;
       float a = 0.5;
-      mat2 m = mat2(cos(0.4), sin(0.4), -sin(0.4), cos(0.4));
-      for(int i=0; i<5; i++){
+      mat2 m = mat2(0.8, 0.6, -0.6, 0.8);
+      for(int i=0; i<3; i++){
         v += a * noise(p);
         p = m * p * 2.1;
         a *= 0.5;
@@ -117,25 +92,19 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       return v;
     }
 
-    // Dynamic translucent white/silver smoke puff
     vec4 smokeBlob(vec2 p, vec2 mousePos, float intensity, float activity, float timeOffset) {
-      vec2 st = p * iScale * 2.5;
+      vec2 st = p * iScale * 2.0;
+      float n1 = fbm(st + vec2(iTime * 0.15 + timeOffset, -iTime * 0.1));
+      float smoke = fbm(st * 1.1 + vec2(n1 * 1.4, n1 * 1.2));
       
-      float n1 = fbm(st + vec2(iTime * 0.2 + timeOffset, -iTime * 0.15));
-      float n2 = fbm(st * 1.4 + vec2(-iTime * 0.15, iTime * 0.2) + vec2(n1 * 1.5, n1 * 1.2));
-      float smoke = fbm(st * 1.2 + vec2(n2 * 1.8, n1 * 1.5));
-      
-      float radius = 0.35 + 0.25 * (1.0 / iScale);
+      float radius = 0.35 + 0.2 * (1.0 / iScale);
       float dist = length(p - mousePos);
       float distFactor = 1.0 - smoothstep(0.0, radius * activity, dist);
       
-      // Soft smoke density
-      float density = pow(smoke, 2.2) * distFactor * 0.8;
-      
-      // Translucent grey-white smoke tint
-      vec3 smokeColor = mix(vec3(0.65, 0.7, 0.75), vec3(0.85, 0.9, 0.95), smoke);
+      float density = pow(smoke, 2.0) * distFactor * 0.6;
+      vec3 smokeColor = mix(vec3(0.6, 0.65, 0.7), vec3(0.85, 0.9, 0.95), smoke);
 
-      return vec4(smokeColor * density * intensity, density * intensity * 0.6);
+      return vec4(smokeColor * density * intensity, density * intensity * 0.5);
     }
 
     void main() {
@@ -145,99 +114,27 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       vec3 colorAcc = vec3(0.0);
       float alphaAcc = 0.0;
       
-      // Cursor head smoke
       vec4 b = smokeBlob(uv, mouse, 1.0, iOpacity, 0.0);
       colorAcc += b.rgb;
       alphaAcc += b.a;
 
-      // Trailing smoke history
-      for (int i = 0; i < MAX_TRAIL_LENGTH; i++) {
+      for (int i = 0; i < 18; i++) {
         vec2 pm = (iPrevMouse[i] * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-        float progress = float(i) / float(MAX_TRAIL_LENGTH);
-        float weight = 1.0 - progress;
-        weight = pow(weight, 1.5);
+        float progress = float(i) / 18.0;
+        float weight = pow(1.0 - progress, 1.5);
         
-        if (weight > 0.02) {
-          vec4 bt = smokeBlob(uv, pm, weight * 0.7, iOpacity, progress * 2.0);
+        if (weight > 0.05) {
+          vec4 bt = smokeBlob(uv, pm, weight * 0.6, iOpacity, progress * 1.5);
           colorAcc += bt.rgb;
           alphaAcc += bt.a;
         }
       }
 
-      colorAcc = clamp(colorAcc * iBrightness * iBaseColor, 0.0, 0.7);
-      
-      vec2 uv01 = gl_FragCoord.xy / iResolution.xy;
-      float edgeDist = min(min(uv01.x, 1.0 - uv01.x), min(uv01.y, 1.0 - uv01.y));
-      float distFromEdge = clamp(edgeDist * 2.0, 0.0, 1.0);
-      float k = clamp(iEdgeIntensity, 0.0, 1.0);
-      float edgeMask = mix(1.0 - k, 1.0, distFromEdge);
-      
-      float outAlpha = clamp(alphaAcc * iOpacity * edgeMask, 0.0, 0.6);
+      colorAcc = clamp(colorAcc * iBrightness * iBaseColor, 0.0, 0.6);
+      float outAlpha = clamp(alphaAcc * iOpacity, 0.0, 0.5);
       gl_FragColor = vec4(colorAcc, outAlpha);
     }
   `;
-
-  const FilmGrainShader = useMemo(() => {
-    return {
-      uniforms: {
-        tDiffuse: { value: null },
-        iTime: { value: 0 },
-        intensity: { value: grainIntensity }
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main(){
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform sampler2D tDiffuse;
-        uniform float iTime;
-        uniform float intensity;
-        varying vec2 vUv;
-        float hash1(float n){ return fract(sin(n)*43758.5453); }
-        void main(){
-          vec4 color = texture2D(tDiffuse, vUv);
-          float n = hash1(vUv.x*1000.0 + vUv.y*2000.0 + iTime) * 2.0 - 1.0;
-          color.rgb += n * intensity * color.rgb;
-          gl_FragColor = color;
-        }
-      `
-    };
-  }, [grainIntensity]);
-
-  const UnpremultiplyPass = useMemo(
-    () =>
-      new ShaderPass({
-        uniforms: { tDiffuse: { value: null } },
-        vertexShader: `
-          varying vec2 vUv;
-          void main(){
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `,
-        fragmentShader: `
-          uniform sampler2D tDiffuse;
-          varying vec2 vUv;
-          void main(){
-            vec4 c = texture2D(tDiffuse, vUv);
-            float a = max(c.a, 1e-5);
-            vec3 straight = c.rgb / a;
-            gl_FragColor = vec4(clamp(straight, 0.0, 1.0), c.a);
-          }
-        `
-      }),
-    []
-  );
-
-  function calculateScale(el: HTMLElement) {
-    const r = el.getBoundingClientRect();
-    const base = 600;
-    const current = Math.min(Math.max(1, r.width), Math.max(1, r.height));
-    return Math.max(0.5, Math.min(2.0, current / base));
-  }
 
   useEffect(() => {
     const host = containerRef.current;
@@ -245,11 +142,11 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     if (!host || !parent) return;
 
     const renderer = new THREE.WebGLRenderer({
-      antialias: !isTouch,
+      antialias: false,
       alpha: true,
       depth: false,
       stencil: false,
-      powerPreference: 'default',
+      powerPreference: 'high-performance',
       premultipliedAlpha: false,
       preserveDrawingBuffer: false
     });
@@ -260,8 +157,6 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     renderer.domElement.style.pointerEvents = 'none';
     if (mixBlendMode) {
       renderer.domElement.style.mixBlendMode = String(mixBlendMode);
-    } else {
-      renderer.domElement.style.removeProperty('mix-blend-mode');
     }
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.width = '100%';
@@ -274,13 +169,12 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const geom = new THREE.PlaneGeometry(2, 2);
 
-    const maxTrail = Math.max(1, Math.floor(trailLength));
+    const maxTrail = 18;
     trailBufRef.current = Array.from({ length: maxTrail }, () => new THREE.Vector2(0.5, 0.5));
     headRef.current = 0;
 
     const baseColor = new THREE.Color(color);
     const material = new THREE.ShaderMaterial({
-      defines: { MAX_TRAIL_LENGTH: maxTrail },
       uniforms: {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector3(1, 1, 1) },
@@ -289,8 +183,7 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
         iOpacity: { value: 1.0 },
         iScale: { value: 1.0 },
         iBaseColor: { value: new THREE.Vector3(baseColor.r, baseColor.g, baseColor.b) },
-        iBrightness: { value: brightness },
-        iEdgeIntensity: { value: edgeIntensity }
+        iBrightness: { value: brightness }
       },
       vertexShader: baseVertexShader,
       fragmentShader,
@@ -303,52 +196,25 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
     const mesh = new THREE.Mesh(geom, material);
     scene.add(mesh);
 
-    const composer = new EffectComposer(renderer);
-    composerRef.current = composer;
-
-    const renderPass = new RenderPass(scene, camera);
-    composer.addPass(renderPass);
-
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), bloomStrength, bloomRadius, bloomThreshold);
-    bloomPassRef.current = bloomPass;
-    composer.addPass(bloomPass);
-
-    const filmPass = new ShaderPass(FilmGrainShader as any);
-    filmPassRef.current = filmPass;
-    composer.addPass(filmPass);
-
-    composer.addPass(UnpremultiplyPass);
-
     const resize = () => {
       const rect = host.getBoundingClientRect();
       const cssW = Math.max(1, Math.floor(rect.width));
       const cssH = Math.max(1, Math.floor(rect.height));
 
-      const currentDPR = Math.min(
-        typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1,
-        maxDevicePixelRatio
-      );
-
-      const need = cssW * cssH * currentDPR * currentDPR;
-      const scale = need <= pixelBudget ? 1 : Math.max(0.5, Math.min(1, Math.sqrt(pixelBudget / Math.max(1, need))));
-      
-      const pixelRatio = currentDPR * scale;
+      // Cap DPR to 0.5 for 60FPS performance on 4K / High DPI screens
+      const pixelRatio = 0.5;
       renderer.setPixelRatio(pixelRatio);
       renderer.setSize(cssW, cssH, false);
-      composer.setPixelRatio?.(pixelRatio);
-      composer.setSize(cssW, cssH);
 
       const wpx = Math.max(1, Math.floor(cssW * pixelRatio));
       const hpx = Math.max(1, Math.floor(cssH * pixelRatio));
       
       material.uniforms.iResolution.value.set(wpx, hpx, 1);
-      material.uniforms.iScale.value = calculateScale(host);
-      bloomPass.setSize(wpx, hpx);
+      material.uniforms.iScale.value = Math.max(0.5, Math.min(1.5, Math.min(cssW, cssH) / 600));
     };
 
     resize();
     const ro = new ResizeObserver(resize);
-    resizeObsRef.current = ro;
     ro.observe(host);
 
     const start = typeof performance !== 'undefined' ? performance.now() : Date.now();
@@ -358,7 +224,6 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       const t = (now - start) / 1000;
       
       const mat = materialRef.current!;
-      const comp = composerRef.current!;
 
       if (pointerActiveRef.current) {
         velocityRef.current.set(
@@ -374,13 +239,13 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
         }
         
         const dt = now - lastMoveTimeRef.current;
-        if (dt > fadeDelay) {
-          const k = Math.min(1, (dt - fadeDelay) / fadeDuration);
+        if (dt > 1000) {
+          const k = Math.min(1, (dt - 1000) / 1200);
           fadeOpacityRef.current = Math.max(0, 1 - k);
         }
       }
 
-      const N = trailBufRef.current.length;
+      const N = 18;
       headRef.current = (headRef.current + 1) % N;
       trailBufRef.current[headRef.current].copy(mat.uniforms.iMouse.value);
       
@@ -393,11 +258,7 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       mat.uniforms.iOpacity.value = fadeOpacityRef.current;
       mat.uniforms.iTime.value = t;
 
-      if (filmPassRef.current?.uniforms?.iTime) {
-        filmPassRef.current.uniforms.iTime.value = t;
-      }
-
-      comp.render();
+      renderer.render(scene, camera);
 
       if (!pointerActiveRef.current && fadeOpacityRef.current <= 0.001) {
         runningRef.current = false;
@@ -452,12 +313,11 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       parent.removeEventListener('pointerenter', onPointerEnter);
       parent.removeEventListener('pointerleave', onPointerLeave);
       
-      resizeObsRef.current?.disconnect();
+      ro.disconnect();
       
       scene.clear();
       geom.dispose();
       material.dispose();
-      composer.dispose();
       renderer.dispose();
       
       if (renderer.domElement && renderer.domElement.parentElement) {
@@ -465,57 +325,11 @@ export const GhostCursor: React.FC<GhostCursorProps> = ({
       }
     };
   }, [
-    trailLength,
     inertia,
-    grainIntensity,
-    bloomStrength,
-    bloomRadius,
-    bloomThreshold,
-    pixelBudget,
-    fadeDelay,
-    fadeDuration,
-    isTouch,
     color,
     brightness,
-    mixBlendMode,
-    edgeIntensity
+    mixBlendMode
   ]);
-
-  useEffect(() => {
-    if (materialRef.current) {
-      const c = new THREE.Color(color);
-      (materialRef.current.uniforms.iBaseColor.value as THREE.Vector3).set(c.r, c.g, c.b);
-    }
-  }, [color]);
-
-  useEffect(() => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.iBrightness.value = brightness;
-    }
-  }, [brightness]);
-
-  useEffect(() => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.iEdgeIntensity.value = edgeIntensity;
-    }
-  }, [edgeIntensity]);
-
-  useEffect(() => {
-    if (filmPassRef.current?.uniforms?.intensity) {
-      filmPassRef.current.uniforms.intensity.value = grainIntensity;
-    }
-  }, [grainIntensity]);
-
-  useEffect(() => {
-    const el = rendererRef.current?.domElement;
-    if (!el) return;
-    
-    if (mixBlendMode) {
-      el.style.mixBlendMode = String(mixBlendMode);
-    } else {
-      el.style.removeProperty('mix-blend-mode');
-    }
-  }, [mixBlendMode]);
 
   const mergedStyle = useMemo<React.CSSProperties>(() => ({ zIndex, ...style }), [zIndex, style]);
 

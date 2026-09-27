@@ -33,15 +33,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.25]" />
       </div>
 
-      {/* Controlled Translucent White/Silver Volumetric Smoke WebGL Effect */}
+      {/* 60FPS Ultra-Optimized Smoky WebGL Cursor Trail (Desktop Only) */}
       <GhostCursor 
         color="#A0A5B5"
         brightness={0.8}
-        bloomStrength={0.08}
-        bloomRadius={0.6}
-        trailLength={40}
-        inertia={0.5}
-        grainIntensity={0.05}
+        inertia={0.45}
         mixBlendMode="screen"
         zIndex={5}
       />
