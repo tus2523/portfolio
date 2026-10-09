@@ -29,10 +29,10 @@ export function getCloudinaryConfig(): CloudinaryConfig {
     }
   }
 
-  // 3. Fallback to Environment Variables (Vite)
+  // 3. Fallback to Environment Variables (Vite) or verified defaults
   return {
-    cloudName: (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '').trim(),
-    uploadPreset: (import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '').trim(),
+    cloudName: (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'aksy1d98').trim(),
+    uploadPreset: (import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'tushar_portfolio').trim(),
   };
 }
 
