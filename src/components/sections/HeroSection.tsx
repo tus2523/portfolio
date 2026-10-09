@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, ArrowUpRight } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { defaultData } from '../../lib/store';
 
 interface HeroSectionProps {
@@ -82,27 +82,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
               {link.label}
             </a>
           ))}
-          <a
-            href="#admin"
-            className="text-[#01472e] text-[10px] font-bold uppercase tracking-[0.25em] pl-3 border-l border-[#01472e]/20 hover:underline"
-          >
-            Admin
-          </a>
         </nav>
 
-        {/* Right: Cart/Action button with numeric counter badge in a cream pill */}
+        {/* Right: Plus / Menu Toggle Button */}
         <div className="flex items-center gap-3">
-          <a
-            href="#projects"
-            className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#fefae0] text-[#01472e] border border-[#01472e]/15 shadow-[0_8px_20px_-6px_rgba(1,71,46,0.15)] text-[10px] font-bold uppercase tracking-[0.25em] hover:bg-[#01472e] hover:text-[#fefae0] transition-all duration-300"
-          >
-            <span>SHOWREEL</span>
-            <span className="w-5 h-5 rounded-full bg-[#01472e] text-[#fefae0] flex items-center justify-center text-[9px] font-bold group-hover:bg-[#fefae0] group-hover:text-[#01472e]">
-              85+
-            </span>
-          </a>
-
-          {/* Plus / Menu Toggle Button */}
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -142,13 +125,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
                     </span>
                   </a>
                 ))}
-                <a
-                  href="#admin"
-                  onClick={() => setMenuOpen(false)}
-                  className="font-sans text-sm font-bold uppercase tracking-[0.25em] text-[#ccd5ae] hover:text-[#fefae0] pt-4 flex items-center gap-2"
-                >
-                  Admin Portal <ArrowUpRight size={16} />
-                </a>
               </div>
             </div>
 

@@ -161,13 +161,13 @@ export const defaultData = {
   videoProjects: [
     {
       id: 'vp1',
-      title: 'Celebrity BTS & Commercial Shoots',
-      description: 'High-energy behind-the-scenes videography and commercial shoot direction with top creators and celebrities in Mumbai.',
-      tags: ['CELEBRITY BTS', 'VIDEOGRAPHY', 'COMMERCIAL'],
+      title: 'Zee Cinema Awards 2025',
+      description: 'Celebrity red carpet coverage, backstage star interactions, and broadcast event videography for Zee Cinema Awards 2025.',
+      tags: ['ZEE CINEMA AWARDS', 'CELEBRITY BTS', 'BROADCAST'],
       videos: [
         {
           id: 'v1',
-          title: 'Celebrity BTS Edit Showcase',
+          title: 'Zee Cinema Awards 2025 Gala BTS',
           url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
           thumbnail: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop'
         }
@@ -175,97 +175,125 @@ export const defaultData = {
     },
     {
       id: 'vp2',
-      title: 'Music Video & Album Post-Production',
-      description: 'Complete video editing, beat sync, visual effects, and color grading for music albums and dance videos.',
-      tags: ['MUSIC ALBUM', 'EDITING', 'COLOR GRADING'],
+      title: 'BharatMatrimony Commercial Ad',
+      description: 'National commercial campaign advertisement with narrative direction, precision lighting, and emotional storytelling.',
+      tags: ['BHARATMATRIMONY', 'COMMERCIAL AD', 'DIRECTION'],
       videos: [
         {
           id: 'v2',
-          title: 'Music Video Cut Showcase',
+          title: 'BharatMatrimony National Ad Cut',
           url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          thumbnail: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=800&auto=format&fit=crop'
+          thumbnail: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop'
         }
       ],
     },
     {
       id: 'vp3',
-      title: 'Comic Creators & Viral Reels',
-      description: 'Fast-paced, high-engagement video edits crafted specifically for digital comedy creators, YouTube Shorts & Reels.',
-      tags: ['REELS', 'COMIC CREATORS', 'PREMIERE PRO'],
+      title: 'Arijit Singh Live In Concert',
+      description: 'Live arena stadium concert coverage, crowd energy capture, and synchronized stage lighting visuals for Arijit Singh.',
+      tags: ['ARIJIT SINGH', 'LIVE CONCERT', 'EVENT REEL'],
       videos: [
         {
           id: 'v3',
-          title: 'Comic Creator Reel Edit',
-          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          thumbnail: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=800&auto=format&fit=crop'
-        }
-      ],
-    },
-    {
-      id: 'vp4',
-      title: 'Luxury Fashion Brand Promo',
-      description: 'Editorial grade motion picture for high-end fashion, styling campaigns, and apparel lookbooks.',
-      tags: ['FASHION', 'BRAND PROMO', 'CINEMATOGRAPHY'],
-      videos: [
-        {
-          id: 'v4',
-          title: 'Fashion Brand Campaign Cut',
-          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          thumbnail: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=800&auto=format&fit=crop'
-        }
-      ],
-    },
-    {
-      id: 'vp5',
-      title: 'Live Concert & Festival Aftermovie',
-      description: 'Dynamic stage coverage, massive crowd energy, and synchronized audio-visual festival highlights.',
-      tags: ['CONCERT', 'FESTIVAL', 'LIVE STAGE'],
-      videos: [
-        {
-          id: 'v5',
-          title: 'Festival Mainstage Aftermovie',
+          title: 'Arijit Singh Arena Tour Visuals',
           url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
           thumbnail: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800&auto=format&fit=crop'
         }
       ],
     },
     {
+      id: 'vp4',
+      title: 'Divine (Gully Gang) Music Video',
+      description: 'Raw Mumbai street aesthetics, high-energy beat sync, wide anamorphic lensing, and post-production for Divine.',
+      tags: ['DIVINE', 'MUSIC VIDEO', 'RAP CUT'],
+      videos: [
+        {
+          id: 'v4',
+          title: 'Divine — Gully Gang Energy Cut',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp5',
+      title: 'Fukra Insaan Music Video & Digital Cut',
+      description: 'High-retention creator video edits, color grading, and dynamic music video post-production for Fukra Insaan (Abhishek Malhan).',
+      tags: ['FUKRA INSAAN', 'MUSIC VIDEO', 'CREATOR REELS'],
+      videos: [
+        {
+          id: 'v5',
+          title: 'Fukra Insaan Viral Music Cut',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
       id: 'vp6',
-      title: 'Automotive Commercial Launch',
-      description: 'High-octane tracking shots, precision camera movement, and sound design for vehicle reveals.',
-      tags: ['AUTOMOTIVE', 'COMMERCIAL', 'SOUND DESIGN'],
+      title: 'Maybelline Beauty Campaign',
+      description: 'Macro beauty cinematography, cosmetic textures, high-frame-rate studio lighting for Maybelline New York.',
+      tags: ['MAYBELLINE', 'BEAUTY BRAND', 'COMMERCIAL'],
       videos: [
         {
           id: 'v6',
-          title: 'Automotive Velocity Reveal',
+          title: 'Maybelline Cosmetics Promo Film',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp7',
+      title: 'Godrej Fashion Week Runway Film',
+      description: 'Haute couture runway coverage, model backstage visuals, and rhythm-driven editorial lookbook for Godrej Fashion Week.',
+      tags: ['GODREJ FASHION WEEK', 'FASHION', 'RUNWAY'],
+      videos: [
+        {
+          id: 'v7',
+          title: 'Godrej Fashion Week Runway Cut',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp8',
+      title: 'Zudio & Bewakoof Fashion Campaigns',
+      description: 'Trendy urban fashion reels, fast cuts, kinetic typography, and lifestyle promos for Zudio and Bewakoof.',
+      tags: ['ZUDIO', 'BEWAKOOF', 'FASHION REELS'],
+      videos: [
+        {
+          id: 'v8',
+          title: 'Zudio x Bewakoof Apparel Cuts',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp9',
+      title: 'Khelo India National Games Film',
+      description: 'High-octane athlete tracking, sports sound design, and inspiring cinematic promo for Khelo India national initiative.',
+      tags: ['KHELO INDIA', 'SPORTS', 'COMMERCIAL'],
+      videos: [
+        {
+          id: 'v9',
+          title: 'Khelo India Anthem Commercial Film',
           url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
           thumbnail: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800&auto=format&fit=crop'
         }
       ],
     },
     {
-      id: 'vp7',
-      title: 'Narrative Short Film Post-Production',
-      description: 'Atmospheric color science, pacing, dialogue editing, and dramatic narrative construction.',
-      tags: ['NARRATIVE', 'POST-PRODUCTION', 'DAVINCI'],
+      id: 'vp10',
+      title: 'Denver Deodorant & Chk Shoes Ads',
+      description: 'Masculine aesthetic, slow-motion studio reveals, and bold product integration for Denver, Chk Shoes, and Wtflex.',
+      tags: ['DENVER', 'CHK SHOES', 'WTFLEX'],
       videos: [
         {
-          id: 'v7',
-          title: 'Dramatic Short Film Cut',
-          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          thumbnail: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=800&auto=format&fit=crop'
-        }
-      ],
-    },
-    {
-      id: 'vp8',
-      title: 'Celebrity Backstage Feature',
-      description: 'Intimate backstage moments, candid celebrity interactions, and cinematic lighting setups.',
-      tags: ['CELEBRITY', 'BACKSTAGE', 'EXCLUSIVE'],
-      videos: [
-        {
-          id: 'v8',
-          title: 'Celebrity Backstage Access',
+          id: 'v10',
+          title: 'Denver & Chk Shoes Velocity Cut',
           url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
           thumbnail: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=800&auto=format&fit=crop'
         }
@@ -310,21 +338,21 @@ export const defaultData = {
       year: '2023 – 2024',
       role: 'Freelance Videographer',
       company: 'Commercial / Brand & Celebrity Shoots',
-      description: 'Captured Celebrities BTS, Live Music Events, and Music albums. Handled concept development, client communication, marketing, and video promos.',
+      description: 'Captured Celebrities BTS, Live Music Events, and Music videos. Directed on-floor cameras for Arijit Singh live concerts, Zee Cinema Awards 2025, Khelo India, and Godrej Fashion Week.',
     },
     {
       id: 'ex2',
       year: '2023 – 2024',
       role: 'Freelance Video Editor',
       company: 'Adobe Premiere Pro & After Effects',
-      description: 'Edited videos for comic creators, brands, BTS edits, music albums, and wedding highlight videos with high retention cuts.',
+      description: 'Edited video campaigns for Zudio, Denver, Bewakoof, Maybelline, and comic creators. Cut Fukra Insaan music videos, BharatMatrimony commercial spots, and Chk Shoes promos using Adobe Premiere Pro & After Effects.',
     },
     {
       id: 'ex3',
       year: '2023 – 2024',
       role: 'Freelance Associate Director (AD)',
       company: 'Production & On-Floor Management',
-      description: 'Operational oversight, team management, strategic planning, emergency response, and project management on live set locations.',
+      description: 'Operational oversight, artist handling for celebrities (Divine, Fukra Insaan, Neha Bhasin, Palak Muchhal, Monali Thakur), strategic shoot planning, and floor management on live set locations.',
     },
     {
       id: 'ex4',
@@ -371,34 +399,56 @@ export const defaultData = {
     footerBio: "Open for videography projects, video editing assignments, celebrity BTS shoots, and creative collaborations.",
     sectionOrder: ['about', 'services', 'videos', 'photos', 'experience', 'skills', 'reviews'],
   },
+  brands: [
+    'Zudio', 'Denver', 'Bewakoof', 'Maybelline', 'Godrej Fashion Week',
+    'Chk Shoes', 'Wtflex', 'BharatMatrimony', 'Zee Cinema Awards 2025',
+    'Off Campus', 'Newme', 'Khelo India'
+  ],
+  celebrities: [
+    'Arijit Singh', 'Divine', 'Fukra Insaan', 'Palak Muchhal', 'Neha Bhasin', 'Monali Thakur'
+  ],
   services: [
     {
       id: 'ser1',
-      name: "Videography & On-Set Shoots",
-      icon: "video",
-      description: "Shooting celebrity behind-the-scenes (BTS), commercial brand shoots, live music events, and music albums.",
-      details: "High-quality video capture on location. Expert handling of camera gear, lighting setups, live stage recording, celebrity BTS moments, and commercial brand promotion.",
+      name: "Influencer Campaigns",
+      icon: "sparkles",
+      description: "End-to-end influencer campaign execution, creator briefing, and high-engagement digital rollouts for top tier brands.",
+      details: "Formulating tailored influencer strategies, coordinating creator deliverables, managing high-retention video hooks, and executing viral branded content across YouTube and Instagram.",
     },
     {
       id: 'ser2',
-      name: "Video Editing & Post-Production",
-      icon: "film",
-      description: "Professional editing using Adobe Premiere Pro & After Effects, visual pacing, color grading, and sound sync.",
-      details: "Seamless story-driven post-production. Specializing in high-retention cuts, dynamic sound design, visual effects, color correction, and polished video delivery.",
+      name: "Video Production",
+      icon: "video",
+      description: "Commercial ads, celebrity BTS, music videos, and mega events like Zee Cinema Awards 2025 and Arijit Singh concerts.",
+      details: "End-to-end production pipelines: from camera operation, lighting direction, on-floor coordination, to final export for broadcast, theater, and digital campaigns.",
     },
     {
       id: 'ser3',
-      name: "Associate Directing & Floor Management",
+      name: "Artist Management",
       icon: "user",
-      description: "Managing operational shoot logistics, directing crew members on-floor, and strategic shoot planning.",
-      details: "Full operational oversight on set. Managing talent logistics, timing, emergency response, shoot schedules, and ensuring smooth collaboration between directorship and crew.",
+      description: "On-set talent handling, schedule management, and production coordination for celebrities and musical artists.",
+      details: "Proven experience working directly on-floor with prominent artists including Divine, Fukra Insaan, Neha Bhasin, Palak Muchhal, Monali Thakur, and Arijit Singh.",
     },
     {
       id: 'ser4',
-      name: "Comic Creator & Viral Reels Edits",
-      icon: "sparkles",
-      description: "Tailored short-form video editing for comedy content creators, YouTube Shorts, and Instagram Reels.",
-      details: "Optimized for social media algorithm engagement. Crafting punchy comedy cuts, engaging captions, sound effects, and fast-paced visual hooks.",
+      name: "Brand Integration",
+      icon: "briefcase",
+      description: "Organic product placement and narrative brand integration across commercials and digital creator videos.",
+      details: "Seamless product storytelling for brands like Zudio, Denver, Bewakoof, Maybelline, Chk Shoes, Wtflex, BharatMatrimony, and Newme.",
+    },
+    {
+      id: 'ser5',
+      name: "Media Planning",
+      icon: "globe",
+      description: "Campaign decks, strategic content distribution, multi-channel release scheduling, and performance tracking.",
+      details: "Strategic media planning ensuring video assets reach target demographics with maximum retention, brand recall, and platform algorithmic velocity.",
+    },
+    {
+      id: 'ser6',
+      name: "Website Planning",
+      icon: "film",
+      description: "Digital presence architecture, portfolio content curation, and interactive storytelling for creators and brands.",
+      details: "Structuring high-converting digital showreels, responsive media showcases, and digital launchpads tailored to the creative and entertainment industry.",
     },
   ],
 };
@@ -426,7 +476,7 @@ export function isLoggedIn(): boolean {
   return sessionStorage.getItem(AUTH_KEY) === '1';
 }
 
-const KEY = 'tushar_portfolio_v1';
+const KEY = 'tushar_portfolio_v3';
 
 export function getData(): typeof defaultData {
   if (typeof window === 'undefined') return defaultData;
@@ -448,6 +498,8 @@ export function getData(): typeof defaultData {
       skills: stored.skills ?? defaultData.skills,
       settings: { ...defaultData.settings, ...(stored.settings || {}) },
       services: stored.services ?? defaultData.services,
+      brands: stored.brands ?? defaultData.brands,
+      celebrities: stored.celebrities ?? defaultData.celebrities,
     };
   } catch (err) {
     console.warn("Store: Falling back to default data due to error:", err);

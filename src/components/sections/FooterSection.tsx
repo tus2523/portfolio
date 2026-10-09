@@ -218,16 +218,48 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
                     MUMBAI, MAHARASHTRA
                   </span>
                 </li>
-                <li className="pt-2 border-t border-[#ccd5ae]/10">
-                  <a
-                    href="#admin"
-                    className="text-[#ccd5ae] hover:text-[#fefae0] flex items-center justify-between"
-                  >
-                    <span>ADMIN PORTAL</span>
-                    <span>→</span>
-                  </a>
-                </li>
               </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Brand Credits & Celebrity Collaborations Showcase ── */}
+        <div className="py-12 border-b border-[#ccd5ae]/15 flex flex-col gap-8">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#ccd5ae]/60 block mb-4">
+              CLIENTS, CAMPAIGNS &amp; PRODUCTIONS
+            </span>
+            <div className="flex flex-wrap gap-2.5 sm:gap-3">
+              {(data.brands || [
+                'Zudio', 'Denver', 'Bewakoof', 'Maybelline', 'Godrej Fashion Week',
+                'Chk Shoes', 'Wtflex', 'BharatMatrimony', 'Zee Cinema Awards 2025',
+                'Off Campus', 'Newme', 'Khelo India'
+              ]).map((brand: string, bIdx: number) => (
+                <span
+                  key={bIdx}
+                  className="px-4 py-2 rounded-full bg-[#fefae0]/10 border border-[#ccd5ae]/20 text-[#fefae0] text-[11px] font-bold uppercase tracking-[0.2em]"
+                >
+                  {brand}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#ccd5ae]/60 block mb-4">
+              CELEBRITY &amp; ARTIST BTS COLLABORATIONS
+            </span>
+            <div className="flex flex-wrap gap-2.5 sm:gap-3">
+              {(data.celebrities || [
+                'Arijit Singh', 'Divine', 'Fukra Insaan', 'Palak Muchhal', 'Neha Bhasin', 'Monali Thakur'
+              ]).map((celeb: string, cIdx: number) => (
+                <span
+                  key={cIdx}
+                  className="px-4 py-2 rounded-full bg-[#ccd5ae]/15 border border-[#ccd5ae]/30 text-[#ccd5ae] text-[11px] font-bold uppercase tracking-[0.2em]"
+                >
+                  ★ {celeb}
+                </span>
+              ))}
             </div>
           </div>
         </div>

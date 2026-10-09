@@ -70,7 +70,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ data }) => {
                 Industry Endorsements
               </h3>
               <p className="text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal">
-                Sydenham College graduate. Direct references from industry directors Saurabh Prajapati and Uma &amp; Gaiti.
+                Sydenham College graduate. Direct references from Saurabh Prajapati and Uma &amp; Gaiti. On-set collaborations with Divine, Fukra Insaan, Neha Bhasin, Palak Muchhal, Monali Thakur, and Arijit Singh.
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { PhotoItem } from '../../lib/store';
-import { X, ArrowUpRight, FolderOpen, Plus } from 'lucide-react';
+import { X, ArrowUpRight, FolderOpen } from 'lucide-react';
 import { InteractiveFolder } from '../InteractiveFolder';
 
 interface PhotosSectionProps {
@@ -74,7 +74,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
         </div>
 
         {/* ── Interactive Folders Showcase ── */}
-        <div className="p-8 sm:p-12 rounded-[3.5rem] bg-[#e9edc9]/50 border border-[#01472e]/15 shadow-sm mb-20">
+        <div className="p-8 sm:p-12 rounded-[3.5rem] bg-[#e9edc9]/50 border border-[#01472e]/15 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 pb-4 border-b border-[#01472e]/15 gap-4">
             <div className="flex items-center gap-2.5">
               <FolderOpen size={20} className="text-[#01472e]" />
@@ -139,60 +139,6 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
             })}
           </div>
         </div>
-
-        {/* ── All Production Stills Grid (NO Filter bar!) ── */}
-        <div className="mb-8 border-b border-[#01472e]/15 pb-4 flex justify-between items-center">
-          <span className="font-display uppercase text-2xl text-[#01472e] tracking-tight">
-            RECENT STILLS &amp; BTS CUTS
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#01472e]/60">
-            {photos.length} TOTAL PHOTOGRAPHS
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {photos.map((photo, idx) => (
-            <div
-              key={photo.id || idx}
-              onClick={() => setActivePhoto(photo)}
-              className="group cursor-pointer flex flex-col"
-            >
-              {/* 4/5 Aspect Ratio Image Container with 2.5rem radius */}
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2.5rem] bg-[#01472e]/10 border border-[#01472e]/15 shadow-[0_25px_50px_-12px_rgba(1,71,46,0.18)]">
-                <img
-                  src={photo.imageUrl}
-                  alt={photo.title}
-                  className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  loading="lazy"
-                />
-
-                {/* Subtle organic green hover tint */}
-                <div className="absolute inset-0 bg-[#01472e]/0 group-hover:bg-[#01472e]/20 transition-colors duration-500 pointer-events-none" />
-
-                {/* Floating Top-Right View Icon */}
-                <div className="absolute top-5 right-5 w-12 h-12 rounded-full bg-[#fefae0] text-[#01472e] flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-xl">
-                  <ArrowUpRight size={20} />
-                </div>
-              </div>
-
-              {/* Metadata */}
-              <div className="mt-4 pt-3 border-t border-[#01472e]/15 flex flex-col gap-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base sm:text-lg font-bold uppercase tracking-tight text-[#01472e] group-hover:opacity-80 transition-opacity">
-                    {photo.title}
-                  </h3>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#01472e]/60">
-                    {photo.date || "2024"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/70">
-                  <span>{photo.category}</span>
-                  <span className="text-[#01472e]/40">[PHOTO STILL]</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* ── EXPANDED FULL FOLDER VIEW MODAL (PORTALED to prevent clipping!) ── */}
@@ -221,20 +167,13 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
                 </div>
               </div>
 
-              {/* Action buttons */}
+              {/* Close Button */}
               <div className="flex items-center gap-3">
-                <a
-                  href="#admin"
-                  onClick={() => setActiveFolderModal(null)}
-                  className="px-5 py-2.5 rounded-full bg-[#01472e] text-[#fefae0] text-[10px] font-bold uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center gap-1.5 shadow-md"
-                >
-                  <Plus size={14} />
-                  <span>ADD MORE PHOTOS</span>
-                </a>
                 <button
                   type="button"
                   onClick={() => setActiveFolderModal(null)}
                   className="w-11 h-11 rounded-full bg-[#01472e]/10 hover:bg-[#01472e] text-[#01472e] hover:text-[#fefae0] flex items-center justify-center transition-colors shadow-sm"
+                  aria-label="Close Folder"
                 >
                   <X size={20} />
                 </button>

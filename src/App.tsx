@@ -9,6 +9,7 @@ import { DifferenceCursor } from './components/DifferenceCursor';
 
 // Section Components matching Earthy Editorial + Video Portfolio spec
 import { HeroSection } from './components/sections/HeroSection';
+import { BrandShowcase } from './components/sections/BrandShowcase';
 import { ProjectsSection } from './components/sections/ProjectsSection';
 import { AsymmetricalMarquee } from './components/AsymmetricalMarquee';
 import { PhotosSection } from './components/sections/PhotosSection';
@@ -134,6 +135,9 @@ function MainApp() {
       >
         {/* 1. Massive Display Hero (Background: Sage #ccd5ae) */}
         <HeroSection data={data} />
+
+        {/* 1.5. Client Brands & Celebrity Collaborations Showcase */}
+        <BrandShowcase data={data} />
 
         {/* 2. Feature / Project Grid (Background: Olive #e9edc9, rounded-t-[5rem]) */}
         <ProjectsSection
