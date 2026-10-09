@@ -22,53 +22,140 @@ export const defaultData = {
     youtubeUrl: 'https://youtube.com',
   },
   photos: [
+    // 1. Celebrity BTS
     {
       id: 'ph1',
-      title: 'Celebrity BTS Shoot',
+      title: 'Celebrity BTS On-Set Focus',
       category: 'Celebrity BTS',
       imageUrl: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop',
       description: 'Behind the scenes camera setup for high-profile celebrity brand shoot in Mumbai.',
       date: '2024'
     },
     {
+      id: 'ph1_2',
+      title: 'Backstage Celebrity Lighting & Rig',
+      category: 'Celebrity BTS',
+      imageUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000&auto=format&fit=crop',
+      description: 'Handheld gimbal and prime lens setup during celebrity wardrobe change.',
+      date: '2024'
+    },
+    {
+      id: 'ph1_3',
+      title: 'Vanity & Floor Coordination',
+      category: 'Celebrity BTS',
+      imageUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1000&auto=format&fit=crop',
+      description: 'Directing behind-the-scenes moments before the main commercial takes.',
+      date: '2024'
+    },
+    {
+      id: 'ph1_4',
+      title: 'Director & Talent Interaction',
+      category: 'Celebrity BTS',
+      imageUrl: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=1000&auto=format&fit=crop',
+      description: 'On-set frame check with the director and celebrity artist.',
+      date: '2024'
+    },
+
+    // 2. Commercial & Brand Shoots
+    {
+      id: 'ph5',
+      title: 'Luxury Fashion Brand Promo',
+      category: 'Commercial',
+      imageUrl: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1000&auto=format&fit=crop',
+      description: 'High-speed camera tracking on studio turntable setup in Mumbai.',
+      date: '2024'
+    },
+    {
+      id: 'ph5_2',
+      title: 'Commercial Product Lighting',
+      category: 'Commercial',
+      imageUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1000&auto=format&fit=crop',
+      description: 'Macro cinematography and atmospheric smoke haze for beverage commercial.',
+      date: '2024'
+    },
+    {
+      id: 'ph5_3',
+      title: 'Apparel Studio Campaign',
+      category: 'Commercial',
+      imageUrl: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1000&auto=format&fit=crop',
+      description: 'Editorial grade camera movement and lighting for designer apparel brand.',
+      date: '2023'
+    },
+    {
+      id: 'ph6',
+      title: 'Cinematic Event & Heritage Production',
+      category: 'Commercial',
+      imageUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop',
+      description: 'Cinematic wedding storytelling & event highlights filming.',
+      date: '2023'
+    },
+
+    // 3. Music Videos & Live Events
+    {
       id: 'ph2',
-      title: 'Live Music Concert Coverage',
+      title: 'Live Music Concert Visuals',
       category: 'Live Events',
       imageUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000&auto=format&fit=crop',
-      description: 'Dynamic stage videography and crowd atmosphere capture.',
+      description: 'Dynamic stage videography and crowd atmosphere capture at EDM music festival.',
       date: '2024'
     },
     {
       id: 'ph3',
       title: 'Music Album Shoot On-Set',
-      category: 'Music Videos',
+      category: 'Live Events',
       imageUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop',
       description: 'Cinematic lighting setup and associate direction during music video filming.',
       date: '2023'
     },
     {
-      id: 'ph4',
-      title: 'Premiere Pro Editing Suite',
-      category: 'Editing',
-      imageUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1000&auto=format&fit=crop',
-      description: 'Timeline workflow & color grading setup for commercial reels.',
+      id: 'ph3_3',
+      title: 'Underground Hip-Hop Music Video',
+      category: 'Live Events',
+      imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop',
+      description: 'Location shoot in Mumbai streets with smoke, wide angle lenses, and fast cuts.',
       date: '2024'
     },
     {
-      id: 'ph5',
-      title: 'Commercial Brand Shoot',
-      category: 'Commercial',
-      imageUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000&auto=format&fit=crop',
-      description: 'On-floor management and videography for fashion brand promo.',
+      id: 'ph3_4',
+      title: 'Dance Choreography Film Cut',
+      category: 'Live Events',
+      imageUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=1000&auto=format&fit=crop',
+      description: 'Dynamic tracking shots following choreography with Uma & Gaiti.',
       date: '2023'
     },
+
+    // 4. Edit Suite & Post Production
     {
-      id: 'ph6',
-      title: 'Wedding Highlights Production',
-      category: 'Wedding',
-      imageUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop',
-      description: 'Cinematic wedding storytelling & event highlights filming.',
-      date: '2023'
+      id: 'ph4',
+      title: 'Premiere Pro Timeline Master',
+      category: 'Editing',
+      imageUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1000&auto=format&fit=crop',
+      description: 'Multi-cam sync timeline workflow & color grading setup for commercial reels.',
+      date: '2024'
+    },
+    {
+      id: 'ph4_2',
+      title: 'Audio Beat Matching & SFX Suite',
+      category: 'Editing',
+      imageUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop',
+      description: 'Precision rhythmic cut markers, sound design risers, and Foley integration.',
+      date: '2024'
+    },
+    {
+      id: 'ph4_3',
+      title: 'DaVinci Resolve Color Grading',
+      category: 'Editing',
+      imageUrl: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop',
+      description: 'Creating custom film emulation LUTs and balanced skin tones for commercial export.',
+      date: '2024'
+    },
+    {
+      id: 'ph4_4',
+      title: 'After Effects Visual Motion Suite',
+      category: 'Editing',
+      imageUrl: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=1000&auto=format&fit=crop',
+      description: 'Kinetic typography, motion graphics, and clean screen replacements.',
+      date: '2024'
     }
   ] as PhotoItem[],
   videoProjects: [

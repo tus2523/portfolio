@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Briefcase, Calendar } from 'lucide-react';
 import { defaultData } from '../../lib/store';
@@ -97,16 +98,16 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
         )}
       </div>
 
-      {/* Experience Details Modal */}
+      {/* Experience Details Modal (PORTALED to document.body) */}
       <AnimatePresence>
-        {activeExp && (
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-6">
+        {activeExp && typeof document !== 'undefined' && createPortal(
+          <div className="fixed inset-0 z-[999999] flex items-center justify-center p-6">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setActiveExp(null)}
-              className="absolute inset-0 bg-[#01472e]/80 backdrop-blur-md"
+              className="absolute inset-0 bg-[#01472e]/85 backdrop-blur-md"
             />
 
             <motion.div
@@ -114,7 +115,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 30 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-xl bg-[#fefae0] border border-[#01472e]/20 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] z-10 flex flex-col gap-6 text-[#01472e]"
+              className="relative w-full max-w-xl bg-[#fefae0] border border-[#01472e]/20 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] z-10 flex flex-col gap-6 text-[#01472e]"
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -144,7 +145,8 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
                 CLOSE
               </button>
             </motion.div>
-          </div>
+          </div>,
+          document.body
         )}
       </AnimatePresence>
     </section>

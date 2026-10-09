@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { PhotoItem } from '../../lib/store';
-import { X, ArrowUpRight, FolderOpen, Maximize2 } from 'lucide-react';
+import { X, ArrowUpRight, FolderOpen, Plus } from 'lucide-react';
 import { InteractiveFolder } from '../InteractiveFolder';
 
 interface PhotosSectionProps {
@@ -8,46 +9,39 @@ interface PhotosSectionProps {
 }
 
 export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activePhoto, setActivePhoto] = useState<PhotoItem | null>(null);
+  const [activeFolderModal, setActiveFolderModal] = useState<any | null>(null);
 
   if (!photos || photos.length === 0) return null;
 
-  const categories = ['All', ...Array.from(new Set(photos.map((p) => p.category).filter(Boolean)))];
-
-  const filteredPhotos =
-    selectedCategory === 'All'
-      ? photos
-      : photos.filter((p) => p.category === selectedCategory);
-
-  // Group photos for interactive folders
+  // Group photos into 4 primary production folders
   const folderSets = [
     {
       id: 'bts',
       label: 'BTS ARCHIVE',
       color: '#01472e',
-      category: 'Celebrity BTS',
+      description: 'Celebrity BTS videography, prime lens setups, vanity trailers, and on-floor camera coordination across Mumbai sets.',
       photos: photos.filter(p => p.category?.toLowerCase().includes('bts') || p.category?.toLowerCase().includes('celebrity')),
     },
     {
       id: 'comm',
       label: 'COMMERCIAL',
       color: '#025235',
-      category: 'Commercial',
+      description: 'High-speed turntable tracking, commercial studio lighting, macro drink styling, and apparel campaign shoots.',
       photos: photos.filter(p => p.category?.toLowerCase().includes('commercial') || p.category?.toLowerCase().includes('wedding')),
     },
     {
       id: 'music',
       label: 'MUSIC & LIVE',
       color: '#1b4d3e',
-      category: 'Live Events',
+      description: 'EDM festival mainstages, live concert atmosphere, dynamic dance choreography, and rap music video cuts.',
       photos: photos.filter(p => p.category?.toLowerCase().includes('music') || p.category?.toLowerCase().includes('live')),
     },
     {
       id: 'suite',
       label: 'EDIT SUITE',
       color: '#2a6041',
-      category: 'Editing',
+      description: 'Multi-cam Premiere Pro timelines, DaVinci Resolve color science, custom LUT grading, and After Effects motion suite.',
       photos: photos.filter(p => p.category?.toLowerCase().includes('edit')),
     },
   ];
@@ -55,7 +49,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
   return (
     <section
       id="photos"
-      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#fefae0] text-[#01472e] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.12)] overflow-hidden"
+      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#fefae0] text-[#01472e] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.12)]"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
@@ -71,16 +65,16 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
 
           <div className="flex flex-col gap-2 max-w-sm self-start lg:self-end">
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/60">
-              Interactive Production Folders
+              Interactive Classified Folders
             </span>
             <p className="text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal">
-              Click folders below to reveal drifting stills and on-set archives.
+              Click any folder below to open the complete collection and browse all production stills.
             </p>
           </div>
         </div>
 
         {/* ── Interactive Folders Showcase ── */}
-        <div className="mb-20 p-8 sm:p-12 rounded-[3.5rem] bg-[#e9edc9]/50 border border-[#01472e]/15 shadow-sm">
+        <div className="p-8 sm:p-12 rounded-[3.5rem] bg-[#e9edc9]/50 border border-[#01472e]/15 shadow-sm mb-20">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 pb-4 border-b border-[#01472e]/15 gap-4">
             <div className="flex items-center gap-2.5">
               <FolderOpen size={20} className="text-[#01472e]" />
@@ -89,53 +83,55 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
               </h3>
             </div>
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/60">
-              [Click Folder To Open • Hover Papers To Drift]
+              [Click Folder To Open Full Stills Album]
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 justify-items-center py-6">
             {folderSets.map((fSet) => {
-              const folderPhotos = fSet.photos.length > 0 ? fSet.photos : photos.slice(0, 3);
-              const items = folderPhotos.slice(0, 3).map((item, pIdx) => (
+              const folderPhotos = fSet.photos.length > 0 ? fSet.photos : photos.slice(0, 4);
+
+              // 3 top preview cards for the folder animation
+              const previewItems = folderPhotos.slice(0, 3).map((item, pIdx) => (
                 <div
                   key={item.id || pIdx}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActivePhoto(item);
+                    setActiveFolderModal(fSet);
                   }}
-                  className="w-full h-full relative cursor-pointer group/photo overflow-hidden rounded-[8px]"
-                  title={`Click to view: ${item.title}`}
+                  className="w-full h-full relative cursor-pointer overflow-hidden rounded-[8px]"
+                  title={`Open ${fSet.label}`}
                 >
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover group-hover/photo:scale-115 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-[#01472e]/20 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center">
-                    <Maximize2 size={12} className="text-[#fefae0]" />
-                  </div>
                 </div>
               ));
 
               return (
-                <div key={fSet.id} className="flex flex-col items-center gap-4">
+                <div key={fSet.id} className="flex flex-col items-center gap-5 w-full">
                   <InteractiveFolder
-                    size={1.3}
+                    size={1.15}
                     color={fSet.color}
                     label={fSet.label}
-                    items={items}
+                    items={previewItems}
+                    count={folderPhotos.length}
+                    onClick={() => setActiveFolderModal(fSet)}
                   />
 
-                  <div className="flex flex-col items-center text-center mt-3">
-                    <span className="font-display uppercase text-lg text-[#01472e] tracking-tight">
+                  <div className="flex flex-col items-center text-center mt-2 w-full">
+                    <span className="font-display uppercase text-xl text-[#01472e] tracking-tight">
                       {fSet.label}
                     </span>
                     <button
                       type="button"
-                      onClick={() => setSelectedCategory(fSet.category in categories ? fSet.category : 'All')}
-                      className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#01472e]/70 hover:text-[#01472e] underline mt-0.5"
+                      onClick={() => setActiveFolderModal(fSet)}
+                      className="mt-2 px-4 py-2 rounded-full bg-[#01472e] text-[#fefae0] text-[9px] font-bold uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center gap-1.5 shadow-md"
                     >
-                      FILTER GALLERY ({folderPhotos.length} STILLS)
+                      <span>VIEW ALL ({folderPhotos.length} STILLS)</span>
+                      <ArrowUpRight size={12} />
                     </button>
                   </div>
                 </div>
@@ -144,35 +140,18 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
           </div>
         </div>
 
-        {/* Filter Pills Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-12 pb-4 border-b border-[#01472e]/15">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/60">
-              Filter By Collection:
-            </span>
-          </div>
-
-          <div className="flex flex-wrap gap-2.5">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.25em] transition-all duration-300 ${
-                  selectedCategory === cat
-                    ? 'bg-[#01472e] text-[#fefae0] shadow-[0_10px_20px_-5px_rgba(1,71,46,0.25)]'
-                    : 'bg-[#e9edc9] text-[#01472e] border border-[#01472e]/15 hover:bg-[#ccd5ae]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        {/* ── All Production Stills Grid (NO Filter bar!) ── */}
+        <div className="mb-8 border-b border-[#01472e]/15 pb-4 flex justify-between items-center">
+          <span className="font-display uppercase text-2xl text-[#01472e] tracking-tight">
+            RECENT STILLS &amp; BTS CUTS
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#01472e]/60">
+            {photos.length} TOTAL PHOTOGRAPHS
+          </span>
         </div>
 
-        {/* 3-Column Photo Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {filteredPhotos.map((photo, idx) => (
+          {photos.map((photo, idx) => (
             <div
               key={photo.id || idx}
               onClick={() => setActivePhoto(photo)}
@@ -216,10 +195,95 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      {activePhoto && (
+      {/* ── EXPANDED FULL FOLDER VIEW MODAL (PORTALED to prevent clipping!) ── */}
+      {activeFolderModal && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-[#01472e]/95 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-300"
+          className="fixed inset-0 z-[999999] bg-[#01472e]/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in font-sans"
+          onClick={() => setActiveFolderModal(null)}
+        >
+          <div
+            className="relative w-full max-w-6xl max-h-[90vh] bg-[#fefae0] rounded-[3rem] p-6 sm:p-10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] border border-[#01472e]/20 text-[#01472e] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Folder Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#01472e]/15 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-[#01472e] text-[#fefae0] flex items-center justify-center shadow-md">
+                  <FolderOpen size={24} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#01472e]/60 block">
+                    PRODUCTION FOLDER
+                  </span>
+                  <h3 className="font-display uppercase text-3xl sm:text-4xl text-[#01472e] tracking-tight">
+                    {activeFolderModal.label}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-3">
+                <a
+                  href="#admin"
+                  onClick={() => setActiveFolderModal(null)}
+                  className="px-5 py-2.5 rounded-full bg-[#01472e] text-[#fefae0] text-[10px] font-bold uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center gap-1.5 shadow-md"
+                >
+                  <Plus size={14} />
+                  <span>ADD MORE PHOTOS</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActiveFolderModal(null)}
+                  className="w-11 h-11 rounded-full bg-[#01472e]/10 hover:bg-[#01472e] text-[#01472e] hover:text-[#fefae0] flex items-center justify-center transition-colors shadow-sm"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Folder Description */}
+            <p className="text-xs sm:text-sm text-[#01472e]/80 py-4 font-normal leading-relaxed border-b border-[#01472e]/10">
+              {activeFolderModal.description}
+            </p>
+
+            {/* All Photos in this Folder Grid */}
+            <div className="overflow-y-auto pt-6 pb-2 pr-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {(activeFolderModal.photos || []).map((pItem: PhotoItem, pIdx: number) => (
+                  <div
+                    key={pItem.id || pIdx}
+                    onClick={() => setActivePhoto(pItem)}
+                    className="group cursor-pointer flex flex-col"
+                  >
+                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] bg-[#01472e]/10 border border-[#01472e]/15 shadow-md">
+                      <img
+                        src={pItem.imageUrl}
+                        alt={pItem.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-[#01472e]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="px-3 py-1.5 rounded-full bg-[#fefae0] text-[#01472e] text-[9px] font-bold uppercase tracking-widest shadow-md">
+                          VIEW FULL
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-[#01472e]">
+                      <span className="truncate max-w-[80%]">{pItem.title}</span>
+                      <span className="text-[#01472e]/50">{pItem.date || '2024'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ── LIGHTBOX MODAL (PORTALED to prevent clipping!) ── */}
+      {activePhoto && typeof document !== 'undefined' && createPortal(
+        <div
+          className="fixed inset-0 z-[9999999] bg-[#01472e]/95 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in"
           onClick={() => setActivePhoto(null)}
         >
           <div
@@ -261,7 +325,8 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
               </span>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

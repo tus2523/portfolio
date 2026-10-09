@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { defaultData, getWhatsAppLink, updateSection } from '../../lib/store';
 import { db } from '../../lib/firebase';
 import { ref, set } from 'firebase/database';
@@ -238,10 +239,10 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
         </div>
       </div>
 
-      {/* Review Modal */}
-      {showReviewModal && (
+      {/* Review Modal (PORTALED to document.body) */}
+      {showReviewModal && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-[#01472e]/90 backdrop-blur-md flex items-center justify-center p-6 text-[#01472e]"
+          className="fixed inset-0 z-[999999] bg-[#01472e]/90 backdrop-blur-md flex items-center justify-center p-6 text-[#01472e]"
           onClick={() => setShowReviewModal(false)}
         >
           <div
@@ -333,7 +334,8 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </footer>
   );

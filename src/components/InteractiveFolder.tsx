@@ -19,8 +19,10 @@ export interface FolderProps {
   className?: string;
   /** Title or label to display on the folder */
   label?: string;
-  /** Optional callback when folder opens or closes */
-  onToggle?: (isOpen: boolean) => void;
+  /** Click handler for when user clicks folder */
+  onClick?: () => void;
+  /** Count of photos inside */
+  count?: number;
 }
 
 const darkenColor = (hex: string, percent: number): string => {
@@ -44,7 +46,8 @@ export function InteractiveFolder({
   items = [], 
   className = '',
   label,
-  onToggle
+  onClick,
+  count
 }: FolderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -56,7 +59,7 @@ export function InteractiveFolder({
     displayItems.push(null);
   }
 
-  const folderBackColor = darkenColor(color, 0.16);
+  const folderBackColor = darkenColor(color, 0.18);
   const paperColors = [
     '#fefae0',
     '#f7f3d5',
@@ -64,9 +67,8 @@ export function InteractiveFolder({
   ];
 
   const handleToggle = () => {
-    const next = !isOpen;
-    setIsOpen(next);
-    if (onToggle) onToggle(next);
+    setIsOpen(!isOpen);
+    if (onClick) onClick();
   };
 
   const handleMouseMove = (e: React.MouseEvent, index: number) => {
@@ -109,27 +111,33 @@ export function InteractiveFolder({
   return (
     <div 
       className={`relative flex items-center justify-center select-none ${className}`}
-      style={{ transform: `scale(${size})`, width: 140, height: 115 }}
+      style={{ transform: `scale(${size})`, width: 170, height: 125 }}
     >
       <div
         className="relative cursor-pointer group"
         onClick={handleToggle}
       >
-        {/* Folder Back */}
+        {/* Folder Back Container */}
         <div
-          className="relative w-[130px] h-[95px] transition-all duration-500 rounded-tr-[16px] rounded-br-[16px] rounded-bl-[16px]"
+          className="relative w-[150px] h-[105px] transition-all duration-500 rounded-tr-[18px] rounded-br-[18px] rounded-bl-[18px]"
           style={{ 
             backgroundColor: folderBackColor,
             boxShadow: isOpen 
-              ? '0 15px 35px -8px rgba(1, 71, 46, 0.35)' 
-              : '0 6px 18px -3px rgba(1, 71, 46, 0.2)'
+              ? '0 16px 36px -8px rgba(1, 71, 46, 0.4)' 
+              : '0 6px 18px -3px rgba(1, 71, 46, 0.25)'
           }}
         >
-          {/* Tab */}
+          {/* Tab on top left */}
           <div
-            className="absolute bottom-full left-0 w-[42px] h-[14px] rounded-t-[8px]"
+            className="absolute bottom-full left-0 w-[55px] h-[16px] rounded-t-[10px] flex items-center px-2"
             style={{ backgroundColor: folderBackColor }}
-          />
+          >
+            {count !== undefined && (
+              <span className="text-[8px] font-bold text-[#fefae0]/80 uppercase tracking-widest">
+                {count} RAW
+              </span>
+            )}
+          </div>
 
           {/* Papers / Stills inside */}
           {displayItems.map((item, i) => (
@@ -149,17 +157,17 @@ export function InteractiveFolder({
                 zIndex: 20,
                 backgroundColor: paperColors[i],
                 borderRadius: '10px',
-                width: i === 0 ? '90px' : i === 1 ? '100px' : '110px',
-                height: i === 0 ? '75px' : i === 1 ? '82px' : '88px',
-                boxShadow: '0 4px 14px rgba(1, 71, 46, 0.15)',
-                border: '1px solid rgba(1, 71, 46, 0.12)'
+                width: i === 0 ? '100px' : i === 1 ? '112px' : '125px',
+                height: i === 0 ? '82px' : i === 1 ? '90px' : '98px',
+                boxShadow: '0 4px 14px rgba(1, 71, 46, 0.2)',
+                border: '1px solid rgba(1, 71, 46, 0.15)'
               }}
             >
               {item || (
-                <div className="w-full h-full p-2 flex flex-col gap-1.5 opacity-30 bg-[#fefae0]">
-                  <div className="w-3/4 h-1.5 bg-[#01472e] rounded-full" />
-                  <div className="w-1/2 h-1.5 bg-[#01472e] rounded-full" />
-                  <div className="w-2/3 h-1.5 bg-[#01472e] rounded-full" />
+                <div className="w-full h-full p-2 flex flex-col justify-center items-center bg-[#fefae0]">
+                  <span className="text-[8px] font-bold uppercase tracking-wider text-[#01472e]/50">
+                    STILL {i + 1}
+                  </span>
                 </div>
               )}
             </motion.div>
@@ -176,7 +184,7 @@ export function InteractiveFolder({
             className="absolute inset-0 z-30 origin-bottom"
             style={{
               backgroundColor: color,
-              borderRadius: '8px 16px 16px 16px',
+              borderRadius: '8px 18px 18px 18px',
               clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)'
             }}
           />
@@ -192,16 +200,27 @@ export function InteractiveFolder({
             className="absolute inset-0 z-30 origin-bottom"
             style={{
               backgroundColor: color,
-              borderRadius: '8px 16px 16px 16px',
+              borderRadius: '8px 18px 18px 18px',
               clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)'
             }}
-          >
-            {label && !isOpen && (
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#fefae0] text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap px-2 font-sans">
+          />
+
+          {/* ── Prominent Folder Front Label (Fully unclipped & crisp!) ── */}
+          {label && (
+            <motion.div
+              animate={{
+                opacity: isOpen ? 0 : 1,
+                scale: isOpen ? 0.8 : 1,
+                translateY: isOpen ? -8 : 0,
+              }}
+              transition={{ duration: 0.25 }}
+              className="absolute inset-x-2 bottom-3.5 z-40 flex items-center justify-center pointer-events-none"
+            >
+              <div className="px-3 py-1.5 rounded-lg bg-[#01472e] border border-[#fefae0]/30 text-[#fefae0] text-[10px] font-bold tracking-[0.2em] uppercase text-center shadow-lg font-sans w-full max-w-[130px] truncate">
                 {label}
               </div>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
         </div>
       </div>
     </div>

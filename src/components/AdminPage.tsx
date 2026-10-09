@@ -623,8 +623,22 @@ const PhotosManagement: React.FC<{ data: typeof defaultData; save: (s: string, v
                 <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm text-[#D7E2EA]" placeholder="e.g. Celebrity BTS Shoot" value={form.title} onChange={e => setForm(p => ({...p, title: e.target.value}))} />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/40">Category</label>
-                <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm text-[#D7E2EA]" placeholder="e.g. Celebrity BTS, Live Events, Music Videos" value={form.category} onChange={e => setForm(p => ({...p, category: e.target.value}))} />
+                <label className="text-[10px] uppercase tracking-widest text-[#D7E2EA]/40">Folder / Category</label>
+                <div className="flex flex-wrap gap-2 mb-1.5">
+                  {['Celebrity BTS', 'Commercial', 'Live Events', 'Editing'].map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setForm(p => ({...p, category: cat}))}
+                      className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase transition ${
+                        form.category === cat ? 'bg-[#7621B0] text-white' : 'bg-[#1a1a1a] text-[#888] hover:text-white'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+                <input className="bg-[#0C0C0C] border border-[#222] rounded p-2 text-sm text-[#D7E2EA]" placeholder="e.g. Celebrity BTS, Commercial, Live Events, Editing" value={form.category} onChange={e => setForm(p => ({...p, category: e.target.value}))} />
               </div>
               <ImageUpload
                 value={form.imageUrl}

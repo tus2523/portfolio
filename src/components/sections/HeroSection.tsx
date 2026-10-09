@@ -202,51 +202,56 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
           </span>
         </div>
 
-        {/* Centerpiece: Massive 'Anton' text (23vw) with Staggered Letter Reveal */}
-        <div className="my-auto py-6 sm:py-10 text-center flex flex-col items-center justify-center relative z-20">
-          <div className="flex flex-col items-center justify-center w-full overflow-visible">
+        {/* Centerpiece: Massive 'Anton' text with Staggered Letter Reveal */}
+        <div className="my-auto py-4 sm:py-8 text-center flex flex-col items-center justify-center relative z-20">
+          <div className="flex flex-col items-center justify-center w-full gap-1 sm:gap-2">
             {/* Row 1: TUSHAR */}
-            <h1
-              className="font-display uppercase tracking-[-0.05em] leading-[0.75] text-[#01472e] flex justify-center text-[22vw] select-none"
-              aria-label="TUSHAR MARU"
-            >
-              {line1.split("").map((char, cIdx) => (
-                <motion.span
-                  key={`l1-${cIdx}`}
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: "0%", opacity: 1 }}
-                  transition={{
-                    delay: cIdx * 0.05,
-                    duration: 1.2,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="inline-block"
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </h1>
+            <div className="overflow-hidden">
+              <h1
+                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(4rem,15vw,190px)] select-none"
+                aria-label="TUSHAR"
+              >
+                {line1.split("").map((char, cIdx) => (
+                  <motion.span
+                    key={`l1-${cIdx}`}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }}
+                    transition={{
+                      delay: cIdx * 0.05,
+                      duration: 1.0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="inline-block"
+                  >
+                    {char}
+                  </motion.span>
+                ))}
+              </h1>
+            </div>
 
             {/* Row 2: MARU */}
-            <h1
-              className="font-display uppercase tracking-[-0.05em] leading-[0.75] text-[#01472e] flex justify-center text-[22vw] select-none -mt-[2vw] sm:-mt-[1.5vw]"
-            >
-              {line2.split("").map((char, cIdx) => (
-                <motion.span
-                  key={`l2-${cIdx}`}
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: "0%", opacity: 1 }}
-                  transition={{
-                    delay: (line1.length + cIdx) * 0.05,
-                    duration: 1.2,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="inline-block"
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </h1>
+            <div className="overflow-hidden">
+              <h1
+                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(4rem,15vw,190px)] select-none"
+                aria-label="MARU"
+              >
+                {line2.split("").map((char, cIdx) => (
+                  <motion.span
+                    key={`l2-${cIdx}`}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }}
+                    transition={{
+                      delay: (line1.length + cIdx) * 0.05,
+                      duration: 1.0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="inline-block"
+                  >
+                    {char}
+                  </motion.span>
+                ))}
+              </h1>
+            </div>
           </div>
         </div>
 
