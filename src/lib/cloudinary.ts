@@ -9,7 +9,7 @@ export interface CloudinaryConfig {
 }
 
 export function getCloudinaryConfig(): CloudinaryConfig {
-  // 1. Check Store / Firebase settings
+  // 1. Check Store settings
   try {
     const storeSettings = getData().settings;
     if (storeSettings?.cloudinaryCloudName && storeSettings?.cloudinaryUploadPreset) {

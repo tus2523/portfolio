@@ -16,11 +16,9 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { db } from '../lib/firebase';
-import { ref, set, onValue } from 'firebase/database';
 import {
   getData,
-  saveData,
+  updateSection,
   resetData,
   login,
   logout,
@@ -116,19 +114,7 @@ const AdminPageInner: React.FC = () => {
   useEffect(() => {
     setIsMounted(true);
     setAuthed(isLoggedIn());
-
-    const portfolioRef = ref(db, 'tushar_portfolio_content');
-    const unsubscribe = onValue(portfolioRef, (snapshot) => {
-      const fbData = snapshot.val();
-      if (fbData) {
-        setData(fbData);
-        saveData(fbData);
-      } else {
-        setData(getData());
-      }
-    });
-
-    return () => unsubscribe();
+    setData(getData());
   }, []);
 
   if (!isMounted) return <div style={{ minHeight: '100vh', background: '#0C0C0C' }} />;
@@ -196,18 +182,10 @@ const AdminPageInner: React.FC = () => {
     setTimeout(() => setSaved(''), 2500);
   };
 
-  const save = async (section: string, val: any) => {
-    const updated = { ...data, [section]: val };
+  const save = (section: string, val: any) => {
+    const updated = updateSection(section, val);
     setData(updated);
-    
-    try {
-      const sectionRef = ref(db, `tushar_portfolio_content/${section}`);
-      await set(sectionRef, val);
-      flash('Synced live to database & local store! ✨');
-    } catch (err) {
-      console.warn("Saved to local storage:", err);
-      flash('Saved to local storage! ✨');
-    }
+    flash('Saved to portfolio store! ✨');
   };
 
   const handleDragEnd = (event: DragEndEvent) => {

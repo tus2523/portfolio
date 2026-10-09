@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { defaultData, getWhatsAppLink, updateSection } from '../../lib/store';
-import { db } from '../../lib/firebase';
-import { ref, set } from 'firebase/database';
 import { Star, ArrowUpRight, ArrowRight } from 'lucide-react';
 
 interface FooterSectionProps {
@@ -50,14 +48,6 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
 
     const updatedReviews = [newReview, ...(data.reviews || [])];
     updateSection('reviews', updatedReviews);
-
-    try {
-      const reviewsRef = ref(db, 'tushar_portfolio_content/reviews');
-      await set(reviewsRef, updatedReviews);
-    } catch (err) {
-      console.warn('Saved review locally:', err);
-    }
-
     setSubmitted(true);
     setName('');
     setComment('');

@@ -1,8 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { db } from './lib/firebase';
-import { ref, onValue } from 'firebase/database';
-import { getData, saveData, getYoutubeId, getInstagramId, defaultData } from './lib/store';
+import { getData, getYoutubeId, getInstagramId, defaultData } from './lib/store';
 import { AdminPage } from './components/AdminPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { DifferenceCursor } from './components/DifferenceCursor';
@@ -45,39 +43,16 @@ function MainApp() {
     }
   };
 
-  // Sync Database Content
+  // Sync Portfolio Data
   useEffect(() => {
     setData(getData());
 
-    const portfolioRef = ref(db, 'tushar_portfolio_content');
-    const unsubscribePort = onValue(portfolioRef, (snapshot) => {
-      const fbData = snapshot.val();
-      if (fbData) {
-        setData(prev => {
-          const merged = {
-            ...prev,
-            ...fbData,
-            heroStats: { ...prev.heroStats, ...(fbData.heroStats || {}) },
-            about: { ...prev.about, ...(fbData.about || {}) },
-            photos: fbData.photos || prev.photos || defaultData.photos,
-            videoProjects: fbData.videoProjects || prev.videoProjects,
-            reviews: fbData.reviews || prev.reviews,
-            experience: fbData.experience || prev.experience,
-            education: fbData.education || prev.education,
-            skills: fbData.skills || prev.skills,
-            services: fbData.services || defaultData.services,
-            settings: { ...prev.settings, ...(fbData.settings || {}) }
-          };
-          saveData(merged);
-          return merged;
-        });
-      }
-    }, (error) => {
-      console.warn("Firebase connection notice:", error);
-    });
-
+    const handleStorageChange = () => {
+      setData(getData());
+    };
+    window.addEventListener('storage', handleStorageChange);
     return () => {
-      unsubscribePort();
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
