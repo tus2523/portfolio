@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, ArrowUpRight } from 'lucide-react';
 import { defaultData } from '../../lib/store';
@@ -9,63 +9,112 @@ interface HeroSectionProps {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const name = "TUSHAR MARU";
+  const [scrollY, setScrollY] = useState(0);
+
+  // Parallax scroll listener (speed factor 0.05)
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
-    { label: "Projects", href: "#projects" },
-    { label: "Gallery", href: "#photos" },
+    { label: "Films", href: "#projects" },
+    { label: "Stills", href: "#photos" },
     { label: "Services", href: "#services" },
-    { label: "Experience", href: "#experience" },
+    { label: "Timeline", href: "#experience" },
     { label: "References", href: "#reviews" },
     { label: "Contact", href: "#contact" },
   ];
 
+  const floatingImages = [
+    {
+      src: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop",
+      alt: "Cinema Lens & Camera Focus",
+      className: "top-[16%] left-[4%] sm:left-[8%] w-36 sm:w-52 md:w-64 aspect-[4/5]",
+      speed: 0.05,
+      delay: "0s",
+      initialRotate: -4,
+    },
+    {
+      src: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800&auto=format&fit=crop",
+      alt: "Motion Picture Film Aesthetic",
+      className: "top-[20%] right-[4%] sm:right-[7%] w-36 sm:w-52 md:w-60 aspect-[4/5]",
+      speed: -0.04,
+      delay: "1.5s",
+      initialRotate: 6,
+    },
+    {
+      src: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=800&auto=format&fit=crop",
+      alt: "Director & Editing Console",
+      className: "bottom-[22%] left-[6%] sm:left-[12%] hidden lg:block w-48 aspect-[4/3]",
+      speed: 0.06,
+      delay: "3.0s",
+      initialRotate: -3,
+    },
+  ];
+
+  const line1 = "TUSHAR";
+  const line2 = "MARU";
+
   return (
     <>
-      {/* ── Fixed Header with mix-blend-mode: difference ── */}
-      <header
-        className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 sm:px-12 md:px-16 py-6 pointer-events-auto"
-        style={{ mixBlendMode: 'difference' }}
-      >
-        {/* Left side: Lowercase Studio Logo */}
+      {/* ── Fixed Top Navigation ── */}
+      <header className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-6 sm:px-10 md:px-14 py-5 pointer-events-auto">
+        {/* Left: Logo with hyphen prefix */}
         <a
           href="#"
-          className="text-white text-2xl font-bold tracking-tighter uppercase font-sans hover:opacity-75 transition-opacity duration-300"
+          className="text-[#01472e] text-lg sm:text-xl font-bold uppercase tracking-[0.2em] font-sans hover:opacity-80 transition-opacity"
         >
-          tm<span className="text-white/40">.</span>
+          - TUSHAR MARU
         </a>
 
-        {/* Center / Right Links on Desktop */}
-        <div className="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-[0.15em] text-white/80">
+        {/* Center: Pill-shaped navigation bar */}
+        <nav className="hidden md:flex items-center gap-7 px-8 py-2.5 rounded-full bg-white/20 backdrop-blur-[20px] border border-[#01472e]/15 shadow-sm">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="hover:text-white transition-colors duration-300"
+              className="text-[#01472e] text-[10px] font-bold uppercase tracking-[0.25em] hover:text-[#01472e]/70 transition-colors"
             >
               {link.label}
             </a>
           ))}
           <a
             href="#admin"
-            className="text-white font-bold border border-white/30 px-3 py-1 rounded hover:bg-white hover:text-black transition duration-300"
+            className="text-[#01472e] text-[10px] font-bold uppercase tracking-[0.25em] pl-3 border-l border-[#01472e]/20 hover:underline"
           >
             Admin
           </a>
-        </div>
+        </nav>
 
-        {/* Right side: Plus Menu Toggle Button */}
-        <button
-          type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition duration-300"
-          aria-label="Toggle Navigation"
-        >
-          {menuOpen ? <X size={18} /> : <Plus size={18} />}
-        </button>
+        {/* Right: Cart/Action button with numeric counter badge in a cream pill */}
+        <div className="flex items-center gap-3">
+          <a
+            href="#projects"
+            className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#fefae0] text-[#01472e] border border-[#01472e]/15 shadow-[0_8px_20px_-6px_rgba(1,71,46,0.15)] text-[10px] font-bold uppercase tracking-[0.25em] hover:bg-[#01472e] hover:text-[#fefae0] transition-all duration-300"
+          >
+            <span>SHOWREEL</span>
+            <span className="w-5 h-5 rounded-full bg-[#01472e] text-[#fefae0] flex items-center justify-center text-[9px] font-bold group-hover:bg-[#fefae0] group-hover:text-[#01472e]">
+              85+
+            </span>
+          </a>
+
+          {/* Plus / Menu Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="w-10 h-10 rounded-full bg-[#fefae0] text-[#01472e] border border-[#01472e]/20 flex items-center justify-center hover:bg-[#01472e] hover:text-[#fefae0] transition-colors duration-300 shadow-sm"
+            aria-label="Toggle Navigation"
+          >
+            {menuOpen ? <X size={18} /> : <Plus size={18} />}
+          </button>
+        </div>
       </header>
 
-      {/* ── Slide-out Menu Overlay ── */}
+      {/* ── Slide-out Menu Overlay (Forest #01472e with Sage #ccd5ae text) ── */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -73,34 +122,38 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 bg-[#0A0A0A] z-40 flex flex-col justify-between p-8 sm:p-16 text-white pt-28"
+            className="fixed inset-0 bg-[#01472e] z-40 flex flex-col justify-between p-8 sm:p-14 text-[#ccd5ae] pt-28"
           >
             <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full">
-              <span className="font-mono text-xs text-[#737373] uppercase tracking-[0.2em]">Navigation Index</span>
-              <div className="flex flex-col gap-4">
+              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#ccd5ae]/60">
+                Index Navigation
+              </span>
+              <div className="flex flex-col gap-3">
                 {navLinks.map((link, idx) => (
                   <a
                     key={link.label}
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-4xl sm:text-6xl font-bold tracking-tight hover:text-[#737373] transition-colors duration-300 flex items-center justify-between border-b border-white/10 pb-3"
+                    className="font-display uppercase text-5xl sm:text-7xl leading-none text-[#fefae0] hover:text-[#ccd5ae] transition-colors flex items-center justify-between border-b border-[#ccd5ae]/20 pb-3"
                   >
                     <span>{link.label}</span>
-                    <span className="font-mono text-sm text-[#737373]">0{idx + 1}</span>
+                    <span className="font-sans text-xs uppercase tracking-[0.3em] text-[#ccd5ae]/50">
+                      0{idx + 1}
+                    </span>
                   </a>
                 ))}
                 <a
                   href="#admin"
                   onClick={() => setMenuOpen(false)}
-                  className="text-2xl font-mono uppercase tracking-wider text-white/60 hover:text-white pt-4 flex items-center gap-2"
+                  className="font-sans text-sm font-bold uppercase tracking-[0.25em] text-[#ccd5ae] hover:text-[#fefae0] pt-4 flex items-center gap-2"
                 >
-                  Admin Control Panel <ArrowUpRight size={18} />
+                  Admin Portal <ArrowUpRight size={16} />
                 </a>
               </div>
             </div>
 
-            <div className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row justify-between text-xs font-mono text-[#737373] border-t border-white/10 pt-6">
-              <span>MUMBAI, INDIA — 400011</span>
+            <div className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row justify-between text-[11px] font-bold uppercase tracking-[0.25em] text-[#ccd5ae]/60 border-t border-[#ccd5ae]/20 pt-6 gap-2">
+              <span>MUMBAI, MH — 400011</span>
               <span>MARUTUSHAR387@GMAIL.COM</span>
               <span>+91 9324704934</span>
             </div>
@@ -108,75 +161,111 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
         )}
       </AnimatePresence>
 
-      {/* ── Hero Section ── */}
-      <section className="min-h-[85vh] w-full flex flex-col justify-between pt-32 pb-12 px-6 sm:px-12 md:px-16 bg-[#FFFFFF] text-[#000000] font-sans relative overflow-hidden">
-        {/* Top Metadata Row */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs font-mono uppercase tracking-[0.1em] text-[#737373] border-b border-[#000000]/10 pb-4 w-full">
-          <span>Tushar Maru Studio</span>
-          <span>Videographer &amp; Video Editor</span>
+      {/* ── Hero Section (Background #ccd5ae) ── */}
+      <section className="min-h-screen w-full flex flex-col justify-between pt-28 pb-10 px-6 sm:px-10 md:px-14 bg-[#ccd5ae] text-[#01472e] font-sans relative overflow-hidden select-none">
+        {/* Floating Organic Cards (Parallax + @keyframes float) */}
+        {floatingImages.map((img, i) => {
+          const parallaxOffset = scrollY * img.speed;
+          return (
+            <div
+              key={i}
+              className={`absolute ${img.className} z-10 pointer-events-none hidden sm:block`}
+              style={{
+                transform: `translateY(${parallaxOffset}px)`,
+                transition: 'transform 0.1s linear',
+              }}
+            >
+              <div
+                className="w-full h-full overflow-hidden rounded-[3rem] shadow-[0_25px_50px_-12px_rgba(1,71,46,0.22)] border border-[#01472e]/10 animate-float"
+                style={{
+                  animationDelay: img.delay,
+                }}
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-full object-cover filter saturate-110"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Top Status Bar */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 border-b border-[#01472e]/15 pb-4 w-full relative z-20">
+          <span>TUSHAR MARU STUDIO</span>
+          <span>COMMERCIAL VIDEOGRAPHER &amp; EDITOR</span>
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
-            Available For Commissions
+            <span className="w-2 h-2 rounded-full bg-[#01472e] animate-ping" />
+            AVAILABLE FOR COMMISSIONS
           </span>
         </div>
 
-        {/* Center Display Headline: Staggered Letter Reveal */}
-        <div className="my-auto py-12 text-center flex flex-col items-center">
-          <div className="overflow-hidden">
+        {/* Centerpiece: Massive 'Anton' text (23vw) with Staggered Letter Reveal */}
+        <div className="my-auto py-6 sm:py-10 text-center flex flex-col items-center justify-center relative z-20">
+          <div className="flex flex-col items-center justify-center w-full overflow-visible">
+            {/* Row 1: TUSHAR */}
             <h1
-              className="font-bold tracking-[-0.05em] leading-[0.88] select-none text-[#000000] flex flex-wrap justify-center text-[clamp(3.2rem,12vw,180px)]"
-              aria-label={name}
+              className="font-display uppercase tracking-[-0.05em] leading-[0.75] text-[#01472e] flex justify-center text-[22vw] select-none"
+              aria-label="TUSHAR MARU"
             >
-              {name.split(" ").map((word, wIdx) => (
-                <span key={wIdx} className="inline-flex whitespace-nowrap mx-[0.15em]">
-                  {word.split("").map((char, cIdx) => (
-                    <motion.span
-                      key={cIdx}
-                      initial={{ y: "110%", opacity: 0 }}
-                      animate={{ y: "0%", opacity: 1 }}
-                      transition={{
-                        delay: (wIdx * 6 + cIdx) * 0.04,
-                        duration: 1.0,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      className="inline-block"
-                    >
-                      {char}
-                    </motion.span>
-                  ))}
-                </span>
+              {line1.split("").map((char, cIdx) => (
+                <motion.span
+                  key={`l1-${cIdx}`}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  transition={{
+                    delay: cIdx * 0.05,
+                    duration: 1.2,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="inline-block"
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </h1>
+
+            {/* Row 2: MARU */}
+            <h1
+              className="font-display uppercase tracking-[-0.05em] leading-[0.75] text-[#01472e] flex justify-center text-[22vw] select-none -mt-[2vw] sm:-mt-[1.5vw]"
+            >
+              {line2.split("").map((char, cIdx) => (
+                <motion.span
+                  key={`l2-${cIdx}`}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  transition={{
+                    delay: (line1.length + cIdx) * 0.05,
+                    duration: 1.2,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="inline-block"
+                >
+                  {char}
+                </motion.span>
               ))}
             </h1>
           </div>
-
-          {/* Sub-headline */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg sm:text-2xl md:text-[24px] text-[#525252] max-w-3xl mx-auto mt-8 font-normal tracking-[-0.02em] leading-snug px-4"
-          >
-            Specializing in high-energy video editing, celebrity behind-the-scenes shoots, commercial brand promos, and narrative post-production.
-          </motion.p>
         </div>
 
-        {/* Bottom Hero Stats Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-[#000000]/10 w-full text-left">
-          {[
-            { val: data.heroStats?.stat1Value || "50+", label: data.heroStats?.stat1Label || "Videos Edited" },
-            { val: data.heroStats?.stat2Value || "20+", label: data.heroStats?.stat2Label || "Brand Shoots" },
-            { val: data.heroStats?.stat3Value || "15+", label: data.heroStats?.stat3Label || "Celebrities BTS" },
-            { val: data.heroStats?.stat4Value || "2+", label: data.heroStats?.stat4Label || "Years Exp." },
-          ].map((item, idx) => (
-            <div key={idx} className="flex flex-col">
-              <span className="font-bold text-2xl sm:text-3xl text-[#000000] tracking-[-0.04em]">
-                {item.val}
-              </span>
-              <span className="text-[11px] sm:text-[13px] font-mono uppercase tracking-[0.1em] text-[#737373] mt-1">
-                {item.label}
-              </span>
-            </div>
-          ))}
+        {/* Bottom: Dual-column descriptive text and location/origin labels */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pt-6 border-t border-[#01472e]/15 w-full relative z-20 items-end">
+          {/* Left Column (7 cols): Descriptive Text */}
+          <div className="md:col-span-7">
+            <p className="text-sm sm:text-base md:text-lg text-[#01472e] font-normal leading-relaxed max-w-xl">
+              {data.about?.bio ||
+                "Skilled freelance videographer and video editor specializing in high-energy commercial visuals, celebrity behind-the-scenes shoots, and precision narrative editing across Mumbai & worldwide."}
+            </p>
+          </div>
+
+          {/* Right Column (5 cols): Location & Origin Labels */}
+          <div className="md:col-span-5 flex flex-col sm:items-end gap-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-[#01472e]/80">
+            <span>MUMBAI, MH — 18.9220° N, 72.8347° E</span>
+            <span>{data.heroStats?.stat1Value || "85+"} {data.heroStats?.stat1Label || "PROJECTS DELIVERED"}</span>
+            <span className="text-[#01472e]">ADOBE PREMIERE PRO • AFTER EFFECTS</span>
+          </div>
         </div>
       </section>
     </>

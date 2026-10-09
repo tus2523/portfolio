@@ -1,5 +1,6 @@
 import React from 'react';
 import { getYoutubeThumbnail } from '../lib/store';
+import { Play } from 'lucide-react';
 
 interface AsymmetricalMarqueeProps {
   videos: any[];
@@ -14,56 +15,67 @@ export const AsymmetricalMarquee: React.FC<AsymmetricalMarqueeProps> = ({ videos
 
   const getBorderRadiusClass = (idx: number) => {
     const mod = idx % 3;
-    if (mod === 0) return 'rounded-tl-[100px] rounded-br-[16px] rounded-tr-[16px] rounded-bl-[16px]';
-    if (mod === 1) return 'rounded-tr-[100px] rounded-bl-[40px] rounded-tl-[16px] rounded-br-[16px]';
-    return 'rounded-[40px]';
+    if (mod === 0) return 'rounded-tl-[5rem] rounded-br-[2rem] rounded-tr-[2rem] rounded-bl-[2rem]';
+    if (mod === 1) return 'rounded-tr-[5rem] rounded-bl-[3rem] rounded-tl-[2rem] rounded-br-[2rem]';
+    return 'rounded-[2.5rem]';
   };
 
   return (
-    <section className="w-full py-16 bg-[#FFFFFF] overflow-hidden border-y border-[#000000]/10 select-none">
-      <div className="max-w-7xl mx-auto px-6 mb-8 flex justify-between items-end">
+    <section className="w-full py-20 bg-[#a3b18a] text-[#01472e] overflow-hidden select-none relative z-10 border-t border-[#01472e]/10">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <span className="font-mono text-xs uppercase tracking-[0.1em] text-[#737373]">Featured Reel Highlights</span>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#000000] mt-1">Continuous Motion Archive</h2>
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70">
+            Archive Highlights
+          </span>
+          <h2 className="font-display uppercase text-3xl sm:text-4xl text-[#01472e] tracking-tight mt-1">
+            Continuous Motion Reel
+          </h2>
         </div>
-        <span className="hidden sm:inline-block font-mono text-xs text-[#737373] uppercase tracking-[0.1em]">Hover to pause / click to view</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/70">
+          [Hover to pause • Click to play]
+        </span>
       </div>
 
       <div className="w-full overflow-hidden group/marquee">
         <div
-          className="flex gap-6 w-max animate-marquee group-hover/marquee:[animation-play-state:paused]"
+          className="flex gap-8 w-max animate-marquee group-hover/marquee:[animation-play-state:paused]"
           style={{ animationDuration: '30s' }}
         >
           {displayVideos.map((video, idx) => {
-            const thumb = video.thumbnailUrl || getYoutubeThumbnail(video.url) || video.thumbnail || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop";
+            const thumb =
+              video.thumbnailUrl ||
+              getYoutubeThumbnail(video.url) ||
+              video.thumbnail ||
+              "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop";
             const radiusClass = getBorderRadiusClass(idx);
 
             return (
               <div
                 key={`${video.id}-${idx}`}
                 onClick={() => onSelectVideo(video)}
-                className={`w-[260px] sm:w-[290px] aspect-[5/7] flex-shrink-0 relative cursor-pointer overflow-hidden bg-neutral-900 border border-[#000000]/10 shadow-lg ${radiusClass} group transition-transform duration-500 hover:-translate-y-2`}
+                className={`w-[270px] sm:w-[310px] aspect-[5/7] flex-shrink-0 relative cursor-pointer overflow-hidden bg-[#01472e]/20 border border-[#01472e]/15 shadow-[0_20px_40px_-10px_rgba(1,71,46,0.25)] ${radiusClass} group transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2`}
               >
                 <img
                   src={thumb}
                   alt={video.title || "Project Video"}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  className="w-full h-full object-cover scale-100 group-hover:scale-108 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                   loading="lazy"
                 />
 
-                {/* Subtle dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
+                {/* Organic Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#01472e]/90 via-[#01472e]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
 
                 {/* Card Meta Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-5 text-white flex flex-col gap-1">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-white/70">
-                    {video.projectTitle || "Motion Work"}
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-[#fefae0] flex flex-col gap-1.5">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#ccd5ae]">
+                    {video.projectTitle || "Cinematography"}
                   </span>
-                  <h3 className="text-base font-bold tracking-tight text-white line-clamp-1">
-                    {video.title || "Cinematic Cut"}
+                  <h3 className="font-bold text-base sm:text-lg tracking-tight text-[#fefae0] line-clamp-1">
+                    {video.title || "Selected Motion Cut"}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-white/50 mt-1 uppercase tracking-wider">
-                    <span>▶ Watch Reel</span>
+                  <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae] mt-1">
+                    <Play size={10} fill="#ccd5ae" />
+                    <span>Watch Cut</span>
                   </div>
                 </div>
               </div>

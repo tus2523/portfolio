@@ -1,27 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Briefcase, Calendar } from 'lucide-react';
-import { FloatingEmoji } from '../FloatingEmoji';
 import { defaultData } from '../../lib/store';
-
-const getAssetUrl = (path: string) => {
-  const base = import.meta.env.BASE_URL || '/';
-  const cleanBase = base.endsWith('/') ? base : `${base}/`;
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-  return `${cleanBase}${cleanPath}`;
-};
-
-const GLASS_CAMERA = getAssetUrl('glass_camera.png');
-const GLASS_MEGAPHONE = getAssetUrl('glass_megaphone.png');
 
 interface ExperienceSectionProps {
   experience: typeof defaultData.experience;
   theme?: 'light' | 'dark';
 }
 
-export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience, theme = 'dark' }) => {
+export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience }) => {
   const [activeExp, setActiveExp] = useState<any | null>(null);
-  const isLight = theme === 'light';
 
   useEffect(() => {
     if (activeExp) {
@@ -38,110 +26,123 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
   }, [activeExp]);
 
   return (
-    <section id="experience" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C] border-[#0C0C0C]/5' : 'bg-[#08080A] text-[#D7E2EA] border-white/5'} py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-10 w-full relative ${activeExp ? 'z-[99999]' : 'z-20'} border-t shadow-inner overflow-hidden transition-colors duration-500 font-sans`}>
-      <FloatingEmoji src={GLASS_CAMERA} alt="Camera" className="top-[30%] left-[2%] sm:left-[4%]" rotation={-8} delay={2.2} lightBg={isLight} />
-      <FloatingEmoji src={GLASS_MEGAPHONE} alt="Megaphone" className="bottom-[30%] right-[2%] sm:right-[4%]" rotation={12} delay={2.4} lightBg={isLight} />
+    <section
+      id="experience"
+      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#ccd5ae] text-[#01472e] font-sans rounded-t-[5rem] -mt-16 sm:-mt-20 relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
+    >
+      <div className="max-w-5xl mx-auto flex flex-col">
+        {/* Section Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 sm:mb-20 border-b border-[#01472e]/15 pb-8 gap-8">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 block mb-2">
+              Career Trajectory — 05
+            </span>
+            <h2 className="font-display uppercase text-[15vw] leading-[0.8] tracking-[-0.05em] text-[#01472e]">
+              TIMELINE
+            </h2>
+          </div>
 
-      <div className="max-w-5xl mx-auto flex flex-col items-center mb-12 text-center relative z-10">
-        <p className="text-xs uppercase tracking-[0.25em] font-bold text-[#7621B0] mb-2">Production Timeline</p>
-        <h2 className="font-display font-extrabold uppercase text-[clamp(2.5rem,7.5vw,100px)] leading-none tracking-tight">
-          Work Experience
-        </h2>
-        <p className="font-editorial italic text-lg sm:text-2xl text-[#D7E2EA]/80 mt-3 max-w-2xl mx-auto">
-          On-Set Shoots, Film Post-Production &amp; Operational Direction
-        </p>
-      </div>
-      
-      {experience && experience.length > 0 ? (
-        <div className="max-w-4xl mx-auto relative pl-4 sm:pl-8 z-10">
-          {/* Vertical timeline filmstrip axis */}
-          <div className="absolute left-[20px] sm:left-[28px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-[#7621B0] via-purple-500/40 to-transparent" />
-          
-          <div className="flex flex-col gap-8">
-            {experience.map((ex) => (
-              <div key={ex.id} className="relative pl-8 sm:pl-12 group">
-                {/* Timeline node */}
-                <div className="absolute left-[-2px] sm:left-[6px] top-1.5 w-6 h-6 rounded-full bg-[#121214] border-2 border-[#7621B0] flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform duration-300">
-                  <div className="w-2 h-2 rounded-full bg-[#7621B0]" />
-                </div>
+          <p className="max-w-xs text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal self-start lg:self-end">
+            Track record across camera direction, celebrity BTS projects, and high-retention video editing.
+          </p>
+        </div>
 
-                <div 
-                  onClick={() => setActiveExp(ex)}
-                  className="bg-[#121214] border border-white/5 hover:border-[#7621B0]/50 p-6 rounded-2xl transition duration-300 shadow-xl cursor-pointer hover:-translate-y-1"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span className="text-xs font-mono font-bold text-[#7621B0] uppercase tracking-wider flex items-center gap-1.5">
-                      <Calendar size={13} /> {ex.year}
-                    </span>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#D7E2EA]/40">
-                      Click for details →
-                    </span>
+        {experience && experience.length > 0 ? (
+          <div className="max-w-4xl mx-auto w-full relative pl-4 sm:pl-8">
+            {/* Vertical timeline axis */}
+            <div className="absolute left-[20px] sm:left-[28px] top-3 bottom-3 w-[2px] bg-[#01472e]/20" />
+
+            <div className="flex flex-col gap-8">
+              {experience.map((ex) => (
+                <div key={ex.id} className="relative pl-8 sm:pl-12 group">
+                  {/* Timeline node */}
+                  <div className="absolute left-[-2px] sm:left-[6px] top-2 w-6 h-6 rounded-full bg-[#fefae0] border-2 border-[#01472e] flex items-center justify-center shadow-md group-hover:scale-125 transition-transform duration-300">
+                    <div className="w-2 h-2 rounded-full bg-[#01472e]" />
                   </div>
 
-                  <h3 className="text-xl font-bold font-display uppercase tracking-wide text-white group-hover:text-[#7621B0] transition">
-                    {ex.role}
-                  </h3>
+                  <div
+                    onClick={() => setActiveExp(ex)}
+                    className="bg-[#fefae0] border border-[#01472e]/15 hover:border-[#01472e]/40 p-8 rounded-[2.5rem] shadow-[0_20px_40px_-15px_rgba(1,71,46,0.12)] transition-all duration-500 cursor-pointer hover:-translate-y-1.5"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e] flex items-center gap-2">
+                        <Calendar size={13} /> {ex.year}
+                      </span>
+                      <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#01472e]/50">
+                        CLICK FOR DETAILS →
+                      </span>
+                    </div>
 
-                  <p className="text-xs text-[#D7E2EA]/60 font-medium mt-0.5 flex items-center gap-1.5">
-                    <Briefcase size={12} className="text-[#7621B0]" />
-                    {ex.company}
-                  </p>
+                    <h3 className="font-display uppercase text-2xl sm:text-3xl tracking-tight text-[#01472e] group-hover:opacity-85 transition-opacity">
+                      {ex.role}
+                    </h3>
 
-                  <p className="text-xs sm:text-sm text-[#D7E2EA]/70 mt-3 font-light leading-relaxed">
-                    {ex.description}
-                  </p>
+                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#01472e]/70 mt-1 flex items-center gap-2">
+                      <Briefcase size={13} />
+                      {ex.company}
+                    </p>
+
+                    <p className="text-xs sm:text-sm text-[#01472e]/80 mt-4 font-normal leading-relaxed">
+                      {ex.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="text-center text-[#D7E2EA]/30 py-12 italic">No experience added yet.</div>
-      )}
+        ) : (
+          <div className="text-center text-[#01472e]/40 py-12 uppercase tracking-widest text-xs">
+            No experience listed.
+          </div>
+        )}
+      </div>
 
-      {/* Experience Detail Modal */}
+      {/* Experience Details Modal */}
       <AnimatePresence>
         {activeExp && (
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-6">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setActiveExp(null)}
-              className="absolute inset-0 bg-black/85 backdrop-blur-md"
+              className="absolute inset-0 bg-[#01472e]/80 backdrop-blur-md"
             />
+
             <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              initial={{ scale: 0.95, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-lg bg-[#121214] border border-[#7621B0]/40 rounded-3xl p-6 sm:p-8 shadow-2xl z-10 flex flex-col gap-5"
+              exit={{ scale: 0.95, opacity: 0, y: 30 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-xl bg-[#fefae0] border border-[#01472e]/20 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] z-10 flex flex-col gap-6 text-[#01472e]"
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-xs font-mono font-bold text-[#7621B0] uppercase">{activeExp.year}</span>
-                  <h3 className="text-2xl font-bold font-display uppercase text-white tracking-wide mt-1">{activeExp.role}</h3>
-                  <p className="text-xs text-[#D7E2EA]/60 font-medium">{activeExp.company}</p>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#01472e]/60">
+                    {activeExp.year} • {activeExp.company}
+                  </span>
+                  <h3 className="font-display uppercase text-3xl text-[#01472e] tracking-tight mt-1">
+                    {activeExp.role}
+                  </h3>
                 </div>
                 <button
                   onClick={() => setActiveExp(null)}
-                  className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white"
+                  className="w-10 h-10 rounded-full bg-[#01472e]/10 hover:bg-[#01472e] text-[#01472e] hover:text-[#fefae0] flex items-center justify-center transition-colors"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="text-sm font-light leading-relaxed text-[#D7E2EA]/80 whitespace-pre-line border-t border-white/5 pt-4">
+              <div className="text-sm font-normal leading-relaxed text-[#01472e]/85 whitespace-pre-line border-t border-[#01472e]/15 pt-5">
                 {activeExp.description}
               </div>
 
-              <div className="pt-2">
-                <button
-                  onClick={() => setActiveExp(null)}
-                  className="w-full bg-[#7621B0] hover:bg-[#611a93] text-white font-semibold py-2.5 rounded-xl text-xs uppercase tracking-wider transition"
-                >
-                  Close
-                </button>
-              </div>
+              <button
+                onClick={() => setActiveExp(null)}
+                className="w-full mt-2 py-4 rounded-full bg-[#01472e] text-[#fefae0] text-[10px] font-bold uppercase tracking-[0.25em] hover:bg-[#023321] transition"
+              >
+                CLOSE
+              </button>
             </motion.div>
           </div>
         )}

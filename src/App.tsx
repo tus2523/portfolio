@@ -7,12 +7,12 @@ import { AdminPage } from './components/AdminPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { DifferenceCursor } from './components/DifferenceCursor';
 
-// Section Components matching the Bold Editorial Studio spec
+// Section Components matching Earthy Editorial + Video Portfolio spec
 import { HeroSection } from './components/sections/HeroSection';
-import { AsymmetricalMarquee } from './components/AsymmetricalMarquee';
-import { AboutSection } from './components/sections/AboutSection';
 import { ProjectsSection } from './components/sections/ProjectsSection';
+import { AsymmetricalMarquee } from './components/AsymmetricalMarquee';
 import { PhotosSection } from './components/sections/PhotosSection';
+import { AboutSection } from './components/sections/AboutSection';
 import { ServicesSection } from './components/sections/ServicesSection';
 import { ExperienceSection } from './components/sections/ExperienceSection';
 import { ReviewsSection } from './components/sections/ReviewsSection';
@@ -95,7 +95,7 @@ function MainApp() {
     };
   }, [lightbox]);
 
-  // Flatten all videos for asymmetrical continuous marquee
+  // Flatten all videos for continuous marquee
   const marqueeVideos = useMemo(() => {
     if (!data.videoProjects) return [];
     return data.videoProjects.flatMap((project: any) => {
@@ -109,8 +109,18 @@ function MainApp() {
   }, [data.videoProjects]);
 
   return (
-    <div className="bg-[#FFFFFF] text-[#000000] font-sans overflow-x-clip min-h-screen w-full relative selection:bg-black selection:text-white">
-      {/* ── Interactive Difference Cursor ── */}
+    <div className="bg-[#ccd5ae] text-[#01472e] font-sans overflow-x-clip min-h-screen w-full relative selection:bg-[#01472e] selection:text-[#fefae0]">
+      {/* ── Fixed SVG Fractal Noise Overlay (0.04 Opacity) ── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-50 mix-blend-overlay opacity-[0.04]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+        }}
+      />
+
+      {/* ── Interactive Custom Cursor ── */}
       <DifferenceCursor />
 
       {/* ── Initial Loading Screen ── */}
@@ -122,10 +132,16 @@ function MainApp() {
         className={`transition-opacity duration-500 ease-in-out ${loaded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         style={{ visibility: loaded ? 'visible' : 'hidden' }}
       >
-        {/* 1. Massive Display Hero */}
+        {/* 1. Massive Display Hero (Background: Sage #ccd5ae) */}
         <HeroSection data={data} />
 
-        {/* 2. Infinite Project Marquee with Asymmetrical Cards */}
+        {/* 2. Feature / Project Grid (Background: Olive #e9edc9, rounded-t-[5rem]) */}
+        <ProjectsSection
+          videoProjects={data.videoProjects || []}
+          onSelectVideo={handleSelectVideo}
+        />
+
+        {/* 3. Continuous Motion Archive with Asymmetrical Cards */}
         {marqueeVideos.length > 0 && (
           <AsymmetricalMarquee
             videos={marqueeVideos}
@@ -133,34 +149,28 @@ function MainApp() {
           />
         )}
 
-        {/* 3. Centered Introductory Statement */}
-        <AboutSection data={data} />
-
-        {/* 4. Balanced Two-Column Project Grid */}
-        <ProjectsSection
-          videoProjects={data.videoProjects || []}
-          onSelectVideo={handleSelectVideo}
-        />
-
-        {/* 5. Photo Stills & BTS Showcase */}
+        {/* 4. Photo Stills & BTS Showcase (Background: Cream #fefae0, rounded-t-[5rem]) */}
         {data.photos && data.photos.length > 0 && (
           <PhotosSection photos={data.photos} />
         )}
 
-        {/* 6. Creative Capabilities & Services */}
+        {/* 5. Editorial Statement (Background: Sage #ccd5ae, rounded-t-[5rem]) */}
+        <AboutSection data={data} />
+
+        {/* 6. Creative Capabilities & Services (Background: Olive #e9edc9, rounded-t-[5rem]) */}
         <ServicesSection data={data} />
 
-        {/* 7. Production Timeline & Experience */}
+        {/* 7. Production Timeline & Experience (Background: Sage #ccd5ae, rounded-t-[5rem]) */}
         {data.experience && data.experience.length > 0 && (
           <ExperienceSection experience={data.experience} />
         )}
 
-        {/* 8. Director Endorsements & References */}
+        {/* 8. Director Endorsements & References (Background: Olive #e9edc9, rounded-t-[5rem]) */}
         {data.reviews && data.reviews.length > 0 && (
           <ReviewsSection reviews={data.reviews} />
         )}
 
-        {/* 9. High-Contrast Dark Footer */}
+        {/* 9. Earthy 12-Column Footer (Background: Forest #01472e, Text: Sage #ccd5ae, rounded-t-[5rem]) */}
         <FooterSection data={data} />
       </div>
 
@@ -174,25 +184,26 @@ function MainApp() {
         return (
           <div 
             onClick={() => setLightbox(null)}
-            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in font-sans"
+            className="fixed inset-0 z-[9999] bg-[#01472e]/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in font-sans"
           >
             <div 
               onClick={e => e.stopPropagation()} 
-              className={`w-full ${isInstagram || isShort ? 'max-w-[400px]' : 'max-w-4xl'} relative`}
+              className={`w-full ${isInstagram || isShort ? 'max-w-[420px]' : 'max-w-4xl'} relative bg-[#fefae0] rounded-[2.5rem] p-6 sm:p-8 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] border border-[#01472e]/20 text-[#01472e]`}
             >
-              <div className="flex justify-between items-center mb-4 text-white">
-                <span className="font-mono text-xs uppercase tracking-wider text-white/80 truncate max-w-[80%]">
-                  {lightbox.title}
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#01472e] truncate max-w-[80%]">
+                  {lightbox.title || "Selected Motion Cut"}
                 </span>
                 <button 
                   type="button"
                   onClick={() => setLightbox(null)} 
-                  className="w-9 h-9 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition"
+                  className="w-10 h-10 rounded-full bg-[#01472e] text-[#fefae0] flex items-center justify-center hover:scale-110 transition-transform"
                 >
                   ✕
                 </button>
               </div>
-              <div className={`relative w-full ${isInstagram || isShort ? 'aspect-[9/16] h-[75vh]' : 'aspect-video'} rounded-2xl overflow-hidden border border-white/10 bg-black`}>
+
+              <div className={`relative w-full ${isInstagram || isShort ? 'aspect-[9/16] h-[70vh]' : 'aspect-video'} rounded-2xl overflow-hidden border border-[#01472e]/15 bg-black`}>
                 {isInstagram ? (
                   <iframe 
                     src={`https://www.instagram.com/reel/${instaId}/embed/`} 

@@ -8,59 +8,84 @@ interface AboutSectionProps {
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ data }) => {
   return (
-    <section id="about" className="py-28 px-6 sm:px-12 md:px-16 bg-[#FFFFFF] text-[#000000] font-sans border-b border-[#000000]/10">
-      <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
+    <section
+      id="about"
+      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#ccd5ae] text-[#01472e] font-sans rounded-t-[5rem] -mt-16 sm:-mt-20 relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
+    >
+      <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
         {/* Label */}
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#737373] mb-6 block">
-          Studio Statement
+        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 mb-6 block">
+          Editorial Statement — Index 03
         </span>
 
-        {/* Centered Large Typography Statement */}
-        <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-[-0.04em] leading-[1.2] text-[#000000] max-w-4xl">
-          {data.about?.bio ||
-            "Skilled videographer and editor with 2 years of experience in creating dynamic visual content. Proficient in Adobe Premiere Pro and After Effects. Known for meeting tight deadlines and producing high-quality, engaging narratives."}
+        {/* Centered Large Headline / Statement */}
+        <h2 className="font-display uppercase text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.9] tracking-[-0.03em] text-[#01472e] max-w-5xl">
+          CRAFTING HIGH-ENERGY VISUALS &amp; CINEMATIC NARRATIVES
         </h2>
 
-        {/* Clean Metadata 3-Column Studio Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-20 pt-12 border-t border-[#000000]/10 text-left">
-          {/* Column 1 */}
-          <div className="flex flex-col gap-2">
-            <span className="font-mono text-xs uppercase tracking-[0.1em] text-[#737373]">[01 / DISCIPLINE]</span>
-            <h3 className="font-bold text-lg text-[#000000]">Videography &amp; Direction</h3>
-            <p className="text-sm text-[#525252] leading-relaxed">
-              Celebrity behind-the-scenes shoots, commercial brand videos, live music events, and on-floor operational management.
-            </p>
+        <p className="text-base sm:text-xl text-[#01472e]/85 max-w-3xl mx-auto mt-8 font-normal leading-relaxed">
+          {data.about?.bio ||
+            "Skilled freelance videographer and video editor with 2 years of extensive production experience. Specializing in high-energy commercial visuals, celebrity BTS shoots, brand campaigns, and post-production in Adobe Premiere Pro and After Effects."}
+        </p>
+
+        {/* 3-Column Metadata Cards with 2.5rem radius */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-20 pt-12 border-t border-[#01472e]/20 text-left">
+          {/* Card 1 */}
+          <div className="bg-[#fefae0]/70 p-8 rounded-[2.5rem] border border-[#01472e]/15 shadow-[0_20px_40px_-15px_rgba(1,71,46,0.15)] flex flex-col justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/60 block mb-2">
+                [01 / PRODUCTION]
+              </span>
+              <h3 className="font-display uppercase text-2xl text-[#01472e] tracking-tight mb-3">
+                Videography &amp; Sets
+              </h3>
+              <p className="text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal">
+                Directing and operating commercial shoots, celebrity behind-the-scenes visuals, brand reels, and on-floor camera management.
+              </p>
+            </div>
           </div>
 
-          {/* Column 2 */}
-          <div className="flex flex-col gap-2">
-            <span className="font-mono text-xs uppercase tracking-[0.1em] text-[#737373]">[02 / POST-PRODUCTION]</span>
-            <h3 className="font-bold text-lg text-[#000000]">Editorial Suite</h3>
-            <p className="text-sm text-[#525252] leading-relaxed">
-              Adobe Premiere Pro &amp; After Effects. High-retention cuts, comedy pacing for creators, color grading, and beat sync.
-            </p>
+          {/* Card 2 */}
+          <div className="bg-[#fefae0]/70 p-8 rounded-[2.5rem] border border-[#01472e]/15 shadow-[0_20px_40px_-15px_rgba(1,71,46,0.15)] flex flex-col justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/60 block mb-2">
+                [02 / EDITORIAL]
+              </span>
+              <h3 className="font-display uppercase text-2xl text-[#01472e] tracking-tight mb-3">
+                Post-Production Suite
+              </h3>
+              <p className="text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal">
+                Mastery in Adobe Premiere Pro and After Effects. High-retention pacing, rhythm matching, comedy timing, and color science.
+              </p>
+            </div>
           </div>
 
-          {/* Column 3 */}
-          <div className="flex flex-col gap-2">
-            <span className="font-mono text-xs uppercase tracking-[0.1em] text-[#737373]">[03 / CREDENTIALS]</span>
-            <h3 className="font-bold text-lg text-[#000000]">Industry Endorsements</h3>
-            <p className="text-sm text-[#525252] leading-relaxed">
-              Sydenham College graduate. Direct references from Saurabh Prajapati and Uma &amp; Gaiti (Directors &amp; Choreographers).
-            </p>
+          {/* Card 3 */}
+          <div className="bg-[#fefae0]/70 p-8 rounded-[2.5rem] border border-[#01472e]/15 shadow-[0_20px_40px_-15px_rgba(1,71,46,0.15)] flex flex-col justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/60 block mb-2">
+                [03 / CREDENTIALS]
+              </span>
+              <h3 className="font-display uppercase text-2xl text-[#01472e] tracking-tight mb-3">
+                Industry Endorsements
+              </h3>
+              <p className="text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal">
+                Sydenham College graduate. Direct references from industry directors Saurabh Prajapati and Uma &amp; Gaiti.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-14 flex items-center gap-4">
+        <div className="mt-16 flex items-center gap-4">
           <a
             href={getWhatsAppLink(data.settings?.whatsappPhone || data.about?.phone || "9324704934")}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#000000] text-[#FFFFFF] font-mono text-xs uppercase tracking-[0.1em] hover:bg-[#333333] transition-colors duration-300"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#01472e] text-[#fefae0] text-[11px] font-bold uppercase tracking-[0.25em] shadow-[0_15px_30px_-8px_rgba(1,71,46,0.35)] hover:scale-105 transition-all duration-300"
           >
-            <span>Initiate Project Inquiry</span>
-            <ArrowUpRight size={14} />
+            <span>START A CONVERSATION</span>
+            <ArrowUpRight size={16} />
           </a>
         </div>
       </div>

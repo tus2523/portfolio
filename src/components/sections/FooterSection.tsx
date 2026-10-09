@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { defaultData, getWhatsAppLink, updateSection } from '../../lib/store';
 import { db } from '../../lib/firebase';
 import { ref, set } from 'firebase/database';
-import { Star, ArrowUpRight } from 'lucide-react';
+import { Star, ArrowUpRight, ArrowRight } from 'lucide-react';
 
 interface FooterSectionProps {
   data: typeof defaultData;
@@ -10,6 +10,10 @@ interface FooterSectionProps {
 
 export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [inquiryEmail, setInquiryEmail] = useState('');
+  const [inquirySent, setInquirySent] = useState(false);
+
+  // Review form states
   const [name, setName] = useState('');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(5);
@@ -18,11 +22,15 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   const whatsappPhone = data.settings?.whatsappPhone || data.about?.phone || '9324704934';
   const whatsappUrl = getWhatsAppLink(whatsappPhone);
 
-  const socials = [
-    { label: "YouTube", url: data.heroStats?.youtubeUrl || data.about?.youtubeUrl || "https://youtube.com" },
-    { label: "Instagram", url: data.heroStats?.instagramUrl || data.about?.instagramUrl || "https://instagram.com/tusharmaru" },
-    { label: "WhatsApp", url: whatsappUrl },
-  ];
+  const handleInquirySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inquiryEmail.trim()) return;
+    setInquirySent(true);
+    setTimeout(() => {
+      setInquirySent(false);
+      setInquiryEmail('');
+    }, 4000);
+  };
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,112 +63,199 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   };
 
   return (
-    <footer id="contact" className="bg-[#0A0A0A] text-[#FFFFFF] font-sans pt-24 pb-12 px-6 sm:px-12 md:px-16 border-t border-white/10">
+    <footer
+      id="contact"
+      className="bg-[#01472e] text-[#ccd5ae] font-sans pt-28 pb-14 px-6 sm:px-10 md:px-14 rounded-t-[5rem] -mt-16 sm:-mt-20 relative z-30 shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.3)] overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto">
-        {/* Four-Column Desktop Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16 pb-20">
-          {/* Column 1-2: Large Brand Name and Short Bio */}
-          <div className="md:col-span-2 flex flex-col justify-between gap-6">
+        {/* 12-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pb-20 border-b border-[#ccd5ae]/15">
+          {/* Left 6 Columns: Large Newsletter / Project Inquiry */}
+          <div className="lg:col-span-6 flex flex-col justify-between gap-8">
             <div>
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#737373] block mb-3">
-                Studio Directory — Index 03
+              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#ccd5ae]/60 block mb-3">
+                Studio Directory — Index 07
               </span>
-              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-[-0.05em] leading-[0.9] text-white">
+              <h2 className="font-display uppercase text-5xl sm:text-7xl lg:text-8xl leading-[0.85] tracking-[-0.04em] text-[#fefae0]">
                 TUSHAR MARU
               </h2>
-              <p className="text-base text-[#737373] max-w-md mt-6 leading-relaxed font-normal tracking-[-0.01em]">
-                Videographer and video editor based in Mumbai. Specializing in high-energy video cuts, celebrity BTS shoots, commercial brand promos, and editorial storytelling.
+              <p className="text-sm sm:text-base text-[#ccd5ae]/80 max-w-md mt-6 leading-relaxed font-normal">
+                Videographer and video editor based in Mumbai. Available for commercial brand campaigns, celebrity BTS productions, music videos, and creative post-production.
               </p>
             </div>
 
-            <div className="flex items-center gap-4 pt-2">
+            {/* Newsletter / Project Inquiry: Uppercase Underline-only Input Field */}
+            <div className="mt-4 max-w-lg">
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#ccd5ae]/70 block mb-2">
+                INITIATE PROJECT INQUIRY
+              </span>
+              <form onSubmit={handleInquirySubmit} className="relative flex items-center">
+                <input
+                  type="email"
+                  required
+                  value={inquiryEmail}
+                  onChange={(e) => setInquiryEmail(e.target.value)}
+                  placeholder="ENTER YOUR EMAIL ADDRESS"
+                  className="w-full bg-transparent border-b border-[#ccd5ae]/40 text-[#fefae0] placeholder-[#ccd5ae]/40 text-xs sm:text-sm font-sans uppercase tracking-[0.2em] py-3 pr-12 focus:outline-none focus:border-[#fefae0] transition-colors"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-[#fefae0] hover:text-[#ccd5ae] p-2 transition-colors"
+                  aria-label="Submit Email"
+                >
+                  <ArrowRight size={18} />
+                </button>
+              </form>
+              {inquirySent && (
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#fefae0] mt-2 block animate-fade-in">
+                  ✓ INQUIRY RECEIVED. WE WILL CONNECT SHORTLY.
+                </span>
+              )}
+            </div>
+
+            <div className="pt-2">
               <button
                 type="button"
                 onClick={() => setShowReviewModal(true)}
-                className="font-mono text-xs uppercase tracking-[0.1em] text-white/60 hover:text-white underline underline-offset-4 transition-colors"
+                className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#fefae0] hover:underline underline-offset-4 transition-colors"
               >
-                + Leave a Director / Client Review
+                + LEAVE A DIRECTOR / CLIENT ENDORSEMENT
               </button>
             </div>
           </div>
 
-          {/* Column 3: Socials List */}
-          <div className="flex flex-col gap-4">
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#737373] border-b border-white/10 pb-2">
-              Socials
-            </span>
-            <ul className="flex flex-col gap-3 font-mono text-xs uppercase tracking-[0.1em]">
-              {socials.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/80 hover:text-white flex items-center justify-between group transition-colors duration-200"
-                  >
-                    <span>{item.label}</span>
-                    <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+          {/* Right 6 Columns: Two columns of links using bold, tracked-out 11px uppercase text */}
+          <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-10">
+            {/* Column 1: Directory Links */}
+            <div className="flex flex-col gap-4">
+              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#ccd5ae]/50 border-b border-[#ccd5ae]/15 pb-2">
+                DIRECTORY
+              </span>
+              <ul className="flex flex-col gap-3.5 text-[11px] font-bold uppercase tracking-[0.25em]">
+                <li>
+                  <a href="#projects" className="text-[#fefae0] hover:text-[#ccd5ae] transition-colors">
+                    01 • FEATURED FILMS
                   </a>
                 </li>
-              ))}
-            </ul>
-          </div>
+                <li>
+                  <a href="#photos" className="text-[#fefae0] hover:text-[#ccd5ae] transition-colors">
+                    02 • PHOTO STILLS &amp; BTS
+                  </a>
+                </li>
+                <li>
+                  <a href="#about" className="text-[#fefae0] hover:text-[#ccd5ae] transition-colors">
+                    03 • STUDIO STATEMENT
+                  </a>
+                </li>
+                <li>
+                  <a href="#services" className="text-[#fefae0] hover:text-[#ccd5ae] transition-colors">
+                    04 • CAPABILITIES
+                  </a>
+                </li>
+                <li>
+                  <a href="#experience" className="text-[#fefae0] hover:text-[#ccd5ae] transition-colors">
+                    05 • TIMELINE
+                  </a>
+                </li>
+                <li>
+                  <a href="#reviews" className="text-[#fefae0] hover:text-[#ccd5ae] transition-colors">
+                    06 • ENDORSEMENTS
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-          {/* Column 4: Contact List */}
-          <div className="flex flex-col gap-4">
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#737373] border-b border-white/10 pb-2">
-              Contact
-            </span>
-            <div className="flex flex-col gap-3 font-mono text-xs uppercase tracking-[0.1em] text-white/80">
-              <a
-                href={`mailto:${data.about?.email || 'marutushar387@gmail.com'}`}
-                className="hover:text-white truncate transition-colors"
-              >
-                {data.about?.email || 'marutushar387@gmail.com'}
-              </a>
-              <a
-                href={`tel:${data.about?.phone || '+919324704934'}`}
-                className="hover:text-white transition-colors"
-              >
-                {data.about?.phone || '+91 9324704934'}
-              </a>
-              <span className="text-[#737373]">
-                Mumbai, Maharashtra, India
+            {/* Column 2: Connect & Contact */}
+            <div className="flex flex-col gap-4">
+              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#ccd5ae]/50 border-b border-[#ccd5ae]/15 pb-2">
+                CONNECT
               </span>
-              <a
-                href="#admin"
-                className="text-[#737373] hover:text-white pt-2 border-t border-white/5 flex items-center justify-between"
-              >
-                <span>Admin Login</span>
-                <span>→</span>
-              </a>
+              <ul className="flex flex-col gap-3.5 text-[11px] font-bold uppercase tracking-[0.25em]">
+                <li>
+                  <a
+                    href={data.heroStats?.youtubeUrl || data.about?.youtubeUrl || "https://youtube.com"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#fefae0] hover:text-[#ccd5ae] flex items-center justify-between group transition-colors"
+                  >
+                    <span>YOUTUBE</span>
+                    <ArrowUpRight size={13} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={data.heroStats?.instagramUrl || data.about?.instagramUrl || "https://instagram.com/tusharmaru"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#fefae0] hover:text-[#ccd5ae] flex items-center justify-between group transition-colors"
+                  >
+                    <span>INSTAGRAM</span>
+                    <ArrowUpRight size={13} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#fefae0] hover:text-[#ccd5ae] flex items-center justify-between group transition-colors"
+                  >
+                    <span>WHATSAPP</span>
+                    <ArrowUpRight size={13} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`mailto:${data.about?.email || 'marutushar387@gmail.com'}`}
+                    className="text-[#fefae0] hover:text-[#ccd5ae] truncate block transition-colors"
+                  >
+                    {data.about?.email || 'MARUTUSHAR387@GMAIL.COM'}
+                  </a>
+                </li>
+                <li>
+                  <span className="text-[#ccd5ae]/70 block">
+                    MUMBAI, MAHARASHTRA
+                  </span>
+                </li>
+                <li className="pt-2 border-t border-[#ccd5ae]/10">
+                  <a
+                    href="#admin"
+                    className="text-[#ccd5ae] hover:text-[#fefae0] flex items-center justify-between"
+                  >
+                    <span>ADMIN PORTAL</span>
+                    <span>→</span>
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar: Thin border-top (white at 10% opacity) with 14px text */}
-        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[14px] text-[#737373] font-mono tracking-tight">
-          <span>&copy; {new Date().getFullYear()} Tushar Maru. All rights reserved.</span>
-          <span className="text-white/40">Editorial Creative Studio Aesthetic</span>
+        {/* Bottom Bar: Copyright and Legal links with 30% opacity */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-[#ccd5ae]/30 font-sans uppercase tracking-[0.2em]">
+          <span>&copy; {new Date().getFullYear()} TUSHAR MARU. ALL RIGHTS RESERVED.</span>
+          <span>EARTHY EDITORIAL STUDIO AESTHETIC</span>
         </div>
       </div>
 
       {/* Review Modal */}
       {showReviewModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-6"
+          className="fixed inset-0 z-50 bg-[#01472e]/90 backdrop-blur-md flex items-center justify-center p-6 text-[#01472e]"
           onClick={() => setShowReviewModal(false)}
         >
           <div
-            className="relative max-w-lg w-full bg-[#121214] border border-white/10 rounded-2xl p-6 text-white"
+            className="relative max-w-lg w-full bg-[#fefae0] border border-[#01472e]/20 rounded-[2.5rem] p-8 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-3">
-              <h3 className="font-mono text-xs uppercase tracking-[0.1em] text-white">Client / Director Endorsement</h3>
+            <div className="flex justify-between items-center mb-6 border-b border-[#01472e]/15 pb-4">
+              <h3 className="font-display uppercase text-2xl text-[#01472e]">
+                DIRECTOR / CLIENT ENDORSEMENT
+              </h3>
               <button
                 type="button"
                 onClick={() => setShowReviewModal(false)}
-                className="text-white/60 hover:text-white"
+                className="w-9 h-9 rounded-full bg-[#01472e]/10 hover:bg-[#01472e] text-[#01472e] hover:text-[#fefae0] flex items-center justify-center transition-colors"
               >
                 ✕
               </button>
@@ -168,64 +263,72 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
 
             {submitted ? (
               <div className="text-center py-8">
-                <span className="text-3xl block mb-2">✓</span>
-                <p className="text-sm font-bold">Endorsement Received</p>
-                <p className="text-xs text-[#737373] mt-1">Pending approval in studio dashboard.</p>
+                <span className="text-4xl block mb-3 text-[#01472e]">✓</span>
+                <p className="font-display uppercase text-2xl text-[#01472e]">ENDORSEMENT RECEIVED</p>
+                <p className="text-xs text-[#01472e]/70 mt-1 uppercase tracking-wider">
+                  Pending review approval in studio dashboard.
+                </p>
                 <button
                   type="button"
                   onClick={() => { setSubmitted(false); setShowReviewModal(false); }}
-                  className="mt-6 px-6 py-2.5 rounded-full bg-white text-black font-mono text-xs uppercase tracking-wider"
+                  className="mt-6 px-8 py-3 rounded-full bg-[#01472e] text-[#fefae0] text-[10px] font-bold uppercase tracking-[0.25em]"
                 >
-                  Close
+                  CLOSE
                 </button>
               </div>
             ) : (
               <form onSubmit={handleReviewSubmit} className="flex flex-col gap-4">
                 <div>
-                  <label className="font-mono text-[10px] uppercase text-[#737373] block mb-1">Your Name &amp; Role</label>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#01472e]/70 block mb-1">
+                    YOUR NAME &amp; ROLE
+                  </label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Saurabh Prajapati — Director"
-                    className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/40"
+                    className="w-full bg-[#01472e]/5 border border-[#01472e]/15 rounded-xl px-4 py-3 text-xs text-[#01472e] focus:outline-none focus:border-[#01472e]/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-mono text-[10px] uppercase text-[#737373] block mb-1">Rating</label>
-                  <div className="flex gap-1 text-amber-400">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#01472e]/70 block mb-1">
+                    RATING
+                  </label>
+                  <div className="flex gap-1.5 text-[#01472e]">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <button
                         key={s}
                         type="button"
                         onClick={() => setRating(s)}
-                        className={s <= rating ? 'text-amber-400' : 'text-white/20'}
+                        className={s <= rating ? 'text-[#01472e]' : 'text-[#01472e]/20'}
                       >
-                        <Star size={18} fill={s <= rating ? 'currentColor' : 'none'} />
+                        <Star size={20} fill={s <= rating ? 'currentColor' : 'none'} />
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="font-mono text-[10px] uppercase text-[#737373] block mb-1">Feedback Statement</label>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#01472e]/70 block mb-1">
+                    TESTIMONIAL STATEMENT
+                  </label>
                   <textarea
                     required
                     rows={4}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Statement on working with Tushar on production / video edit..."
-                    className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/40 resize-none"
+                    className="w-full bg-[#01472e]/5 border border-[#01472e]/15 rounded-xl px-4 py-3 text-xs text-[#01472e] focus:outline-none focus:border-[#01472e]/50 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full mt-2 py-3 rounded-full bg-white text-black font-mono text-xs uppercase tracking-[0.1em] font-bold hover:bg-neutral-200 transition"
+                  className="w-full mt-2 py-4 rounded-full bg-[#01472e] text-[#fefae0] text-[10px] font-bold uppercase tracking-[0.25em] hover:bg-[#023321] transition shadow-lg"
                 >
-                  Submit Endorsement
+                  SUBMIT ENDORSEMENT
                 </button>
               </form>
             )}

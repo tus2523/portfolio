@@ -4,8 +4,8 @@
 
 @layer base {
   html, body, #root {
-    background-color: #FFFFFF;
-    color: #000000;
+    background-color: #ccd5ae;
+    color: #01472e;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
     padding: 0;
@@ -14,29 +14,30 @@
   }
 
   ::selection {
-    background: #000000;
-    color: #FFFFFF;
+    background: #01472e;
+    color: #fefae0;
   }
 }
 
-/* Studio smooth cubic-bezier easing */
+/* Earthy smooth cubic-bezier easing */
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
+/* Custom Earthy scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FFFFFF;
+  background: #ccd5ae;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E5E5E5;
-  border-radius: 3px;
+  background: #a3b18a;
+  border-radius: 9999px;
+  border: 2px solid #ccd5ae;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #A3A3A3;
+  background: #01472e;
 }

@@ -9,12 +9,12 @@ export interface ProjectsSectionProps {
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects, onSelectVideo }) => {
-  // Flatten videos with project metadata for 2-column editorial grid
+  // Flatten videos with project metadata for 3-column feature grid
   const allProjects = (videoProjects || []).flatMap((proj, pIdx) => {
     return (proj.videos || []).map((vid, vIdx) => ({
       ...vid,
       projectId: proj.id,
-      category: (proj.tags && proj.tags[0]) || "COMMERCIAL / BTS",
+      category: (proj.tags && proj.tags[0]) || "COMMERCIAL / REEL",
       year: "2024",
       description: proj.description,
       displayTitle: vid.title || proj.title,
@@ -23,25 +23,47 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
   });
 
   return (
-    <section id="projects" className="py-24 px-6 sm:px-12 md:px-16 bg-[#FFFFFF] text-[#000000] font-sans border-b border-[#000000]/10">
+    <section
+      id="projects"
+      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#e9edc9] text-[#01472e] font-sans rounded-t-[5rem] -mt-16 sm:-mt-20 relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 border-b border-[#000000]/10 pb-6">
+        {/* Section Header: Massive Anton display text (15vw) paired with circular CTA */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 sm:mb-24 gap-8">
           <div>
-            <span className="font-mono text-xs uppercase tracking-[0.1em] text-[#737373]">Index — 01</span>
-            <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-[-0.05em] leading-[0.9] text-[#000000] mt-2">
-              Selected Works
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 block mb-2">
+              Portfolio Catalog — 01
+            </span>
+            <h2 className="font-display uppercase text-[15vw] leading-[0.8] tracking-[-0.05em] text-[#01472e]">
+              WORKS
             </h2>
           </div>
-          <p className="font-mono text-xs text-[#525252] uppercase tracking-[0.1em] mt-4 md:mt-0">
-            [Featured Reel Cuts &amp; Commercial Shoots]
-          </p>
+
+          {/* Large Circular CTA Button */}
+          <div className="flex items-center gap-6 self-start lg:self-end">
+            <p className="max-w-xs text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal">
+              Commercial promos, celebrity behind-the-scenes shoots, and rhythm-synced post-production reels.
+            </p>
+            <a
+              href="#contact"
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#01472e] text-[#fefae0] flex flex-col items-center justify-center p-2 text-center shadow-[0_20px_35px_-10px_rgba(1,71,46,0.35)] hover:scale-105 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shrink-0 group"
+            >
+              <ArrowUpRight size={22} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] mt-1">
+                INQUIRE
+              </span>
+            </a>
+          </div>
         </div>
 
-        {/* Two-Column Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14">
+        {/* 3-Column Feature Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
           {allProjects.map((item, idx) => {
-            const thumb = (item as any).thumbnailUrl || item.thumbnail || getYoutubeThumbnail(item.url) || "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1000&auto=format&fit=crop";
+            const thumb =
+              (item as any).thumbnailUrl ||
+              item.thumbnail ||
+              getYoutubeThumbnail(item.url) ||
+              "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1000&auto=format&fit=crop";
 
             return (
               <div
@@ -49,44 +71,45 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
                 onClick={() => onSelectVideo(item)}
                 className="group cursor-pointer flex flex-col"
               >
-                {/* 1. 4:3 Aspect Ratio Image Container */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-neutral-900 border border-[#000000]/10">
+                {/* 4/5 Aspect Ratio Image Card with 2.5rem radius */}
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2.5rem] bg-[#01472e]/10 border border-[#01472e]/15 shadow-[0_25px_50px_-12px_rgba(1,71,46,0.18)]">
                   <img
                     src={thumb}
                     alt={item.displayTitle}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                     loading="lazy"
                   />
 
-                  {/* 2. Hover-triggered Overlay (Black at 10% opacity) */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 pointer-events-none" />
-
-                  {/* 3. Top-Right Arrow-Up-Right Icon appearing on hover */}
-                  <div className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-xl">
-                    <ArrowUpRight size={20} />
-                  </div>
-
-                  {/* Center Play badge on hover */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="px-4 py-2 rounded-full bg-black/80 backdrop-blur-md text-white font-mono text-xs uppercase tracking-wider flex items-center gap-2">
-                      <Play size={12} fill="white" /> Watch Video
-                    </span>
+                  {/* Blur-Reveal Button & Overlay */}
+                  <div
+                    className="absolute inset-0 flex items-end justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    style={{
+                      background: 'rgba(1, 71, 46, 0.3)',
+                      backdropFilter: 'blur(2px)',
+                    }}
+                  >
+                    <div className="w-full py-4 px-6 rounded-full bg-[#fefae0] text-[#01472e] flex items-center justify-center gap-2 transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-xl">
+                      <Play size={14} fill="#01472e" />
+                      <span className="text-[11px] font-bold uppercase tracking-[0.3em]">
+                        WATCH FILM
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* 4. Bottom Metadata Row separated by 1px border-top */}
-                <div className="mt-5 pt-4 border-t border-[#000000]/10 flex flex-col gap-1.5">
+                {/* Metadata Row below card */}
+                <div className="mt-5 pt-3 border-t border-[#01472e]/15 flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl sm:text-[24px] font-bold tracking-[-0.04em] leading-snug text-[#000000] group-hover:text-[#525252] transition-colors duration-300">
+                    <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#01472e] group-hover:opacity-80 transition-opacity">
                       {item.displayTitle}
                     </h3>
-                    <span className="font-mono text-xs sm:text-[14px] uppercase tracking-[0.1em] text-[#737373]">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#01472e]/60">
                       {item.year}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs font-mono uppercase tracking-[0.1em] text-[#737373]">
+                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/70">
                     <span>{item.category}</span>
-                    <span className="text-[#000000]/40">[REEL CUT]</span>
+                    <span className="text-[#01472e]/40">[REEL ARCHIVE]</span>
                   </div>
                 </div>
               </div>
