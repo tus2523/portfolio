@@ -398,6 +398,8 @@ export const defaultData = {
     footerHeading: "Let's create visually stunning content together",
     footerBio: "Open for videography projects, video editing assignments, celebrity BTS shoots, and creative collaborations.",
     sectionOrder: ['about', 'services', 'videos', 'photos', 'experience', 'skills', 'reviews'],
+    cloudinaryCloudName: '',
+    cloudinaryUploadPreset: '',
   },
   brands: [
     'Zudio', 'Denver', 'Bewakoof', 'Maybelline', 'Godrej Fashion Week',

@@ -29,7 +29,7 @@ import {
   defaultData
 } from '../lib/store';
 import { ImageUpload } from './ImageUpload';
-import { getCloudinaryConfig, saveCloudinaryConfig } from '../lib/cloudinary';
+import { getCloudinaryConfig, saveCloudinaryConfig, testCloudinaryConnection } from '../lib/cloudinary';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -1023,11 +1023,43 @@ const ServicesManagement: React.FC<{ data: typeof defaultData; save: (s: string,
 const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
   const [form, setForm] = useState({ ...(data.settings || {}) });
   const [cConfig, setCConfig] = useState(getCloudinaryConfig());
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
-  useEffect(() => setForm({ ...(data.settings || {}) }), [data.settings]);
+  useEffect(() => {
+    setForm({ ...(data.settings || {}) });
+    if (data.settings?.cloudinaryCloudName || data.settings?.cloudinaryUploadPreset) {
+      setCConfig({
+        cloudName: data.settings.cloudinaryCloudName || '',
+        uploadPreset: data.settings.cloudinaryUploadPreset || '',
+      });
+    }
+  }, [data.settings]);
+
+  const handleTestConnection = async () => {
+    if (!cConfig.cloudName.trim() || !cConfig.uploadPreset.trim()) {
+      setTestResult({ ok: false, msg: 'Please enter both Cloud Name and Upload Preset to test.' });
+      return;
+    }
+    setTesting(true);
+    setTestResult(null);
+    try {
+      await testCloudinaryConnection(cConfig.cloudName, cConfig.uploadPreset);
+      setTestResult({ ok: true, msg: '✅ Cloudinary is connected and ready to upload!' });
+    } catch (err: any) {
+      setTestResult({ ok: false, msg: `❌ Connection error: ${err.message}` });
+    } finally {
+      setTesting(false);
+    }
+  };
 
   const handleSave = () => {
-    save('settings', form);
+    const updatedSettings = {
+      ...form,
+      cloudinaryCloudName: cConfig.cloudName.trim(),
+      cloudinaryUploadPreset: cConfig.uploadPreset.trim(),
+    };
+    save('settings', updatedSettings);
     saveCloudinaryConfig(cConfig.cloudName, cConfig.uploadPreset);
   };
 
@@ -1048,19 +1080,58 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
 
         {/* Cloudinary Integration Settings */}
         <div className="border-t border-[#222] pt-6 flex flex-col gap-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            ☁️ Cloudinary Image Storage Keys
-          </h3>
-          <p className="text-xs text-[#D7E2EA]/50">Enter Cloudinary credentials to directly upload photos to your Cloudinary account.</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                ☁️ Cloudinary Image Storage
+              </h3>
+              <p className="text-xs text-[#D7E2EA]/60 mt-0.5">
+                Upload production photos, BTS shots, and thumbnails directly to your personal Cloudinary cloud.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleTestConnection}
+              disabled={testing}
+              className="px-4 py-2 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-semibold text-white uppercase tracking-wider transition shrink-0"
+            >
+              {testing ? 'Testing...' : '⚡ Test Connection'}
+            </button>
+          </div>
+
+          {testResult && (
+            <div className={`p-3 rounded text-xs font-medium border ${testResult.ok ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-red-950/40 border-red-500/40 text-red-300'}`}>
+              {testResult.msg}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40">Cloud Name</label>
-              <input className="bg-[#0C0C0C] border border-[#222] rounded p-3 text-sm text-[#D7E2EA]" placeholder="e.g. digkpl4re" value={cConfig.cloudName} onChange={e => setCConfig(p => ({ ...p, cloudName: e.target.value }))} />
+              <input
+                className="bg-[#0C0C0C] border border-[#222] rounded p-3 text-sm text-[#D7E2EA] focus:border-[#7621B0] outline-none"
+                placeholder="e.g. tusharmaru"
+                value={cConfig.cloudName}
+                onChange={e => setCConfig(p => ({ ...p, cloudName: e.target.value }))}
+              />
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40">Upload Preset (Unsigned)</label>
-              <input className="bg-[#0C0C0C] border border-[#222] rounded p-3 text-sm text-[#D7E2EA]" placeholder="e.g. axuqgwb1" value={cConfig.uploadPreset} onChange={e => setCConfig(p => ({ ...p, uploadPreset: e.target.value }))} />
+              <input
+                className="bg-[#0C0C0C] border border-[#222] rounded p-3 text-sm text-[#D7E2EA] focus:border-[#7621B0] outline-none"
+                placeholder="e.g. tushar_portfolio"
+                value={cConfig.uploadPreset}
+                onChange={e => setCConfig(p => ({ ...p, uploadPreset: e.target.value }))}
+              />
             </div>
+          </div>
+
+          <div className="bg-[#0C0C0C] border border-[#222] p-4 rounded-lg text-xs text-[#D7E2EA]/60 flex flex-col gap-1.5">
+            <span className="font-bold text-white uppercase tracking-wider text-[10px]">Quick Setup Guide:</span>
+            <span>1. Create a free account at <a href="https://cloudinary.com" target="_blank" rel="noreferrer" className="text-emerald-400 underline">cloudinary.com</a>.</span>
+            <span>2. Copy your <strong>Cloud Name</strong> from the Cloudinary dashboard and paste it above.</span>
+            <span>3. Go to <strong>Settings (Gear icon) → Upload → Upload presets → Add upload preset</strong>.</span>
+            <span>4. Set <strong>Signing Mode</strong> to <strong>Unsigned</strong>, click Save, and paste the preset name above.</span>
           </div>
         </div>
 

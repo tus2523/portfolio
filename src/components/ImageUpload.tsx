@@ -64,8 +64,13 @@ const uploadToCloudinary = async (
   onProgress: (pct: number) => void
 ): Promise<string> => {
   const config = getCloudinaryConfig();
-  const cloudName = config.cloudName || "digkpl4re";
-  const uploadPreset = config.uploadPreset || "axuqgwb1";
+  const cloudName = config.cloudName;
+  const uploadPreset = config.uploadPreset;
+
+  if (!cloudName || !uploadPreset) {
+    // Fallback to local Base64 if Cloudinary is not configured yet
+    return fileToBase64(file);
+  }
 
   const toUpload = file.type === "image/svg+xml" ? file : await toJpeg(file);
   const fd = new FormData();
