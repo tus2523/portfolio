@@ -1,118 +1,184 @@
-import React from 'react';
-import { FadeIn } from '../FadeIn';
-import { FloatingParticles } from '../FloatingParticles';
-import { ParallaxEmoji } from '../ParallaxEmoji';
-import { CountUp } from '../CountUp';
-import { ContactButton } from '../ContactButton';
-import { defaultData, getWhatsAppLink } from '../../lib/store';
-
-const getAssetUrl = (path: string) => {
-  const base = import.meta.env.BASE_URL || '/';
-  const cleanBase = base.endsWith('/') ? base : `${base}/`;
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-  return `${cleanBase}${cleanPath}`;
-};
-
-const GLASS_CAMERA = getAssetUrl('glass_camera.png');
-const GLASS_CLAPPERBOARD = getAssetUrl('glass_clapperboard.png');
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, X, ArrowUpRight } from 'lucide-react';
+import { defaultData } from '../../lib/store';
 
 interface HeroSectionProps {
   data: typeof defaultData;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const name = "TUSHAR MARU";
+
+  const navLinks = [
+    { label: "Projects", href: "#projects" },
+    { label: "Gallery", href: "#photos" },
+    { label: "Services", href: "#services" },
+    { label: "Experience", href: "#experience" },
+    { label: "References", href: "#reviews" },
+    { label: "Contact", href: "#contact" },
+  ];
+
   return (
-    <section className="min-h-screen w-full flex flex-col justify-between relative overflow-hidden py-6 bg-[#0C0C0D] font-sans">
-      {/* Dynamic Ambient Motion Gradient Background */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full bg-gradient-to-br from-[#7621B0]/20 via-[#B600A8]/10 to-transparent blur-[80px] sm:blur-[140px] animate-blob-slow" />
-        <div className="absolute bottom-[10%] right-[10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full bg-gradient-to-br from-[#BE4C00]/15 via-[#7621B0]/15 to-transparent blur-[80px] sm:blur-[140px] animate-blob-reverse" />
-        <div className="absolute top-[40%] right-[20%] w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] rounded-full bg-gradient-to-br from-indigo-900/15 via-[#B600A8]/10 to-transparent blur-[80px] sm:blur-[140px] animate-blob-slow" style={{ animationDelay: '-7s' }} />
-        {/* Subtle mesh background grid */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.25]" />
-      </div>
+    <>
+      {/* ── Fixed Header with mix-blend-mode: difference ── */}
+      <header
+        className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 sm:px-12 md:px-16 py-6 pointer-events-auto"
+        style={{ mixBlendMode: 'difference' }}
+      >
+        {/* Left side: Lowercase Studio Logo */}
+        <a
+          href="#"
+          className="text-white text-2xl font-bold tracking-tighter uppercase font-sans hover:opacity-75 transition-opacity duration-300"
+        >
+          tm<span className="text-white/40">.</span>
+        </a>
 
-      <FloatingParticles />
-      {/* Parallax Floating 3D Glass Assets */}
-      <ParallaxEmoji src={GLASS_CLAPPERBOARD} alt="Clapperboard" className="top-[25%] left-[2%] sm:left-[5%] md:left-[8%]" rotation={-12} delay={0} parallaxY={-90} />
-      <ParallaxEmoji src={GLASS_CAMERA} alt="Camera" className="top-[45%] right-[2%] sm:right-[5%] md:right-[8%]" rotation={15} delay={1.5} parallaxY={-60} />
-
-      {/* Navbar */}
-      <FadeIn delay={0} y={-20} as="nav" className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 px-6 sm:px-12 md:px-16 lg:px-24 pt-4 w-full relative z-20">
-        <div className="font-display font-extrabold text-lg sm:text-xl md:text-2xl text-[#D7E2EA] whitespace-nowrap tracking-wider">
-          TUSHAR MARU<span className="text-[#7621B0]">.</span>
-        </div>
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-[#D7E2EA]/70">
-          {["About", "Videos", "Photos", "Services", "Experience", "Reviews", "Contact"].map((item) => (
+        {/* Center / Right Links on Desktop */}
+        <div className="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-[0.15em] text-white/80">
+          {navLinks.map((link) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="hover:text-white transition-colors duration-200"
+              key={link.label}
+              href={link.href}
+              className="hover:text-white transition-colors duration-300"
             >
-              {item}
+              {link.label}
             </a>
           ))}
-          <a href="#admin" className="text-[#7621B0] hover:text-white transition-colors font-bold">Admin</a>
+          <a
+            href="#admin"
+            className="text-white font-bold border border-white/30 px-3 py-1 rounded hover:bg-white hover:text-black transition duration-300"
+          >
+            Admin
+          </a>
         </div>
-      </FadeIn>
 
-      {/* Hero Heading Container */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full relative z-10 px-6 mt-12 sm:mt-8">
-        <FadeIn delay={0.15} y={40} as="div" className="w-full text-center">
-          {/* Availability Status Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161618] border border-white/10 text-[#D7E2EA] text-xs font-medium tracking-wide mb-6 shadow-xl">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="uppercase text-[11px] font-bold tracking-widest text-[#D7E2EA]/80">Available for Shoots &amp; Edits</span>
-            <span className="text-[#D7E2EA]/30">•</span>
-            <span className="text-[11px] text-[#7621B0] font-semibold uppercase">Mumbai / Worldwide</span>
+        {/* Right side: Plus Menu Toggle Button */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition duration-300"
+          aria-label="Toggle Navigation"
+        >
+          {menuOpen ? <X size={18} /> : <Plus size={18} />}
+        </button>
+      </header>
+
+      {/* ── Slide-out Menu Overlay ── */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 bg-[#0A0A0A] z-40 flex flex-col justify-between p-8 sm:p-16 text-white pt-28"
+          >
+            <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full">
+              <span className="font-mono text-xs text-[#737373] uppercase tracking-[0.2em]">Navigation Index</span>
+              <div className="flex flex-col gap-4">
+                {navLinks.map((link, idx) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="text-4xl sm:text-6xl font-bold tracking-tight hover:text-[#737373] transition-colors duration-300 flex items-center justify-between border-b border-white/10 pb-3"
+                  >
+                    <span>{link.label}</span>
+                    <span className="font-mono text-sm text-[#737373]">0{idx + 1}</span>
+                  </a>
+                ))}
+                <a
+                  href="#admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-2xl font-mono uppercase tracking-wider text-white/60 hover:text-white pt-4 flex items-center gap-2"
+                >
+                  Admin Control Panel <ArrowUpRight size={18} />
+                </a>
+              </div>
+            </div>
+
+            <div className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row justify-between text-xs font-mono text-[#737373] border-t border-white/10 pt-6">
+              <span>MUMBAI, INDIA — 400011</span>
+              <span>MARUTUSHAR387@GMAIL.COM</span>
+              <span>+91 9324704934</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Hero Section ── */}
+      <section className="min-h-[85vh] w-full flex flex-col justify-between pt-32 pb-12 px-6 sm:px-12 md:px-16 bg-[#FFFFFF] text-[#000000] font-sans relative overflow-hidden">
+        {/* Top Metadata Row */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs font-mono uppercase tracking-[0.1em] text-[#737373] border-b border-[#000000]/10 pb-4 w-full">
+          <span>Tushar Maru Studio</span>
+          <span>Videographer &amp; Video Editor</span>
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
+            Available For Commissions
+          </span>
+        </div>
+
+        {/* Center Display Headline: Staggered Letter Reveal */}
+        <div className="my-auto py-12 text-center flex flex-col items-center">
+          <div className="overflow-hidden">
+            <h1
+              className="font-bold tracking-[-0.05em] leading-[0.88] select-none text-[#000000] flex flex-wrap justify-center text-[clamp(3.2rem,12vw,180px)]"
+              aria-label={name}
+            >
+              {name.split(" ").map((word, wIdx) => (
+                <span key={wIdx} className="inline-flex whitespace-nowrap mx-[0.15em]">
+                  {word.split("").map((char, cIdx) => (
+                    <motion.span
+                      key={cIdx}
+                      initial={{ y: "110%", opacity: 0 }}
+                      animate={{ y: "0%", opacity: 1 }}
+                      transition={{
+                        delay: (wIdx * 6 + cIdx) * 0.04,
+                        duration: 1.0,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className="inline-block"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </span>
+              ))}
+            </h1>
           </div>
 
-          {/* Combined Display & Editorial Serif Fonts */}
-          <h1 className="font-display font-extrabold uppercase tracking-tight leading-[0.88] text-[clamp(2.8rem,11.5vw,170px)] text-white mt-1">
-            TUSHAR MARU
-          </h1>
-
-          <p className="font-editorial italic text-xl sm:text-3xl md:text-4xl text-[#D7E2EA]/90 mt-4 max-w-3xl mx-auto font-normal">
-            Crafting <span className="text-white font-semibold underline decoration-[#7621B0] underline-offset-8">Cinematic Narratives</span> &amp; High-Retention Visuals
-          </p>
-
-          <p className="font-sans text-xs sm:text-sm text-[#D7E2EA]/60 max-w-xl mx-auto mt-4 font-normal tracking-wide">
-            Specializing in Celebrity BTS, Live Music Events, Commercial Shoots &amp; Adobe Premiere Pro Post-Production.
-          </p>
-        </FadeIn>
-
-        {/* Stats Counter Row */}
-        <div className="flex flex-wrap gap-6 sm:gap-10 md:gap-14 pt-8 border-t border-white/10 w-full max-w-6xl mt-12 justify-center px-4">
-          {[1, 2, 3, 4].map(n => {
-            const value = (data.heroStats as any)[`stat${n}Value`] || '';
-            const label = (data.heroStats as any)[`stat${n}Label`] || '';
-            if (!value && !label) return null;
-            return (
-              <div key={n} className="text-center min-w-[80px] sm:min-w-[110px]">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-[#D7E2EA] mb-0.5 tracking-tight">
-                  <CountUp end={value} suffix="+" />
-                </div>
-                <div className="text-[10px] sm:text-xs uppercase tracking-widest text-[#D7E2EA]/50 font-bold">
-                  {label}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Bottom bar */}
-      <div className="flex flex-col sm:flex-row justify-end items-start sm:items-end px-6 sm:px-12 md:px-16 lg:px-24 pb-4 w-full relative z-20">
-        <FadeIn delay={0.5} y={20} className="ml-auto">
-          <a
-            href={getWhatsAppLink(data.settings?.whatsappPhone || '9324704934')}
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Sub-headline */}
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+            className="text-lg sm:text-2xl md:text-[24px] text-[#525252] max-w-3xl mx-auto mt-8 font-normal tracking-[-0.02em] leading-snug px-4"
           >
-            <ContactButton />
-          </a>
-        </FadeIn>
-      </div>
-    </section>
+            Specializing in high-energy video editing, celebrity behind-the-scenes shoots, commercial brand promos, and narrative post-production.
+          </motion.p>
+        </div>
+
+        {/* Bottom Hero Stats Bar */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-[#000000]/10 w-full text-left">
+          {[
+            { val: data.heroStats?.stat1Value || "50+", label: data.heroStats?.stat1Label || "Videos Edited" },
+            { val: data.heroStats?.stat2Value || "20+", label: data.heroStats?.stat2Label || "Brand Shoots" },
+            { val: data.heroStats?.stat3Value || "15+", label: data.heroStats?.stat3Label || "Celebrities BTS" },
+            { val: data.heroStats?.stat4Value || "2+", label: data.heroStats?.stat4Label || "Years Exp." },
+          ].map((item, idx) => (
+            <div key={idx} className="flex flex-col">
+              <span className="font-bold text-2xl sm:text-3xl text-[#000000] tracking-[-0.04em]">
+                {item.val}
+              </span>
+              <span className="text-[11px] sm:text-[13px] font-mono uppercase tracking-[0.1em] text-[#737373] mt-1">
+                {item.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
   );
 };

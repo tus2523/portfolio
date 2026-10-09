@@ -1,41 +1,15 @@
 import React, { useState } from 'react';
-import { Mail, Phone, Star } from 'lucide-react';
-import { ConfettiEffect } from '../ConfettiEffect';
-import { defaultData, updateSection, getWhatsAppLink } from '../../lib/store';
+import { defaultData, getWhatsAppLink, updateSection } from '../../lib/store';
 import { db } from '../../lib/firebase';
 import { ref, set } from 'firebase/database';
-
-const Instagram = ({ size = 24 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-);
-const Linkedin = ({ size = 24 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-);
-const Youtube = ({ size = 24 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
-);
-const WhatsApp = ({ size = 24 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-);
-
-import { FloatingEmoji } from '../FloatingEmoji';
-
-const getAssetUrl = (path: string) => {
-  const base = import.meta.env.BASE_URL || '/';
-  const cleanBase = base.endsWith('/') ? base : `${base}/`;
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-  return `${cleanBase}${cleanPath}`;
-};
-
-const GLASS_SPARKLES = getAssetUrl('glass_sparkles.png');
-const GLASS_HEART = getAssetUrl('glass_heart.png');
+import { Star, ArrowUpRight } from 'lucide-react';
 
 interface FooterSectionProps {
   data: typeof defaultData;
 }
 
 export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const [name, setName] = useState('');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(5);
@@ -44,14 +18,11 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   const whatsappPhone = data.settings?.whatsappPhone || data.about?.phone || '9324704934';
   const whatsappUrl = getWhatsAppLink(whatsappPhone);
 
-  const contactLinks = [
-    { url: data.heroStats?.instagramUrl || data.about?.instagramUrl, icon: <Instagram size={18} />, title: "Instagram" },
-    { url: data.heroStats?.linkedinUrl || data.about?.linkedinUrl, icon: <Linkedin size={18} />, title: "LinkedIn" },
-    { url: data.heroStats?.youtubeUrl || data.about?.youtubeUrl, icon: <Youtube size={18} />, title: "YouTube" },
-    { url: whatsappUrl, icon: <WhatsApp size={18} />, title: "WhatsApp" },
-    { url: data.about?.email ? `mailto:${data.about.email}` : 'mailto:marutushar387@gmail.com', icon: <Mail size={18} />, title: "Email Me" },
-    { url: data.about?.phone ? `tel:${data.about.phone}` : 'tel:+919324704934', icon: <Phone size={18} />, title: "Call Me" },
-  ].filter(link => link.url);
+  const socials = [
+    { label: "YouTube", url: data.heroStats?.youtubeUrl || data.about?.youtubeUrl || "https://youtube.com" },
+    { label: "Instagram", url: data.heroStats?.instagramUrl || data.about?.instagramUrl || "https://instagram.com/tusharmaru" },
+    { label: "WhatsApp", url: whatsappUrl },
+  ];
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +31,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
     const newReview = {
       id: `rev_${Date.now()}`,
       clientName: name,
-      role: 'Client / Collaborator',
+      role: 'Director / Client',
       logoUrl: '',
       rating,
       comment,
@@ -84,134 +55,183 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   };
 
   return (
-    <footer id="contact" className="bg-[#08080A] border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20 overflow-hidden font-sans">
-      <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="top-[10%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={false} />
-      <FloatingEmoji src={GLASS_HEART} alt="Heart" className="bottom-[15%] right-[2%] sm:right-[4%]" rotation={12} delay={1.2} lightBg={false} />
-      
-      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start relative z-10">
-        {/* Contact Info Side */}
-        <div className="flex flex-col gap-8">
-          <div>
-            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#7621B0] mb-2 block">Connect &amp; Collaborate</span>
-            <h2 className="text-2xl md:text-4xl font-display font-extrabold uppercase tracking-tight text-[#D7E2EA] mb-4">
-              {data.settings?.footerHeading || "Let's Create Visually Stunning Content Together"}
-            </h2>
-            <p className="text-sm sm:text-base font-light leading-relaxed text-[#D7E2EA]/60 max-w-md">
-              {data.settings?.footerBio || "Open for videography projects, video editing assignments, celebrity BTS shoots, and creative collaborations in Mumbai and worldwide."}
-            </p>
-          </div>
+    <footer id="contact" className="bg-[#0A0A0A] text-[#FFFFFF] font-sans pt-24 pb-12 px-6 sm:px-12 md:px-16 border-t border-white/10">
+      <div className="max-w-7xl mx-auto">
+        {/* Four-Column Desktop Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16 pb-20">
+          {/* Column 1-2: Large Brand Name and Short Bio */}
+          <div className="md:col-span-2 flex flex-col justify-between gap-6">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#737373] block mb-3">
+                Studio Directory — Index 03
+              </span>
+              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-[-0.05em] leading-[0.9] text-white">
+                TUSHAR MARU
+              </h2>
+              <p className="text-base text-[#737373] max-w-md mt-6 leading-relaxed font-normal tracking-[-0.01em]">
+                Videographer and video editor based in Mumbai. Specializing in high-energy video cuts, celebrity BTS shoots, commercial brand promos, and editorial storytelling.
+              </p>
+            </div>
 
-          <div className="flex flex-col gap-2 text-xs text-[#D7E2EA]/70">
-            <p><strong className="text-white">Email:</strong> {data.about?.email || 'marutushar387@gmail.com'}</p>
-            <p><strong className="text-white">Phone:</strong> {data.about?.phone || '+91 9324704934'}</p>
-            <p><strong className="text-white">Location:</strong> Mumbai, Maharashtra, India</p>
-          </div>
-
-          <div className="flex flex-wrap gap-4 items-center">
-            {contactLinks.map((s, idx) => {
-              const isExternal = !s.url?.startsWith('mailto:') && !s.url?.startsWith('tel:');
-              
-              if (s.title === "Email Me") {
-                return (
-                  <div 
-                    key={idx}
-                    className="relative cursor-pointer"
-                    onClick={() => { setShowConfetti(true); setTimeout(() => setShowConfetti(false), 200); }}
-                  >
-                    <ConfettiEffect trigger={showConfetti} />
-                    <a
-                      href={s.url || undefined}
-                      title={s.title}
-                      className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#7621B0]/50 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-[#7621B0]/20"
-                    >
-                      {s.icon}
-                    </a>
-                  </div>
-                );
-              }
-
-              return (
-                <a
-                  key={idx}
-                  href={s.url || undefined}
-                  title={s.title}
-                  target={isExternal ? "_blank" : undefined}
-                  rel={isExternal ? "noopener noreferrer" : undefined}
-                  className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#7621B0]/50 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-[#7621B0]/20"
-                >
-                  {s.icon}
-                </a>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Leave a Review Form Side */}
-        <div className="w-full max-w-sm ml-auto bg-[#121214] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#7621B0] via-purple-400 to-[#7621B0]"></div>
-          <h3 className="text-lg font-bold mb-5 text-center tracking-wide uppercase text-white font-display">Leave a Review</h3>
-          
-          {submitted ? (
-             <div className="text-center py-6">
-               <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">✓</div>
-               <h4 className="font-bold text-base mb-1 text-white">Thank You!</h4>
-               <p className="text-xs text-[#D7E2EA]/60">Your review has been submitted for approval.</p>
-               <button onClick={() => setSubmitted(false)} className="mt-4 text-[10px] text-[#7621B0] uppercase tracking-wider hover:underline transition">Write another</button>
-             </div>
-          ) : (
-            <form onSubmit={handleReviewSubmit} className="flex flex-col gap-3">
-              <div>
-                <input 
-                  type="text" 
-                  required
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-[#7621B0] transition placeholder-white/20 text-white"
-                  placeholder="Your Name &amp; Company"
-                />
-              </div>
-              
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-semibold tracking-wider text-[#D7E2EA]/50 uppercase">Rating</span>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setRating(star)}
-                      className={`transition ${star <= rating ? 'text-amber-400' : 'text-white/20 hover:text-white/40'}`}
-                    >
-                      <Star size={18} fill={star <= rating ? "currentColor" : "none"} strokeWidth={star <= rating ? 0 : 2} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <textarea 
-                  required
-                  value={comment}
-                  onChange={e => setComment(e.target.value)}
-                  rows={3}
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-[#7621B0] transition placeholder-white/20 text-white resize-none"
-                  placeholder="Working with Tushar on our shoot / video edit was exceptional because..."
-                />
-              </div>
-
-              <button 
-                type="submit" 
-                className="w-full mt-2 bg-[#7621B0] text-white font-bold uppercase tracking-widest text-[10px] py-3 rounded-lg hover:bg-[#611a93] transition shadow-lg shadow-purple-900/30"
+            <div className="flex items-center gap-4 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowReviewModal(true)}
+                className="font-mono text-xs uppercase tracking-[0.1em] text-white/60 hover:text-white underline underline-offset-4 transition-colors"
               >
-                Submit Review
+                + Leave a Director / Client Review
               </button>
-            </form>
-          )}
+            </div>
+          </div>
+
+          {/* Column 3: Socials List */}
+          <div className="flex flex-col gap-4">
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#737373] border-b border-white/10 pb-2">
+              Socials
+            </span>
+            <ul className="flex flex-col gap-3 font-mono text-xs uppercase tracking-[0.1em]">
+              {socials.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/80 hover:text-white flex items-center justify-between group transition-colors duration-200"
+                  >
+                    <span>{item.label}</span>
+                    <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 4: Contact List */}
+          <div className="flex flex-col gap-4">
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#737373] border-b border-white/10 pb-2">
+              Contact
+            </span>
+            <div className="flex flex-col gap-3 font-mono text-xs uppercase tracking-[0.1em] text-white/80">
+              <a
+                href={`mailto:${data.about?.email || 'marutushar387@gmail.com'}`}
+                className="hover:text-white truncate transition-colors"
+              >
+                {data.about?.email || 'marutushar387@gmail.com'}
+              </a>
+              <a
+                href={`tel:${data.about?.phone || '+919324704934'}`}
+                className="hover:text-white transition-colors"
+              >
+                {data.about?.phone || '+91 9324704934'}
+              </a>
+              <span className="text-[#737373]">
+                Mumbai, Maharashtra, India
+              </span>
+              <a
+                href="#admin"
+                className="text-[#737373] hover:text-white pt-2 border-t border-white/5 flex items-center justify-between"
+              >
+                <span>Admin Login</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar: Thin border-top (white at 10% opacity) with 14px text */}
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[14px] text-[#737373] font-mono tracking-tight">
+          <span>&copy; {new Date().getFullYear()} Tushar Maru. All rights reserved.</span>
+          <span className="text-white/40">Editorial Creative Studio Aesthetic</span>
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto border-t border-white/5 mt-16 pt-8 text-center text-xs text-[#D7E2EA]/40">
-        &copy; {new Date().getFullYear()} Tushar Maru · Videographer &amp; Video Editor. All rights reserved.
-      </div>
+      {/* Review Modal */}
+      {showReviewModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-6"
+          onClick={() => setShowReviewModal(false)}
+        >
+          <div
+            className="relative max-w-lg w-full bg-[#121214] border border-white/10 rounded-2xl p-6 text-white"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-3">
+              <h3 className="font-mono text-xs uppercase tracking-[0.1em] text-white">Client / Director Endorsement</h3>
+              <button
+                type="button"
+                onClick={() => setShowReviewModal(false)}
+                className="text-white/60 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            {submitted ? (
+              <div className="text-center py-8">
+                <span className="text-3xl block mb-2">✓</span>
+                <p className="text-sm font-bold">Endorsement Received</p>
+                <p className="text-xs text-[#737373] mt-1">Pending approval in studio dashboard.</p>
+                <button
+                  type="button"
+                  onClick={() => { setSubmitted(false); setShowReviewModal(false); }}
+                  className="mt-6 px-6 py-2.5 rounded-full bg-white text-black font-mono text-xs uppercase tracking-wider"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleReviewSubmit} className="flex flex-col gap-4">
+                <div>
+                  <label className="font-mono text-[10px] uppercase text-[#737373] block mb-1">Your Name &amp; Role</label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Saurabh Prajapati — Director"
+                    className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/40"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-mono text-[10px] uppercase text-[#737373] block mb-1">Rating</label>
+                  <div className="flex gap-1 text-amber-400">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => setRating(s)}
+                        className={s <= rating ? 'text-amber-400' : 'text-white/20'}
+                      >
+                        <Star size={18} fill={s <= rating ? 'currentColor' : 'none'} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-mono text-[10px] uppercase text-[#737373] block mb-1">Feedback Statement</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Statement on working with Tushar on production / video edit..."
+                    className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/40 resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full mt-2 py-3 rounded-full bg-white text-black font-mono text-xs uppercase tracking-[0.1em] font-bold hover:bg-neutral-200 transition"
+                >
+                  Submit Endorsement
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </footer>
   );
 };

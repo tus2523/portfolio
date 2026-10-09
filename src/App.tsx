@@ -5,21 +5,19 @@ import { ref, onValue } from 'firebase/database';
 import { getData, saveData, getYoutubeId, getInstagramId, defaultData } from './lib/store';
 import { AdminPage } from './components/AdminPage';
 import { LoadingScreen } from './components/LoadingScreen';
-import { ScrollProgressBar } from './components/ScrollProgressBar';
-import { InteractiveGlow } from './components/InteractiveGlow';
+import { DifferenceCursor } from './components/DifferenceCursor';
 
-// Section Components
+// Section Components matching the Bold Editorial Studio spec
 import { HeroSection } from './components/sections/HeroSection';
+import { AsymmetricalMarquee } from './components/AsymmetricalMarquee';
 import { AboutSection } from './components/sections/AboutSection';
-import { ServicesSection } from './components/sections/ServicesSection';
 import { ProjectsSection } from './components/sections/ProjectsSection';
 import { PhotosSection } from './components/sections/PhotosSection';
+import { ServicesSection } from './components/sections/ServicesSection';
 import { ExperienceSection } from './components/sections/ExperienceSection';
-import { SkillsSection } from './components/sections/SkillsSection';
-import { FooterSection } from './components/sections/FooterSection';
 import { ReviewsSection } from './components/sections/ReviewsSection';
+import { FooterSection } from './components/sections/FooterSection';
 
-import { MarqueeRow } from './components/MarqueeRow';
 import './App.css';
 
 function MainApp() {
@@ -74,7 +72,7 @@ function MainApp() {
         });
       }
     }, (error) => {
-      console.warn("Firebase connection notice (using offline local store):", error);
+      console.warn("Firebase connection notice:", error);
     });
 
     return () => {
@@ -97,7 +95,7 @@ function MainApp() {
     };
   }, [lightbox]);
 
-  // Flatten all videos across projects for top marquee
+  // Flatten all videos for asymmetrical continuous marquee
   const marqueeVideos = useMemo(() => {
     if (!data.videoProjects) return [];
     return data.videoProjects.flatMap((project: any) => {
@@ -110,11 +108,12 @@ function MainApp() {
     });
   }, [data.videoProjects]);
 
-  const row1Videos = marqueeVideos;
-  const row2Videos = useMemo(() => [...marqueeVideos].reverse(), [marqueeVideos]);
-
   return (
-    <div className="bg-[#0C0C0C] text-[#D7E2EA] font-kanit overflow-x-clip min-h-screen w-full relative select-none">
+    <div className="bg-[#FFFFFF] text-[#000000] font-sans overflow-x-clip min-h-screen w-full relative selection:bg-black selection:text-white">
+      {/* ── Interactive Difference Cursor ── */}
+      <DifferenceCursor />
+
+      {/* ── Initial Loading Screen ── */}
       <AnimatePresence>
         {!loaded && <LoadingScreen onComplete={() => setLoaded(true)} />}
       </AnimatePresence>
@@ -123,72 +122,45 @@ function MainApp() {
         className={`transition-opacity duration-500 ease-in-out ${loaded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         style={{ visibility: loaded ? 'visible' : 'hidden' }}
       >
-        <ScrollProgressBar />
-        <div className="film-grain" aria-hidden="true" />
-        <InteractiveGlow />
-
+        {/* 1. Massive Display Hero */}
         <HeroSection data={data} />
-        
-        {/* Reel Previews Marquee Transition */}
+
+        {/* 2. Infinite Project Marquee with Asymmetrical Cards */}
         {marqueeVideos.length > 0 && (
-          <section className="bg-[#0C0C0C] py-6 border-b border-white/5 overflow-hidden w-full flex flex-col gap-4 relative z-20">
-            <div className="flex flex-col gap-4 w-full">
-              <MarqueeRow videos={row1Videos} direction="left" onSelectVideo={handleSelectVideo} />
-              <MarqueeRow videos={row2Videos} direction="right" onSelectVideo={handleSelectVideo} />
-            </div>
-          </section>
+          <AsymmetricalMarquee
+            videos={marqueeVideos}
+            onSelectVideo={handleSelectVideo}
+          />
         )}
 
-        {(() => {
-          const order = data.settings?.sectionOrder || ['about', 'services', 'videos', 'photos', 'experience', 'skills', 'reviews'];
-          let visibleIndex = 0;
+        {/* 3. Centered Introductory Statement */}
+        <AboutSection data={data} />
 
-          return order.map((sectionId) => {
-            let hasContent = true;
-            let content = null;
+        {/* 4. Balanced Two-Column Project Grid */}
+        <ProjectsSection
+          videoProjects={data.videoProjects || []}
+          onSelectVideo={handleSelectVideo}
+        />
 
-            switch (sectionId) {
-              case 'about':
-                hasContent = !!(data.about?.bio || data.about?.photoUrl);
-                content = hasContent ? <AboutSection key="about" data={data} theme={visibleIndex % 2 === 0 ? 'dark' : 'light'} /> : null;
-                break;
-              case 'services':
-                hasContent = true;
-                content = <ServicesSection key="services" data={data} theme={visibleIndex % 2 === 0 ? 'dark' : 'light'} />;
-                break;
-              case 'videos':
-                hasContent = data.videoProjects && data.videoProjects.length > 0;
-                content = hasContent ? <ProjectsSection key="videos" videoProjects={data.videoProjects || []} onSelectVideo={handleSelectVideo} theme={visibleIndex % 2 === 0 ? 'dark' : 'light'} /> : null;
-                break;
-              case 'photos':
-                hasContent = data.photos && data.photos.length > 0;
-                content = hasContent ? <PhotosSection key="photos" photos={data.photos || []} /> : null;
-                break;
-              case 'experience':
-                hasContent = data.experience && data.experience.length > 0;
-                content = hasContent ? <ExperienceSection key="experience" experience={data.experience || []} theme={visibleIndex % 2 === 0 ? 'dark' : 'light'} /> : null;
-                break;
-              case 'skills':
-                hasContent = data.skills && data.skills.length > 0;
-                content = hasContent ? <SkillsSection key="skills" skills={data.skills || []} theme={visibleIndex % 2 === 0 ? 'dark' : 'light'} /> : null;
-                break;
-              case 'reviews':
-                const approvedReviews = (data.reviews || []).filter(r => r.status === 'approved');
-                hasContent = approvedReviews.length > 0;
-                content = hasContent ? <ReviewsSection key="reviews" reviews={data.reviews || []} theme={visibleIndex % 2 === 0 ? 'dark' : 'light'} /> : null;
-                break;
-              default:
-                return null;
-            }
+        {/* 5. Photo Stills & BTS Showcase */}
+        {data.photos && data.photos.length > 0 && (
+          <PhotosSection photos={data.photos} />
+        )}
 
-            if (hasContent && content) {
-              visibleIndex++;
-              return content;
-            }
-            return null;
-          });
-        })()}
+        {/* 6. Creative Capabilities & Services */}
+        <ServicesSection data={data} />
 
+        {/* 7. Production Timeline & Experience */}
+        {data.experience && data.experience.length > 0 && (
+          <ExperienceSection experience={data.experience} />
+        )}
+
+        {/* 8. Director Endorsements & References */}
+        {data.reviews && data.reviews.length > 0 && (
+          <ReviewsSection reviews={data.reviews} />
+        )}
+
+        {/* 9. High-Contrast Dark Footer */}
         <FooterSection data={data} />
       </div>
 
@@ -202,23 +174,25 @@ function MainApp() {
         return (
           <div 
             onClick={() => setLightbox(null)}
-            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in font-sans"
           >
             <div 
               onClick={e => e.stopPropagation()} 
               className={`w-full ${isInstagram || isShort ? 'max-w-[400px]' : 'max-w-4xl'} relative`}
             >
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-sm font-semibold tracking-wider text-[#D7E2EA]/70 truncate max-w-[80%]">{lightbox.title}</span>
+              <div className="flex justify-between items-center mb-4 text-white">
+                <span className="font-mono text-xs uppercase tracking-wider text-white/80 truncate max-w-[80%]">
+                  {lightbox.title}
+                </span>
                 <button 
                   type="button"
                   onClick={() => setLightbox(null)} 
-                  className="bg-white/5 border border-white/10 text-white rounded-full w-9 h-9 flex items-center justify-center hover:bg-white/10 transition"
+                  className="w-9 h-9 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition"
                 >
                   ✕
                 </button>
               </div>
-              <div className={`relative w-full ${isInstagram || isShort ? 'aspect-[9/16] h-[75vh]' : 'aspect-video'} rounded-3xl overflow-hidden border border-white/10 bg-black`}>
+              <div className={`relative w-full ${isInstagram || isShort ? 'aspect-[9/16] h-[75vh]' : 'aspect-video'} rounded-2xl overflow-hidden border border-white/10 bg-black`}>
                 {isInstagram ? (
                   <iframe 
                     src={`https://www.instagram.com/reel/${instaId}/embed/`} 
