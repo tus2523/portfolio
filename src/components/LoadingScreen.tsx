@@ -5,20 +5,20 @@ interface LoadingScreenProps {
   onComplete: () => void;
 }
 
-// Rapid-fire words like Marvel comic frames
+// Rapid-fire words for videographer & cinematic editor
 const FLASH_FRAMES = [
-  'EDIT', 'CREATE', 'PRODUCE', 'MANAGE',
-  'FILM', 'BRAND', 'CONTENT', 'INFLUENCE',
+  'SHOOT', 'DIRECT', 'CAPTURE', 'EDIT',
+  'CUT', 'COLOR', 'PREMIERE', 'CINEMA',
 ];
 
-const NAME = 'SAHIL THORAT';
+const NAME = 'TUSHAR MARU';
 
 type Phase = 'frames' | 'assemble' | 'hold' | 'done';
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const [phase, setPhase] = useState<Phase>('frames');
   const [frameIdx, setFrameIdx] = useState(0);
-  const [bg, setBg] = useState('#0C0C0C');
+  const [bg, setBg] = useState('#08080A');
   const [visible, setVisible] = useState(true);
   const [flash, setFlash] = useState(false);
   const doneRef = useRef(false);
@@ -26,20 +26,16 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   useEffect(() => {
     if (doneRef.current) return;
 
-    // ── Phase 1: Rapid frame flash (Marvel-style) ──────────────────
     let idx = 0;
-    const bgColors = ['#0C0C0C', '#0a0a12', '#111', '#0C0C0C', '#0a0814', '#111', '#0C0C0C', '#080808'];
+    const bgColors = ['#08080A', '#0b0914', '#0d0d12', '#08080A', '#100a1c', '#0d0d12', '#08080A', '#060608'];
 
     const frameInterval = setInterval(() => {
       if (idx >= FLASH_FRAMES.length - 1) {
         clearInterval(frameInterval);
 
-        // Short blank between phases
         setTimeout(() => {
-          // ── Phase 2: Name assembly ──────────────────────────────
           setPhase('assemble');
 
-          // ── Phase 3: Hold + white flash ────────────────────────
           setTimeout(() => {
             setPhase('hold');
             setTimeout(() => {
@@ -47,8 +43,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
               setTimeout(() => {
                 doneRef.current = true;
                 setVisible(false);
-                setTimeout(onComplete, 400); // Matches the 0.4s exit transition duration
-              }, 150); // Wait for the white flash to fully cover the screen (150ms)
+                setTimeout(onComplete, 400);
+              }, 150);
             }, 900);
           }, NAME.length * 45 + 300);
         }, 80);
@@ -57,7 +53,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         setFrameIdx(idx);
         setBg(bgColors[idx % bgColors.length]);
       }
-    }, 110); // 110ms per frame — ultra fast
+    }, 110);
 
     return () => clearInterval(frameInterval);
   }, [onComplete]);
@@ -66,12 +62,11 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden select-none"
+          className="fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden select-none font-sans"
           style={{ background: bg, transition: 'background 0.05s' }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
         >
-          {/* ── White flash overlay ── */}
           {flash && (
             <motion.div
               className="absolute inset-0 bg-white z-50 pointer-events-none"
@@ -81,7 +76,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
             />
           )}
 
-          {/* ── Scanlines (cinematic TV effect) ── */}
+          {/* Film scanlines */}
           <div
             className="absolute inset-0 pointer-events-none z-10 opacity-[0.04]"
             style={{
@@ -90,36 +85,31 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
             }}
           />
 
-          {/* ── Phase 1: Rapid word frames ── */}
+          {/* Phase 1: Rapid word frames */}
           {phase === 'frames' && (
             <div className="absolute inset-0 flex items-center justify-center z-20">
-              {/* Comic-style horizontal bar */}
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[38vh] bg-white/[0.03] pointer-events-none" />
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[38vh] bg-white/[0.02] pointer-events-none" />
 
               <span
-                className="font-black uppercase text-white/95 z-10 tracking-tighter text-center leading-none select-none"
+                className="font-display font-black uppercase text-white/95 z-10 tracking-tighter text-center leading-none select-none"
                 style={{
-                  fontFamily: 'Kanit, sans-serif',
                   fontSize: 'clamp(4rem, 18vw, 180px)',
-                  textShadow: '0 0 60px rgba(255,255,255,0.15)',
+                  textShadow: '0 0 60px rgba(118,33,176,0.3)',
                 }}
               >
                 {FLASH_FRAMES[frameIdx] ?? ''}
               </span>
 
-              {/* Frame number (bottom right — film feel) */}
-              <span
-                className="absolute bottom-8 right-8 text-white/20 font-mono text-xs tracking-widest"
-              >
-                {String(frameIdx + 1).padStart(2, '0')} / {String(FLASH_FRAMES.length).padStart(2, '0')}
+              {/* Timecode counter */}
+              <span className="absolute bottom-8 right-8 text-[#7621B0]/60 font-mono text-xs tracking-widest">
+                REC ● 00:0{frameIdx}:1{frameIdx} / 24FPS
               </span>
             </div>
           )}
 
-          {/* ── Phase 2 & 3: Name assembly ── */}
+          {/* Phase 2 & 3: Name assembly */}
           {(phase === 'assemble' || phase === 'hold') && (
             <div className="flex flex-col items-center gap-5 z-20">
-              {/* Letters slamming in */}
               <div 
                 className="flex flex-wrap justify-center leading-none gap-x-[0.35em] md:gap-x-[0.4em]" 
                 aria-label={NAME}
@@ -145,12 +135,10 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                                 stiffness: 280,
                                 damping: 22,
                               }}
-                              className="inline-block font-black text-white uppercase"
+                              className="inline-block font-display font-extrabold text-white uppercase tracking-tight"
                               style={{
-                                fontFamily: 'Kanit, sans-serif',
-                                fontSize: 'clamp(2.2rem, 7.5vw, 90px)',
-                                letterSpacing: '-0.01em',
-                                textShadow: '0 0 40px rgba(187,204,215,0.3)',
+                                fontSize: 'clamp(2.5rem, 8vw, 95px)',
+                                textShadow: '0 0 40px rgba(118,33,176,0.4)',
                               }}
                             >
                               {letter}
@@ -159,35 +147,31 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                         })}
                       </span>
                     );
-                    // Add 1 to globalIdx to account for the space between words
                     globalIdx++;
                     return wordEl;
                   });
                 })()}
               </div>
 
-              {/* Tagline slides up after letters */}
+              {/* Tagline */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: NAME.length * 0.04 + 0.1, duration: 0.5 }}
                 className="flex items-center gap-3 px-4 justify-center"
               >
-                <div className="hidden sm:block h-[1px] w-10 bg-[#BBCCD7]/40 shrink-0" />
-                <span
-                  className="text-[#BBCCD7]/60 text-[8px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.4em] font-semibold text-center whitespace-nowrap"
-                  style={{ fontFamily: 'Kanit, sans-serif' }}
-                >
-                  Content Producer · Influencer Marketer
+                <div className="hidden sm:block h-[1px] w-10 bg-[#7621B0]/40 shrink-0" />
+                <span className="text-[#D7E2EA]/70 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.4em] font-semibold text-center whitespace-nowrap">
+                  Videographer · Video Editor · Associate Director
                 </span>
-                <div className="hidden sm:block h-[1px] w-10 bg-[#BBCCD7]/40 shrink-0" />
+                <div className="hidden sm:block h-[1px] w-10 bg-[#7621B0]/40 shrink-0" />
               </motion.div>
             </div>
           )}
 
-          {/* ── Ambient corner glows ── */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-700/8 blur-[80px] pointer-events-none rounded-full" />
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#BBCCD7]/5 blur-[80px] pointer-events-none rounded-full" />
+          {/* Ambient corner glows */}
+          <div className="absolute top-0 left-0 w-64 h-64 bg-[#7621B0]/10 blur-[80px] pointer-events-none rounded-full" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-900/10 blur-[80px] pointer-events-none rounded-full" />
         </motion.div>
       )}
     </AnimatePresence>

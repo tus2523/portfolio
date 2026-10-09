@@ -1,20 +1,22 @@
-# Sahil Thorat — Portfolio
+# Tushar Maru — Portfolio
 
-> Influencer Marketing Executive, Video Editor, and Content Producer based in Mumbai, India.
+> Videographer & Video Editor based in Mumbai, India.
 
 ## About
-Sahil Thorat is a creative Content Producer, Influencer Marketing Executive, and Video Editor based in Mumbai. He specializes in end-to-end campaign execution, short-form Reels & Shorts video editing, YouTube content production, and brand partnerships with leading Indian and global brands.
+Tushar Maru is a skilled videographer and video editor with 2+ years of professional experience in creating dynamic visual content. Proficient in Adobe Premiere Pro and After Effects. Known for meeting tight deadlines and producing high-quality, engaging narratives.
 
-## Core Services
-- Influencer Marketing: Strategy, creator onboarding, brand campaigns, ROI tracking.
-- Video Editing: Commercials, YouTube videos, Instagram Reels, Shorts, motion graphics.
-- Content Production: End-to-end media production, scriptwriting, creative direction.
-- Event Coordination: On-ground influencer management and event execution.
+## Core Expertise & Services
+- Videography: Celebrity BTS shoots, commercial brand videos, live music events, music albums.
+- Video Editing: Adobe Premiere Pro, After Effects, comic creator reels, sound sync, color grading, wedding highlight films.
+- Associate Direction (AD): Operational oversight, team management, strategic shoot planning, crisis management on floor.
+- Content Strategy: High-retention video cuts for YouTube, Instagram Reels, and digital campaigns.
 
-## Key Portfolio Highlights & Brands
-- Collaborated with brands like ICICI Bank, Flipkart, Tata Motors, Sony SAB, My11Circle, Puma India, Nykaa, Boat Lifestyle, Mamaearth, and Urban Monkey.
-- Managed 100+ influencer campaigns and produced viral short-form video content.
+## References
+- Saurabh Prajapati (Director & Choreographer)
+- Uma & Gaiti (Director & Choreographer)
 
 ## Contact
-- Website: https://sahil-thorat-portfolio.vercel.app/
-- Location: Mumbai, Maharashtra, India
+- Email: marutushar387@gmail.com
+- Phone: +91 9324704934
+- Location: 16th Floor, Room No.1605, Navratna Blg, Ramdev Nagar, Mumbai - 400011, India
+- GitHub: https://github.com/tus2523/portfolio

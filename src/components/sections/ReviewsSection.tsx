@@ -15,11 +15,11 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
 
   const ReviewCard = ({ review }: { review: typeof approvedReviews[0] }) => (
     <div
-      className={`w-[280px] sm:w-[320px] mx-2.5 flex-shrink-0 ${
+      className={`w-[290px] sm:w-[340px] mx-3 flex-shrink-0 ${
         isLight
           ? 'bg-[#F4F3F6] border-[#0C0C0C]/5 hover:bg-[#EAE8ED]'
-          : 'bg-white/5 border-white/10 hover:bg-white/10'
-      } rounded-3xl p-6 shadow-xl flex flex-col justify-between transition duration-300 border cursor-default`}
+          : 'bg-[#121214] border-white/10 hover:border-[#7621B0]/50'
+      } rounded-3xl p-6 shadow-xl flex flex-col justify-between transition duration-300 border cursor-default font-sans`}
     >
       <div>
         <div className="flex gap-1 mb-4 text-amber-400">
@@ -27,12 +27,12 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
             <Star key={i} size={14} fill={i < review.rating ? 'currentColor' : 'none'} strokeWidth={i < review.rating ? 0 : 2} />
           ))}
         </div>
-        <p className={`text-sm ${isLight ? 'text-[#0C0C0C]/80' : 'text-[#D7E2EA]/80'} font-light italic leading-relaxed mb-6 line-clamp-4`}>
-          "{review.comment}"
+        <p className="text-xs sm:text-sm text-[#D7E2EA]/80 font-light italic leading-relaxed mb-6 line-clamp-4">
+          &ldquo;{review.comment}&rdquo;
         </p>
       </div>
-      <div className={`flex items-center gap-3 border-t ${isLight ? 'border-[#0C0C0C]/10' : 'border-white/5'} pt-4 mt-auto`}>
-        <div className={`w-10 h-10 rounded-full ${isLight ? 'bg-white border-[#0C0C0C]/10 text-[#0C0C0C]' : 'bg-zinc-800 border-white/10 text-white'} border flex items-center justify-center font-black text-sm overflow-hidden shrink-0`}>
+      <div className="flex items-center gap-3 border-t border-white/5 pt-4 mt-auto">
+        <div className="w-10 h-10 rounded-full bg-[#7621B0]/20 border border-[#7621B0]/40 text-[#7621B0] flex items-center justify-center font-bold text-sm overflow-hidden shrink-0">
           {review.logoUrl ? (
             <img src={review.logoUrl} className="w-full h-full object-cover" alt={review.clientName} />
           ) : (
@@ -40,28 +40,33 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews, theme =
           )}
         </div>
         <div className="truncate">
-          <h3 className={`font-bold text-sm truncate ${isLight ? 'text-[#0C0C0C]' : 'text-white'}`}>{review.clientName}</h3>
-          <span className={`text-[10px] ${isLight ? 'text-[#0C0C0C]/40' : 'text-[#D7E2EA]/40'} font-semibold uppercase tracking-wider`}>Client</span>
+          <h3 className="font-bold text-sm truncate text-white">{review.clientName}</h3>
+          <span className="text-[10px] text-[#7621B0] font-semibold uppercase tracking-wider block truncate">
+            {review.role || 'Industry Director'}
+          </span>
         </div>
       </div>
     </div>
   );
 
   return (
-    <section id="reviews" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-0 w-full border-t border-white/5 relative z-20 overflow-hidden transition-colors duration-500`}>
-      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center px-5 sm:px-8 md:px-10">
-        <FadeIn delay={0} y={40} className="mb-12 text-center">
-          <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2`}>What they say</p>
-          <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide ${isLight ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]'} transition-colors duration-500`}>
-            Client Reviews
+    <section id="reviews" className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#08080A] text-[#D7E2EA]'} py-16 sm:py-20 md:py-24 px-0 w-full border-t border-white/5 relative z-20 overflow-hidden transition-colors duration-500 font-sans`}>
+      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center px-5 sm:px-8 md:px-10 mb-12 text-center">
+        <FadeIn delay={0} y={40}>
+          <p className="text-xs uppercase tracking-[0.25em] font-bold text-[#7621B0] mb-2">Industry Recommendations</p>
+          <h2 className="font-display font-extrabold uppercase text-[clamp(2.5rem,7.5vw,100px)] leading-none tracking-tight">
+            Director References
           </h2>
+          <p className="font-editorial italic text-lg sm:text-2xl text-[#D7E2EA]/80 mt-3 max-w-2xl mx-auto">
+            Endorsements from Prominent Directors &amp; Choreographers
+          </p>
         </FadeIn>
       </div>
 
       {approvedReviews.length > 0 && (
         <div className="relative w-full">
-          <div className={`absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
-          <div className={`absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l ${isLight ? 'from-[#FAF9F6]' : 'from-[#0C0C0C]'} to-transparent z-10 pointer-events-none`} />
+          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#08080A] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#08080A] to-transparent z-10 pointer-events-none" />
           <InfiniteMarquee direction="left" speed={0.9} gap="gap-0">
             {approvedReviews.map((review, idx) => <ReviewCard key={`r-${review.id}-${idx}`} review={review} />)}
           </InfiniteMarquee>

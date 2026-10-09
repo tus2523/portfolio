@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sahil-thorat-portfolio.vercel.app/sitemap.xml
+Sitemap: https://portfolio-tus2523.vercel.app/sitemap.xml

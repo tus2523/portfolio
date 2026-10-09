@@ -41,17 +41,16 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   const [rating, setRating] = useState(5);
   const [submitted, setSubmitted] = useState(false);
 
-  const whatsappUrl = data.settings?.whatsappPhone
-    ? getWhatsAppLink(data.settings.whatsappPhone)
-    : null;
+  const whatsappPhone = data.settings?.whatsappPhone || data.about?.phone || '9324704934';
+  const whatsappUrl = getWhatsAppLink(whatsappPhone);
 
   const contactLinks = [
-    { url: data.heroStats?.instagramUrl, icon: <Instagram size={18} />, title: "Instagram" },
-    { url: data.heroStats?.linkedinUrl, icon: <Linkedin size={18} />, title: "LinkedIn" },
-    { url: data.heroStats?.youtubeUrl, icon: <Youtube size={18} />, title: "YouTube" },
+    { url: data.heroStats?.instagramUrl || data.about?.instagramUrl, icon: <Instagram size={18} />, title: "Instagram" },
+    { url: data.heroStats?.linkedinUrl || data.about?.linkedinUrl, icon: <Linkedin size={18} />, title: "LinkedIn" },
+    { url: data.heroStats?.youtubeUrl || data.about?.youtubeUrl, icon: <Youtube size={18} />, title: "YouTube" },
     { url: whatsappUrl, icon: <WhatsApp size={18} />, title: "WhatsApp" },
-    { url: data.about?.email ? `mailto:${data.about.email}` : null, icon: <Mail size={18} />, title: "Email Me" },
-    { url: data.about?.phone ? `tel:${data.about.phone}` : null, icon: <Phone size={18} />, title: "Call Me" },
+    { url: data.about?.email ? `mailto:${data.about.email}` : 'mailto:marutushar387@gmail.com', icon: <Mail size={18} />, title: "Email Me" },
+    { url: data.about?.phone ? `tel:${data.about.phone}` : 'tel:+919324704934', icon: <Phone size={18} />, title: "Call Me" },
   ].filter(link => link.url);
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
@@ -61,10 +60,11 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
     const newReview = {
       id: `rev_${Date.now()}`,
       clientName: name,
+      role: 'Client / Collaborator',
       logoUrl: '',
       rating,
       comment,
-      status: 'pending', // Needs admin approval
+      status: 'pending',
       date: new Date().toISOString(),
     };
 
@@ -72,10 +72,10 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
     updateSection('reviews', updatedReviews);
 
     try {
-      const reviewsRef = ref(db, 'portfolio_content/reviews');
+      const reviewsRef = ref(db, 'tushar_portfolio_content/reviews');
       await set(reviewsRef, updatedReviews);
     } catch (err) {
-      console.error('Failed to sync review to Firebase:', err);
+      console.warn('Saved review locally:', err);
     }
 
     setSubmitted(true);
@@ -84,20 +84,27 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   };
 
   return (
-    <footer id="contact" className="bg-[#0C0C0C] border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20 overflow-hidden">
-      {/* Floating 3D Glass Assets */}
+    <footer id="contact" className="bg-[#08080A] border-t border-white/5 py-16 px-5 sm:px-8 md:px-10 relative z-20 overflow-hidden font-sans">
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="top-[10%] left-[2%] sm:left-[4%]" rotation={-15} delay={1.0} lightBg={false} />
       <FloatingEmoji src={GLASS_HEART} alt="Heart" className="bottom-[15%] right-[2%] sm:right-[4%]" rotation={12} delay={1.2} lightBg={false} />
+      
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start relative z-10">
         {/* Contact Info Side */}
         <div className="flex flex-col gap-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-[#D7E2EA] mb-4">
-              {data.settings?.footerHeading || "Let's Work Together"}
+            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#7621B0] mb-2 block">Connect &amp; Collaborate</span>
+            <h2 className="text-2xl md:text-4xl font-display font-extrabold uppercase tracking-tight text-[#D7E2EA] mb-4">
+              {data.settings?.footerHeading || "Let's Create Visually Stunning Content Together"}
             </h2>
             <p className="text-sm sm:text-base font-light leading-relaxed text-[#D7E2EA]/60 max-w-md">
-              {data.settings?.footerBio || "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."}
+              {data.settings?.footerBio || "Open for videography projects, video editing assignments, celebrity BTS shoots, and creative collaborations in Mumbai and worldwide."}
             </p>
+          </div>
+
+          <div className="flex flex-col gap-2 text-xs text-[#D7E2EA]/70">
+            <p><strong className="text-white">Email:</strong> {data.about?.email || 'marutushar387@gmail.com'}</p>
+            <p><strong className="text-white">Phone:</strong> {data.about?.phone || '+91 9324704934'}</p>
+            <p><strong className="text-white">Location:</strong> Mumbai, Maharashtra, India</p>
           </div>
 
           <div className="flex flex-wrap gap-4 items-center">
@@ -115,7 +122,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
                     <a
                       href={s.url || undefined}
                       title={s.title}
-                      className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#BBCCD7]/40 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-white/10"
+                      className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#7621B0]/50 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-[#7621B0]/20"
                     >
                       {s.icon}
                     </a>
@@ -130,7 +137,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
                   title={s.title}
                   target={isExternal ? "_blank" : undefined}
                   rel={isExternal ? "noopener noreferrer" : undefined}
-                  className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#BBCCD7]/40 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-white/10"
+                  className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:border-[#7621B0]/50 hover:-translate-y-0.5 transition duration-300 bg-white/5 hover:bg-[#7621B0]/20"
                 >
                   {s.icon}
                 </a>
@@ -140,16 +147,16 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
         </div>
 
         {/* Leave a Review Form Side */}
-        <div className="w-full max-w-sm ml-auto bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-zinc-800 via-zinc-400 to-zinc-800"></div>
-          <h3 className="text-lg font-bold mb-5 text-center tracking-wide uppercase text-white">Leave a Review</h3>
+        <div className="w-full max-w-sm ml-auto bg-[#121214] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#7621B0] via-purple-400 to-[#7621B0]"></div>
+          <h3 className="text-lg font-bold mb-5 text-center tracking-wide uppercase text-white font-display">Leave a Review</h3>
           
           {submitted ? (
              <div className="text-center py-6">
                <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">✓</div>
                <h4 className="font-bold text-base mb-1 text-white">Thank You!</h4>
-               <p className="text-xs text-[#D7E2EA]/60">Your review is pending approval.</p>
-               <button onClick={() => setSubmitted(false)} className="mt-4 text-[10px] text-[#D7E2EA]/40 uppercase tracking-wider hover:text-white transition">Write another</button>
+               <p className="text-xs text-[#D7E2EA]/60">Your review has been submitted for approval.</p>
+               <button onClick={() => setSubmitted(false)} className="mt-4 text-[10px] text-[#7621B0] uppercase tracking-wider hover:underline transition">Write another</button>
              </div>
           ) : (
             <form onSubmit={handleReviewSubmit} className="flex flex-col gap-3">
@@ -159,8 +166,8 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
                   required
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-white/30 transition placeholder-white/20 text-white"
-                  placeholder="Your Name"
+                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-[#7621B0] transition placeholder-white/20 text-white"
+                  placeholder="Your Name &amp; Company"
                 />
               </div>
               
@@ -186,14 +193,14 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
                   value={comment}
                   onChange={e => setComment(e.target.value)}
                   rows={3}
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-white/30 transition placeholder-white/20 text-white resize-none"
-                  placeholder="Working with Sahil was amazing because..."
+                  className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-[#7621B0] transition placeholder-white/20 text-white resize-none"
+                  placeholder="Working with Tushar on our shoot / video edit was exceptional because..."
                 />
               </div>
 
               <button 
-                type="submit"
-                className="w-full mt-2 bg-white text-black font-bold uppercase tracking-widest text-[10px] py-3 rounded-lg hover:bg-zinc-200 transition"
+                type="submit" 
+                className="w-full mt-2 bg-[#7621B0] text-white font-bold uppercase tracking-widest text-[10px] py-3 rounded-lg hover:bg-[#611a93] transition shadow-lg shadow-purple-900/30"
               >
                 Submit Review
               </button>
@@ -202,8 +209,8 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto border-t border-white/5 mt-16 pt-8 text-center text-xs text-[#D7E2EA]/30">
-        &copy; {new Date().getFullYear()} Sahil Thorat. All rights reserved.
+      <div className="max-w-[1200px] mx-auto border-t border-white/5 mt-16 pt-8 text-center text-xs text-[#D7E2EA]/40">
+        &copy; {new Date().getFullYear()} Tushar Maru · Videographer &amp; Video Editor. All rights reserved.
       </div>
     </footer>
   );

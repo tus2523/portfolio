@@ -1,19 +1,17 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB3qLkvx-bE0IRRJLx9ptmYU-mHTuQq5yc",
-  authDomain: "sahil-portfolio-cf061.firebaseapp.com",
-  projectId: "sahil-portfolio-cf061",
-  storageBucket: "sahil-portfolio-cf061.firebasestorage.app",
-  messagingSenderId: "951737944490",
-  appId: "1:951737944490:web:f2a055e3027c4dc397c3d3",
-  measurementId: "G-FVC3D4SB8R",
-  databaseURL: "https://sahil-portfolio-cf061-default-rtdb.firebaseio.com"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyB3qLkvx-bE0IRRJLx9ptmYU-mHTuQq5yc",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "tushar-portfolio.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "tushar-portfolio",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "tushar-portfolio.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "951737944490",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:951737944490:web:f2a055e3027c4dc397c3d3",
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || "https://tushar-portfolio-default-rtdb.firebaseio.com"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 export const db = getDatabase(app);
 export const storage = getStorage(app);
-
