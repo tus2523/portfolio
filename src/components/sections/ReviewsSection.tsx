@@ -55,7 +55,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
   return (
     <section
       id="reviews"
-      className="py-24 sm:py-32 px-0 bg-[#e9edc9] text-[#01472e] font-sans rounded-t-[5rem] -mt-16 sm:-mt-20 relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
+      className="py-24 sm:py-32 px-0 bg-[#e9edc9] text-[#01472e] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
     >
       <div className="max-w-7xl mx-auto flex flex-col px-6 sm:px-10 md:px-14 mb-16 sm:mb-20">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between border-b border-[#01472e]/15 pb-8 gap-8">

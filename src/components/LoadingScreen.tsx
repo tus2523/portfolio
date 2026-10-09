@@ -1,177 +1,94 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoadingScreenProps {
   onComplete: () => void;
 }
 
-// Rapid-fire words for videographer & cinematic editor
-const FLASH_FRAMES = [
-  'SHOOT', 'DIRECT', 'CAPTURE', 'EDIT',
-  'CUT', 'COLOR', 'PREMIERE', 'CINEMA',
-];
-
-const NAME = 'TUSHAR MARU';
-
-type Phase = 'frames' | 'assemble' | 'hold' | 'done';
-
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
-  const [phase, setPhase] = useState<Phase>('frames');
-  const [frameIdx, setFrameIdx] = useState(0);
-  const [bg, setBg] = useState('#08080A');
+  const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(true);
-  const [flash, setFlash] = useState(false);
-  const doneRef = useRef(false);
 
   useEffect(() => {
-    if (doneRef.current) return;
+    const startTime = Date.now();
+    const duration = 850; // smooth and fast ~0.85s
 
-    let idx = 0;
-    const bgColors = ['#08080A', '#0b0914', '#0d0d12', '#08080A', '#100a1c', '#0d0d12', '#08080A', '#060608'];
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const currentProgress = Math.min(100, Math.round((elapsed / duration) * 100));
+      setProgress(currentProgress);
 
-    const frameInterval = setInterval(() => {
-      if (idx >= FLASH_FRAMES.length - 1) {
-        clearInterval(frameInterval);
-
+      if (elapsed >= duration) {
+        clearInterval(interval);
         setTimeout(() => {
-          setPhase('assemble');
-
-          setTimeout(() => {
-            setPhase('hold');
-            setTimeout(() => {
-              setFlash(true);
-              setTimeout(() => {
-                doneRef.current = true;
-                setVisible(false);
-                setTimeout(onComplete, 400);
-              }, 150);
-            }, 900);
-          }, NAME.length * 45 + 300);
-        }, 80);
-      } else {
-        idx++;
-        setFrameIdx(idx);
-        setBg(bgColors[idx % bgColors.length]);
+          setVisible(false);
+          setTimeout(onComplete, 400);
+        }, 150);
       }
-    }, 110);
+    }, 20);
 
-    return () => clearInterval(frameInterval);
+    return () => clearInterval(interval);
   }, [onComplete]);
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden select-none font-sans"
-          style={{ background: bg, transition: 'background 0.05s' }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+          className="fixed inset-0 z-[99999] flex flex-col justify-between p-8 sm:p-14 bg-[#ccd5ae] text-[#01472e] font-sans select-none overflow-hidden"
+          exit={{ y: '-100%' }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          {flash && (
-            <motion.div
-              className="absolute inset-0 bg-white z-50 pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
-            />
-          )}
-
-          {/* Film scanlines */}
+          {/* Subtle SVG Noise */}
           <div
-            className="absolute inset-0 pointer-events-none z-10 opacity-[0.04]"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-overlay"
             style={{
-              backgroundImage:
-                'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.6) 3px, rgba(255,255,255,0.6) 4px)',
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
             }}
           />
 
-          {/* Phase 1: Rapid word frames */}
-          {phase === 'frames' && (
-            <div className="absolute inset-0 flex items-center justify-center z-20">
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[38vh] bg-white/[0.02] pointer-events-none" />
+          {/* Top Bar */}
+          <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 border-b border-[#01472e]/15 pb-4">
+            <span>TUSHAR MARU STUDIO</span>
+            <span>MUMBAI, MH</span>
+          </div>
 
-              <span
-                className="font-display font-black uppercase text-white/95 z-10 tracking-tighter text-center leading-none select-none"
-                style={{
-                  fontSize: 'clamp(4rem, 18vw, 180px)',
-                  textShadow: '0 0 60px rgba(118,33,176,0.3)',
-                }}
-              >
-                {FLASH_FRAMES[frameIdx] ?? ''}
-              </span>
+          {/* Center Brand Name in Anton */}
+          <div className="my-auto text-center flex flex-col items-center">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="font-display uppercase text-6xl sm:text-8xl md:text-9xl leading-[0.85] tracking-[-0.04em] text-[#01472e]"
+            >
+              TUSHAR MARU
+            </motion.h1>
 
-              {/* Timecode counter */}
-              <span className="absolute bottom-8 right-8 text-[#7621B0]/60 font-mono text-xs tracking-widest">
-                REC ● 00:0{frameIdx}:1{frameIdx} / 24FPS
-              </span>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 mt-4"
+            >
+              FILMMAKER • VIDEOGRAPHER • VIDEO EDITOR
+            </motion.p>
+          </div>
+
+          {/* Bottom Progress Bar */}
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-[#01472e]/80">
+              <span>LOADING PRODUCTION ARCHIVE</span>
+              <span>{progress}%</span>
             </div>
-          )}
 
-          {/* Phase 2 & 3: Name assembly */}
-          {(phase === 'assemble' || phase === 'hold') && (
-            <div className="flex flex-col items-center gap-5 z-20">
-              <div 
-                className="flex flex-wrap justify-center leading-none gap-x-[0.35em] md:gap-x-[0.4em]" 
-                aria-label={NAME}
-              >
-                {(() => {
-                  let globalIdx = 0;
-                  return NAME.split(' ').map((word, wordIdx) => {
-                    const letters = word.split('');
-                    const wordEl = (
-                      <span key={wordIdx} className="inline-flex whitespace-nowrap">
-                        {letters.map((letter) => {
-                          const currentIdx = globalIdx;
-                          globalIdx++;
-                          return (
-                            <motion.span
-                              key={currentIdx}
-                              initial={{ opacity: 0, y: -80, rotateX: -90 }}
-                              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                              transition={{
-                                delay: currentIdx * 0.04,
-                                duration: 0.35,
-                                type: 'spring',
-                                stiffness: 280,
-                                damping: 22,
-                              }}
-                              className="inline-block font-display font-extrabold text-white uppercase tracking-tight"
-                              style={{
-                                fontSize: 'clamp(2.5rem, 8vw, 95px)',
-                                textShadow: '0 0 40px rgba(118,33,176,0.4)',
-                              }}
-                            >
-                              {letter}
-                            </motion.span>
-                          );
-                        })}
-                      </span>
-                    );
-                    globalIdx++;
-                    return wordEl;
-                  });
-                })()}
-              </div>
-
-              {/* Tagline */}
+            <div className="w-full h-1 bg-[#01472e]/15 rounded-full overflow-hidden">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: NAME.length * 0.04 + 0.1, duration: 0.5 }}
-                className="flex items-center gap-3 px-4 justify-center"
-              >
-                <div className="hidden sm:block h-[1px] w-10 bg-[#7621B0]/40 shrink-0" />
-                <span className="text-[#D7E2EA]/70 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.4em] font-semibold text-center whitespace-nowrap">
-                  Videographer · Video Editor · Associate Director
-                </span>
-                <div className="hidden sm:block h-[1px] w-10 bg-[#7621B0]/40 shrink-0" />
-              </motion.div>
+                className="h-full bg-[#01472e] rounded-full"
+                style={{ width: `${progress}%` }}
+                transition={{ ease: 'linear' }}
+              />
             </div>
-          )}
-
-          {/* Ambient corner glows */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-[#7621B0]/10 blur-[80px] pointer-events-none rounded-full" />
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-900/10 blur-[80px] pointer-events-none rounded-full" />
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

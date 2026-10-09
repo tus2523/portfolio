@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowUpRight, Play } from 'lucide-react';
+import React, { useRef } from 'react';
+import { ArrowLeft, ArrowRight, Play, ArrowUpRight } from 'lucide-react';
 import { defaultData, getYoutubeThumbnail } from '../../lib/store';
 
 export interface ProjectsSectionProps {
@@ -9,7 +9,9 @@ export interface ProjectsSectionProps {
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects, onSelectVideo }) => {
-  // Flatten videos with project metadata for 3-column feature grid
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Flatten videos with project metadata for horizontal scrolling showcase
   const allProjects = (videoProjects || []).flatMap((proj, pIdx) => {
     return (proj.videos || []).map((vid, vIdx) => ({
       ...vid,
@@ -22,14 +24,21 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
     }));
   });
 
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = direction === 'left' ? -460 : 460;
+      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   return (
     <section
       id="projects"
-      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#e9edc9] text-[#01472e] font-sans rounded-t-[5rem] -mt-16 sm:-mt-20 relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
+      className="py-28 sm:py-36 px-6 sm:px-10 md:px-14 bg-[#e9edc9] text-[#01472e] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Section Header: Massive Anton display text (15vw) paired with circular CTA */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 sm:mb-24 gap-8">
+        {/* Section Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-14 sm:mb-20 gap-8">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 block mb-2">
               Portfolio Catalog — 01
@@ -39,25 +48,49 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
             </h2>
           </div>
 
-          {/* Large Circular CTA Button */}
-          <div className="flex items-center gap-6 self-start lg:self-end">
+          {/* Navigation Controls & Description */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 self-start lg:self-end">
             <p className="max-w-xs text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal">
-              Commercial promos, celebrity behind-the-scenes shoots, and rhythm-synced post-production reels.
+              Commercial promos, celebrity BTS shoots, viral comic reels, and rhythmic music cuts.
             </p>
-            <a
-              href="#contact"
-              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#01472e] text-[#fefae0] flex flex-col items-center justify-center p-2 text-center shadow-[0_20px_35px_-10px_rgba(1,71,46,0.35)] hover:scale-105 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shrink-0 group"
-            >
-              <ArrowUpRight size={22} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] mt-1">
-                INQUIRE
-              </span>
-            </a>
+
+            {/* Left & Right Arrow Scroll Buttons */}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => scroll('left')}
+                className="w-14 h-14 rounded-full bg-[#fefae0] text-[#01472e] border border-[#01472e]/20 flex items-center justify-center hover:bg-[#01472e] hover:text-[#fefae0] transition-colors duration-300 shadow-[0_10px_20px_-5px_rgba(1,71,46,0.2)]"
+                aria-label="Scroll Left"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <button
+                type="button"
+                onClick={() => scroll('right')}
+                className="w-14 h-14 rounded-full bg-[#01472e] text-[#fefae0] flex items-center justify-center hover:scale-105 transition-transform duration-300 shadow-[0_15px_30px_-8px_rgba(1,71,46,0.35)]"
+                aria-label="Scroll Right"
+              >
+                <ArrowRight size={20} />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 3-Column Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+        {/* Status Hint */}
+        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/60 mb-6 border-b border-[#01472e]/15 pb-3">
+          <span>{allProjects.length} CURATED PROJECTS</span>
+          <span className="hidden sm:inline-block">← SCROLL LEFT TO RIGHT →</span>
+        </div>
+
+        {/* ── Left-to-Right Horizontal Scrolling Showcase ── */}
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-8 sm:gap-10 overflow-x-auto pb-8 pt-2 scroll-smooth select-none snap-x snap-mandatory"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
           {allProjects.map((item, idx) => {
             const thumb =
               (item as any).thumbnailUrl ||
@@ -69,7 +102,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
               <div
                 key={`${item.id}-${idx}`}
                 onClick={() => onSelectVideo(item)}
-                className="group cursor-pointer flex flex-col"
+                className="w-[300px] sm:w-[360px] md:w-[400px] shrink-0 group cursor-pointer flex flex-col snap-start"
               >
                 {/* 4/5 Aspect Ratio Image Card with 2.5rem radius */}
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2.5rem] bg-[#01472e]/10 border border-[#01472e]/15 shadow-[0_25px_50px_-12px_rgba(1,71,46,0.18)]">
@@ -95,21 +128,26 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
                       </span>
                     </div>
                   </div>
+
+                  {/* Top-Right Direct Play Badge */}
+                  <div className="absolute top-5 right-5 w-11 h-11 rounded-full bg-[#fefae0] text-[#01472e] flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-md">
+                    <ArrowUpRight size={18} />
+                  </div>
                 </div>
 
                 {/* Metadata Row below card */}
                 <div className="mt-5 pt-3 border-t border-[#01472e]/15 flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#01472e] group-hover:opacity-80 transition-opacity">
+                    <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#01472e] group-hover:opacity-80 transition-opacity line-clamp-1">
                       {item.displayTitle}
                     </h3>
-                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#01472e]/60">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#01472e]/60 shrink-0 ml-2">
                       {item.year}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/70">
                     <span>{item.category}</span>
-                    <span className="text-[#01472e]/40">[REEL ARCHIVE]</span>
+                    <span className="text-[#01472e]/40">[REEL CUT]</span>
                   </div>
                 </div>
               </div>

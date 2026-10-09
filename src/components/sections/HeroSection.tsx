@@ -33,25 +33,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
     {
       src: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop",
       alt: "Cinema Lens & Camera Focus",
-      className: "top-[16%] left-[4%] sm:left-[8%] w-36 sm:w-52 md:w-64 aspect-[4/5]",
-      speed: 0.05,
+      className: "top-[18%] left-[3%] sm:left-[5%] w-32 sm:w-44 md:w-56 aspect-[4/5]",
+      speed: 0.04,
       delay: "0s",
       initialRotate: -4,
     },
     {
       src: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800&auto=format&fit=crop",
       alt: "Motion Picture Film Aesthetic",
-      className: "top-[20%] right-[4%] sm:right-[7%] w-36 sm:w-52 md:w-60 aspect-[4/5]",
+      className: "top-[20%] right-[3%] sm:right-[5%] w-32 sm:w-44 md:w-56 aspect-[4/5]",
       speed: -0.04,
       delay: "1.5s",
-      initialRotate: 6,
+      initialRotate: 5,
     },
     {
       src: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=800&auto=format&fit=crop",
       alt: "Director & Editing Console",
-      className: "bottom-[22%] left-[6%] sm:left-[12%] hidden lg:block w-48 aspect-[4/3]",
-      speed: 0.06,
-      delay: "3.0s",
+      className: "top-[52%] right-[8%] hidden xl:block w-44 aspect-[4/3]",
+      speed: 0.05,
+      delay: "2.5s",
       initialRotate: -3,
     },
   ];
@@ -162,7 +162,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
       </AnimatePresence>
 
       {/* ── Hero Section (Background #ccd5ae) ── */}
-      <section className="min-h-screen w-full flex flex-col justify-between pt-28 pb-10 px-6 sm:px-10 md:px-14 bg-[#ccd5ae] text-[#01472e] font-sans relative overflow-hidden select-none">
+      <section className="min-h-screen w-full flex flex-col justify-between pt-28 pb-20 sm:pb-28 px-6 sm:px-10 md:px-14 bg-[#ccd5ae] text-[#01472e] font-sans relative overflow-hidden select-none">
         {/* Floating Organic Cards (Parallax + @keyframes float) */}
         {floatingImages.map((img, i) => {
           const parallaxOffset = scrollY * img.speed;

@@ -65,7 +65,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
   return (
     <footer
       id="contact"
-      className="bg-[#01472e] text-[#ccd5ae] font-sans pt-28 pb-14 px-6 sm:px-10 md:px-14 rounded-t-[5rem] -mt-16 sm:-mt-20 relative z-30 shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.3)] overflow-hidden"
+      className="bg-[#01472e] text-[#ccd5ae] font-sans pt-28 pb-14 px-6 sm:px-10 md:px-14 rounded-t-[5rem] relative z-30 shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.3)] overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         {/* 12-Column Grid */}

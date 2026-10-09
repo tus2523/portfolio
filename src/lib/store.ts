@@ -75,7 +75,7 @@ export const defaultData = {
     {
       id: 'vp1',
       title: 'Celebrity BTS & Commercial Shoots',
-      description: 'High-energy behind-the-scenes videography and commercial shoot direction with top creators and celebrities.',
+      description: 'High-energy behind-the-scenes videography and commercial shoot direction with top creators and celebrities in Mumbai.',
       tags: ['CELEBRITY BTS', 'VIDEOGRAPHY', 'COMMERCIAL'],
       videos: [
         {
@@ -111,6 +111,76 @@ export const defaultData = {
           title: 'Comic Creator Reel Edit',
           url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
           thumbnail: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp4',
+      title: 'Luxury Fashion Brand Promo',
+      description: 'Editorial grade motion picture for high-end fashion, styling campaigns, and apparel lookbooks.',
+      tags: ['FASHION', 'BRAND PROMO', 'CINEMATOGRAPHY'],
+      videos: [
+        {
+          id: 'v4',
+          title: 'Fashion Brand Campaign Cut',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp5',
+      title: 'Live Concert & Festival Aftermovie',
+      description: 'Dynamic stage coverage, massive crowd energy, and synchronized audio-visual festival highlights.',
+      tags: ['CONCERT', 'FESTIVAL', 'LIVE STAGE'],
+      videos: [
+        {
+          id: 'v5',
+          title: 'Festival Mainstage Aftermovie',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp6',
+      title: 'Automotive Commercial Launch',
+      description: 'High-octane tracking shots, precision camera movement, and sound design for vehicle reveals.',
+      tags: ['AUTOMOTIVE', 'COMMERCIAL', 'SOUND DESIGN'],
+      videos: [
+        {
+          id: 'v6',
+          title: 'Automotive Velocity Reveal',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp7',
+      title: 'Narrative Short Film Post-Production',
+      description: 'Atmospheric color science, pacing, dialogue editing, and dramatic narrative construction.',
+      tags: ['NARRATIVE', 'POST-PRODUCTION', 'DAVINCI'],
+      videos: [
+        {
+          id: 'v7',
+          title: 'Dramatic Short Film Cut',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
+    },
+    {
+      id: 'vp8',
+      title: 'Celebrity Backstage Feature',
+      description: 'Intimate backstage moments, candid celebrity interactions, and cinematic lighting setups.',
+      tags: ['CELEBRITY', 'BACKSTAGE', 'EXCLUSIVE'],
+      videos: [
+        {
+          id: 'v8',
+          title: 'Celebrity Backstage Access',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=800&auto=format&fit=crop'
         }
       ],
     },
