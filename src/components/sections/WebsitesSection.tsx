@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { FadeIn } from '../FadeIn';
 import { FloatingEmoji } from '../FloatingEmoji';
-import { defaultData } from '../../lib/store';
 
 const getAssetUrl = (path: string) => {
   const base = import.meta.env.BASE_URL || '/';
@@ -15,12 +14,21 @@ const getAssetUrl = (path: string) => {
 const GLASS_CAMERA = getAssetUrl('glass_camera.png');
 const GLASS_SPARKLES = getAssetUrl('glass_sparkles.png');
 
+interface WebsiteItem {
+  id: string;
+  title: string;
+  description?: string;
+  url: string;
+  previewUrl?: string;
+  tags?: string[];
+}
+
 interface WebsitesSectionProps {
-  websites: typeof defaultData.websites;
+  websites?: WebsiteItem[];
   theme?: 'light' | 'dark';
 }
 
-export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, theme = 'dark' }) => {
+export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites = [], theme = 'dark' }) => {
   const isLight = theme === 'light';
 
   return (
@@ -42,7 +50,7 @@ export const WebsitesSection: React.FC<WebsitesSectionProps> = ({ websites, them
 
       <div className="max-w-[1400px] mx-auto w-full flex flex-wrap justify-center gap-6 sm:gap-8 relative z-10">
         {websites && websites.length > 0 ? (
-          websites.map((site) => (
+          websites.map((site: WebsiteItem) => (
             <FadeIn key={site.id} y={20} className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] max-w-lg flex">
               <motion.a
                 href={site.url}

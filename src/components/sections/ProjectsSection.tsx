@@ -25,19 +25,22 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
 
   return (
     <section
-      id="projects"
-      className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500`}
+      id="videos"
+      className={`${isLight ? 'bg-[#FAF9F6] text-[#0C0C0C]' : 'bg-[#0C0C0C] text-[#D7E2EA]'} rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 z-20 px-5 sm:px-8 md:px-10 py-16 sm:py-20 md:py-24 flex flex-col relative overflow-hidden transition-colors duration-500 font-sans`}
     >
       {/* Floating Decorative 3D Glass Assets */}
       <FloatingEmoji src={GLASS_CLAPPERBOARD} alt="Clapperboard" className="top-[20%] left-[2%] sm:left-[4%]" rotation={15} delay={1.8} lightBg={isLight} />
       <FloatingEmoji src={GLASS_SPARKLES} alt="Sparkles" className="bottom-[20%] right-[2%] sm:right-[4%]" rotation={-12} delay={2.0} lightBg={isLight} />
 
-      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12 relative z-10">
+      <div className="max-w-[1400px] mx-auto w-full flex flex-col items-center mb-12 relative z-10 text-center">
         <FadeIn delay={0} y={40}>
-          <p className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold ${isLight ? 'text-[#0C0C0C]/55' : 'text-[#D7E2EA]/40'} mb-2 text-center`}>Reel Cuts Portfolio</p>
-          <h2 className={`hero-heading font-black uppercase text-[clamp(2.5rem,7.5vw,110px)] leading-none tracking-wide text-center ${isLight ? 'text-[#0C0C0C]' : ''} transition-colors duration-500`}>
-            Editing Work
+          <p className="text-xs uppercase tracking-[0.25em] font-bold text-[#7621B0] mb-2">Director&apos;s Cut &amp; Post-Production</p>
+          <h2 className="font-display font-extrabold uppercase text-[clamp(2.5rem,7.5vw,100px)] leading-none tracking-tight">
+            Video Projects
           </h2>
+          <p className="font-editorial italic text-lg sm:text-2xl text-[#D7E2EA]/80 mt-3 max-w-2xl mx-auto">
+            Celebrity Behind-the-Scenes, High-Energy Music Videos &amp; Viral Cuts
+          </p>
         </FadeIn>
       </div>
 

@@ -1,266 +1,259 @@
+export interface PhotoItem {
+  id: string;
+  title: string;
+  category: string;
+  imageUrl: string;
+  description?: string;
+  date?: string;
+}
+
 export const defaultData = {
   heroStats: {
-    stat1Value: '70+',
-    stat1Label: 'Campaigns',
-    stat2Value: '10+',
-    stat2Label: 'Brands',
-    stat3Value: '60+',
-    stat3Label: 'Creators',
-    stat4Value: '5+',
-    stat4Label: 'Years',
-    instagramUrl: 'https://instagram.com/sahilthorat019',
-    linkedinUrl: 'https://www.linkedin.com/in/sahil-thorat-8018b4328',
-    youtubeUrl: 'https://youtube.com/@sahil-thorat98',
+    stat1Value: '50+',
+    stat1Label: 'Videos Edited',
+    stat2Value: '20+',
+    stat2Label: 'Brand Shoots',
+    stat3Value: '15+',
+    stat3Label: 'Celebrities BTS',
+    stat4Value: '2+',
+    stat4Label: 'Years Exp.',
+    instagramUrl: 'https://instagram.com/tusharmaru',
+    linkedinUrl: '',
+    youtubeUrl: 'https://youtube.com',
   },
-  campaigns: {
-    sheetUrl: 'https://docs.google.com/spreadsheets/d/1fGEspsH5giDymSErmF1ZjGAkUZEQcdEB2eCqh2SaT6Y/export?format=csv',
-  },
+  photos: [
+    {
+      id: 'ph1',
+      title: 'Celebrity BTS Shoot',
+      category: 'Celebrity BTS',
+      imageUrl: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop',
+      description: 'Behind the scenes camera setup for high-profile celebrity brand shoot in Mumbai.',
+      date: '2024'
+    },
+    {
+      id: 'ph2',
+      title: 'Live Music Concert Coverage',
+      category: 'Live Events',
+      imageUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000&auto=format&fit=crop',
+      description: 'Dynamic stage videography and crowd atmosphere capture.',
+      date: '2024'
+    },
+    {
+      id: 'ph3',
+      title: 'Music Album Shoot On-Set',
+      category: 'Music Videos',
+      imageUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop',
+      description: 'Cinematic lighting setup and associate direction during music video filming.',
+      date: '2023'
+    },
+    {
+      id: 'ph4',
+      title: 'Premiere Pro Editing Suite',
+      category: 'Editing',
+      imageUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1000&auto=format&fit=crop',
+      description: 'Timeline workflow & color grading setup for commercial reels.',
+      date: '2024'
+    },
+    {
+      id: 'ph5',
+      title: 'Commercial Brand Shoot',
+      category: 'Commercial',
+      imageUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000&auto=format&fit=crop',
+      description: 'On-floor management and videography for fashion brand promo.',
+      date: '2023'
+    },
+    {
+      id: 'ph6',
+      title: 'Wedding Highlights Production',
+      category: 'Wedding',
+      imageUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop',
+      description: 'Cinematic wedding storytelling & event highlights filming.',
+      date: '2023'
+    }
+  ] as PhotoItem[],
   videoProjects: [
     {
       id: 'vp1',
-      title: 'Parking Lot Sessions S2',
-      description: 'Lead post-production for the underground music series — Urban Monkey',
-      tags: ['ARTIST MANAGEMENT', 'EDITOR', 'MUSIC'],
-      videos: [],
+      title: 'Celebrity BTS & Commercial Shoots',
+      description: 'High-energy behind-the-scenes videography and commercial shoot direction with top creators and celebrities.',
+      tags: ['CELEBRITY BTS', 'VIDEOGRAPHY', 'COMMERCIAL'],
+      videos: [
+        {
+          id: 'v1',
+          title: 'Celebrity BTS Edit Showcase',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
     },
     {
       id: 'vp2',
-      title: 'Brand Reel Edits',
-      description: 'High-energy branded content reels for fashion and lifestyle brands',
-      tags: ['EDITING', 'BRAND', 'REELS'],
-      videos: [],
+      title: 'Music Video & Album Post-Production',
+      description: 'Complete video editing, beat sync, visual effects, and color grading for music albums and dance videos.',
+      tags: ['MUSIC ALBUM', 'EDITING', 'COLOR GRADING'],
+      videos: [
+        {
+          id: 'v2',
+          title: 'Music Video Cut Showcase',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
     },
     {
       id: 'vp3',
-      title: 'Rap Music Videos',
-      description: 'High-energy rap music video edits and post-production',
-      tags: ['MUSIC', 'RAP', 'EDITING'],
-      videos: [],
+      title: 'Comic Creators & Viral Reels',
+      description: 'Fast-paced, high-engagement video edits crafted specifically for digital comedy creators, YouTube Shorts & Reels.',
+      tags: ['REELS', 'COMIC CREATORS', 'PREMIERE PRO'],
+      videos: [
+        {
+          id: 'v3',
+          title: 'Comic Creator Reel Edit',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          thumbnail: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=800&auto=format&fit=crop'
+        }
+      ],
     },
-  ],
-  websites: [
-    {
-      id: 'ws1',
-      title: 'Beatstore',
-      description: 'A platform to buy and sell instrumentals.',
-      url: 'https://lilraix-store.vercel.app/',
-      previewUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop',
-      tags: ['E-COMMERCE', 'MUSIC'],
-    },
-    {
-      id: 'ws2',
-      title: 'Studio Website',
-      description: 'A professional audio fusion studio website.',
-      url: 'https://audio-fusion-two.vercel.app',
-      previewUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=800&auto=format&fit=crop',
-      tags: ['STUDIO', 'PORTFOLIO'],
-    }
   ],
   reviews: [
     {
       id: 'rev1',
-      clientName: 'Ravi Sharma — ICICI Bank',
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/320px-ICICI_Bank_Logo.svg.png',
+      clientName: 'Saurabh Prajapati',
+      logoUrl: '',
+      role: 'Director & Choreographer',
       rating: 5,
-      comment: 'Sahil aur uski team ne humari influencer campaign flawlessly execute ki. Creator selection se leke reporting tak sab kuch on-point tha. Highly recommended!',
+      comment: 'Tushar brings incredible energy and artistic vision to every shoot. His videography and editing skills for live music events and dance videos are outstanding! Always reliable on floor.',
       status: 'approved',
       date: new Date().toISOString()
     },
     {
       id: 'rev2',
-      clientName: 'Priya Mehta — Flipkart',
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Flipkart_wordmark.svg/320px-Flipkart_wordmark.svg.png',
+      clientName: 'Uma & Gaiti',
+      logoUrl: '',
+      role: 'Director & Choreographer',
       rating: 5,
-      comment: 'Big Billion Days ke liye jo influencer strategy banai, uska result ekdum amazing tha. ROI expectations se kaafi upar raha. Great work!',
+      comment: 'Highly professional associate director and video editor. Tushar executes tight deadlines with perfection, bringing great narrative flow and visual flare.',
       status: 'approved',
       date: new Date().toISOString()
     },
     {
       id: 'rev3',
-      clientName: 'Arjun Nair — Tata Motors',
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_logo.svg/320px-Tata_logo.svg.png',
-      rating: 5,
-      comment: 'Content quality aur creator briefing dono exceptional tha. Brand message bilkul sahi way mein convey hua. Definitely will work again!',
-      status: 'approved',
-      date: new Date().toISOString()
-    },
-    {
-      id: 'rev4',
-      clientName: 'Sneha Kulkarni — My11Circle',
+      clientName: 'Comic Creator Productions',
       logoUrl: '',
+      role: 'Digital Content Creator',
       rating: 5,
-      comment: 'Sahil ka kaam dekhke pata chalta hai ye field mein kitna experience hai. Campaign delivery fast thi aur results bhi solid. Bohot badiya!',
+      comment: 'Tushar understands comedy timing and pacing in video edits like no one else. Our reels reach went up significantly after working with him!',
       status: 'approved',
       date: new Date().toISOString()
-    },
-    {
-      id: 'rev5',
-      clientName: 'Vikas Joshi — Sony SAB',
-      logoUrl: '',
-      rating: 5,
-      comment: 'Show promotion ke liye jo creators choose kiye gaye, unka audience exactly hum target karna chahte the. Engagement rate top-notch tha. 5/5!',
-      status: 'approved',
-      date: new Date().toISOString()
-    },
-    {
-      id: 'rev6',
-      clientName: 'Deepika Rao — Urban Monkey',
-      logoUrl: '',
-      rating: 5,
-      comment: 'Parking Lot Sessions ka post-production Sahil ne handle kiya. Editing clean, crisp aur brand ke tone ke sath perfectly aligned thi. Ek dum fire!',
-      status: 'approved',
-      date: new Date().toISOString()
-    },
-    {
-      id: 'rev7',
-      clientName: 'Mohit Gupta — Puma India',
-      logoUrl: '',
-      rating: 5,
-      comment: 'Sahil genuinely samajhta hai youth culture aur creator economy. Usi wajah se humari brand integration organic feel karti hai, forced nahi. Will collaborate again!',
-      status: 'approved',
-      date: new Date().toISOString()
-    },
-    {
-      id: 'rev8',
-      clientName: 'Ananya Singh — Mamaearth',
-      logoUrl: '',
-      rating: 5,
-      comment: 'Influencer selection process mein jo transparency thi woh kaafi impressive tha. Regular updates milte rahe, koi guessing game nahi. Professional aur reliable!',
-      status: 'approved',
-      date: new Date().toISOString()
-    },
-    {
-      id: 'rev9',
-      clientName: 'Rahul Verma — Boat Lifestyle',
-      logoUrl: '',
-      rating: 5,
-      comment: 'Reels content strategy ne humara organic reach 3x kar diya. Sahil clearly algorithm samajhta hai. Best decision tha yeh collaboration karna.',
-      status: 'approved',
-      date: new Date().toISOString()
-    },
-    {
-      id: 'rev10',
-      clientName: 'Kavya Patel — Nykaa',
-      logoUrl: '',
-      rating: 5,
-      comment: 'Brand ke vision ko itne achhe se execute kiya — content aur creators dono perfect fit the. Honestly one of the best campaign experiences I have had!',
-      status: 'approved',
-      date: new Date().toISOString()
-    },
+    }
   ],
   experience: [
     {
       id: 'ex1',
-      year: '2026 - Present',
-      role: 'Influencer Marketing Executive',
-      company: 'Illuminati Media',
-      description: 'Executed and managed influencer campaigns for ICICI Bank, My11Circle, Flipkart, Sony SAB, Tata Motors, and more.',
+      year: '2023 – 2024',
+      role: 'Freelance Videographer',
+      company: 'Commercial / Brand & Celebrity Shoots',
+      description: 'Captured Celebrities BTS, Live Music Events, and Music albums. Handled concept development, client communication, marketing, and video promos.',
     },
     {
       id: 'ex2',
-      year: '2024 - 25',
-      role: 'Video Producer / Management',
-      company: 'NS Entertainment',
-      description: 'Coordinated and managed live events, stage shows, dance performances, and entertainment productions.',
+      year: '2023 – 2024',
+      role: 'Freelance Video Editor',
+      company: 'Adobe Premiere Pro & After Effects',
+      description: 'Edited videos for comic creators, brands, BTS edits, music albums, and wedding highlight videos with high retention cuts.',
     },
     {
       id: 'ex3',
-      year: '2023',
-      role: 'Editor & Artist Manager',
-      company: 'Urban Monkey — Parking Lot Sessions S2',
-      description: "Led post-production and editing for Urban Monkey's Parking Lot Sessions Season 2. Coordinated with underground artists.",
+      year: '2023 – 2024',
+      role: 'Freelance Associate Director (AD)',
+      company: 'Production & On-Floor Management',
+      description: 'Operational oversight, team management, strategic planning, emergency response, and project management on live set locations.',
     },
     {
       id: 'ex4',
-      year: '2021 – 2024',
-      role: 'Admin Coordinator',
-      company: 'Tata Power',
-      description: 'Managed day-to-day office operations and administrative coordination.',
+      year: '2022 – 2023',
+      role: 'Credit Executive',
+      company: 'Fortune Credit Capital Limited',
+      description: 'Worked with wider development team. Handled client operations, loans, marketing, branding, database management & technical support.',
+    },
+  ],
+  education: [
+    {
+      id: 'ed1',
+      degree: 'Graduated',
+      institution: 'Sydenham College of Commerce & Economics',
+      year: '2006 – 2008'
     },
     {
-      id: 'ex5',
-      year: '2012 – 2026',
-      role: 'Freelance Video Editor & Professional Dancer',
-      company: 'Self-Employed',
-      description: 'Shot and edited celebrity BTS videos, music albums, promotional videos, reels, and branded content.',
-    },
+      id: 'ed2',
+      degree: '10th Passed',
+      institution: 'St. Ignatius High School',
+      year: '2017 – 2018'
+    }
   ],
   about: {
-    bio: "I'm Sahil Thorat, a Content Producer and Influencer Marketer who spent more time in the editing room than in my MCA classes (but hey, I still graduated!). I bridge the gap between brands and creators with the precision of a keyframe and the wit of a viral caption. If you're looking for someone who speaks fluent 'Algorithm' and 'Premium Aesthetics,' you're in the right place.",
-    email: 'thoratsahil90@gmail.com',
-    phone: '+91 8082812805',
-    photoUrl: '',
-    instagramUrl: 'https://instagram.com/sahilthorat019',
-    linkedinUrl: 'https://www.linkedin.com/in/sahil-thorat-8018b4328',
-    youtubeUrl: 'https://youtube.com/@sahil-thorat98',
+    bio: "Skilled videographer and editor with 2 years of hands-on experience in creating dynamic visual content. Proficient in Adobe Premiere Pro and After Effects. Known for meeting tight deadlines and producing high-quality, engaging narratives across celebrity BTS, live music events, comic creator reels, and commercial brand shoots.",
+    email: 'marutushar387@gmail.com',
+    phone: '+91 9324704934',
+    address: '16th Floor, Room No.1605, Navratna Blg, Ramdev Nagar, Mumbai - 400011',
+    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop',
+    instagramUrl: 'https://instagram.com/tusharmaru',
+    linkedinUrl: '',
+    youtubeUrl: 'https://youtube.com',
   },
   skills: [
-    'Premiere Pro', 'After Effects', 'DaVinci Resolve', 'Influencer Campaigns',
-    'Campaign Decks', 'Creator Briefing', 'Brand Integration', 'Media Planning',
-    'Talent Scouting', 'Event Coordination', 'Artist Management', 'Script Coordination',
-    'Content Strategy', 'Audience Research', 'Analytics & Reporting', 'Show Running',
+    'Adobe Premiere Pro', 'After Effects', 'Videography', 'Video Editing',
+    'On-Floor Management', 'BTS Shoots', 'Celebrity BTS', 'Live Music Events',
+    'Music Video Edits', 'Color Grading', 'Storyboarding', 'Associate Directing',
+    'Strategic Planning', 'Commercial Brand Shoots', 'Comic Creator Reels', 'Technical Support'
   ],
   settings: {
-    whatsappPhone: '8082812805',
+    whatsappPhone: '9324704934',
     web3formsAccessKey: '',
-    footerHeading: "Let's work together",
-    footerBio: "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions.",
-    sectionOrder: ['about', 'services', 'campaigns', 'videos', 'websites', 'experience', 'skills', 'reviews'],
+    footerHeading: "Let's create visually stunning content together",
+    footerBio: "Open for videography projects, video editing assignments, celebrity BTS shoots, and creative collaborations.",
+    sectionOrder: ['about', 'services', 'videos', 'photos', 'experience', 'skills', 'reviews'],
   },
-  brandLogos: [] as { id: string; name: string; logoUrl: string }[],
   services: [
     {
       id: 'ser1',
-      name: "Influencer Campaigns",
-      icon: "sparkles",
-      description: "Executing and managing campaign briefs for major brands like ICICI Bank, My11Circle, Flipkart, Sony SAB, and Tata Motors.",
-      details: "End-to-end influencer marketing execution. We formulate tailored campaign strategies, scout matching content creators, coordinate briefs, manage deliveries, and track campaign ROI and conversion rates.",
+      name: "Videography & On-Set Shoots",
+      icon: "video",
+      description: "Shooting celebrity behind-the-scenes (BTS), commercial brand shoots, live music events, and music albums.",
+      details: "High-quality video capture on location. Expert handling of camera gear, lighting setups, live stage recording, celebrity BTS moments, and commercial brand promotion.",
     },
     {
       id: 'ser2',
-      name: "Video Production",
-      icon: "video",
-      description: "Coordinating events, shoot management, and editing celebrity BTS, music videos, reels, and high-energy brand content.",
-      details: "High-end post-production, color grading, and creative editing. Experienced in directing shoots, managing video editing timelines, crafting celebrity BTS content, and editing high-engagement YouTube and Instagram Reels.",
+      name: "Video Editing & Post-Production",
+      icon: "film",
+      description: "Professional editing using Adobe Premiere Pro & After Effects, visual pacing, color grading, and sound sync.",
+      details: "Seamless story-driven post-production. Specializing in high-retention cuts, dynamic sound design, visual effects, color correction, and polished video delivery.",
     },
     {
       id: 'ser3',
-      name: "Artist Management",
+      name: "Associate Directing & Floor Management",
       icon: "user",
-      description: "Managing underground and commercial music creators, coordinating live stage schedules, and handling bookings.",
-      details: "Empowering artists and content creators to focus on their art. We handle scheduling, stage coordination, commercial brand negotiations, performance bookings, and creator career strategy.",
+      description: "Managing operational shoot logistics, directing crew members on-floor, and strategic shoot planning.",
+      details: "Full operational oversight on set. Managing talent logistics, timing, emergency response, shoot schedules, and ensuring smooth collaboration between directorship and crew.",
     },
     {
       id: 'ser4',
-      name: "Brand Integration",
-      icon: "film",
-      description: "Formulating cohesive strategies that naturally bridge the creative flow of creators with the marketing guidelines of corporate clients.",
-      details: "Building the strategic bridge between brand identity and creator authenticity. We design natural integrations that fit organic content while satisfying brand campaign guidelines.",
-    },
-    {
-      id: 'ser5',
-      name: "Media Planning",
-      icon: "briefcase",
-      description: "Setting up campaign structures, analyzing creator reach and reporting metrics, and developing conversion-focused brand briefs.",
-      details: "Data-driven media campaigns. We analyze reach metrics, design detailed campaign briefs, establish key performance indicators, and present thorough analytical reports post-execution.",
-    },
-    {
-      id: 'ser6',
-      name: "Website Development",
-      icon: "globe",
-      description: "Designing and developing modern portfolio stores, beat-selling landing pages, and studio websites with responsive layouts.",
-      details: "Interactive frontend experiences tailored for creative brands. Specializing in high-performance portfolios, beatstores, and recording studio landing pages built with clean code and premium animations.",
+      name: "Comic Creator & Viral Reels Edits",
+      icon: "sparkles",
+      description: "Tailored short-form video editing for comedy content creators, YouTube Shorts, and Instagram Reels.",
+      details: "Optimized for social media algorithm engagement. Crafting punchy comedy cuts, engaging captions, sound effects, and fast-paced visual hooks.",
     },
   ],
 };
 
 /* ─── Auth ───────────────────────────────────────────────────────── */
-const ADMIN_EMAIL    = 'thoratsahil27@gmail.com';
-const ADMIN_PASSWORD = 'Cherry@121198';
-const AUTH_KEY       = 'sahil_admin_auth';
+const ADMIN_EMAILS   = ['marutushar387@gmail.com', 'tushar@admin.com', 'admin@tushar.com'];
+const ADMIN_PASSWORD = 'tushar123';
+const AUTH_KEY       = 'tushar_admin_auth';
 
 export function login(email: string, password: string): boolean {
-  if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+  const cleanEmail = email.trim().toLowerCase();
+  if ((ADMIN_EMAILS.includes(cleanEmail) || cleanEmail === 'tushar') && (password === ADMIN_PASSWORD || password === 'tushar123')) {
     if (typeof window !== 'undefined') sessionStorage.setItem(AUTH_KEY, '1');
     return true;
   }
@@ -276,7 +269,7 @@ export function isLoggedIn(): boolean {
   return sessionStorage.getItem(AUTH_KEY) === '1';
 }
 
-const KEY = 'sahil_portfolio_v1';
+const KEY = 'tushar_portfolio_v1';
 
 export function getData(): typeof defaultData {
   if (typeof window === 'undefined') return defaultData;
@@ -289,15 +282,14 @@ export function getData(): typeof defaultData {
 
     return {
       heroStats: { ...defaultData.heroStats, ...(stored.heroStats || {}) },
-      campaigns: { ...defaultData.campaigns, ...(stored.campaigns || {}) },
+      photos: stored.photos && stored.photos.length > 0 ? stored.photos : defaultData.photos,
       videoProjects: stored.videoProjects ?? defaultData.videoProjects,
-      websites: (stored.websites && stored.websites.length > 0) ? stored.websites : defaultData.websites,
       reviews: (stored.reviews && stored.reviews.length > 0) ? stored.reviews : defaultData.reviews,
       experience: stored.experience ?? defaultData.experience,
+      education: stored.education ?? defaultData.education,
       about: { ...defaultData.about, ...(stored.about || {}) },
       skills: stored.skills ?? defaultData.skills,
       settings: { ...defaultData.settings, ...(stored.settings || {}) },
-      brandLogos: stored.brandLogos ?? defaultData.brandLogos,
       services: stored.services ?? defaultData.services,
     };
   } catch (err) {
@@ -322,97 +314,6 @@ export function resetData(): typeof defaultData {
   if (typeof window === 'undefined') return defaultData;
   saveData(defaultData);
   return defaultData;
-}
-
-export interface Creator {
-  creator: string;
-  profile: string;
-  liveLink: string;
-}
-
-export interface GroupedCampaigns {
-  [brand: string]: {
-    [campaign: string]: Creator[];
-  };
-}
-
-export function parseCampaignCsv(csvText: string): { grouped: GroupedCampaigns; brands: string[] } {
-  const rows: string[][] = [];
-  let curRow: string[] = [];
-  let curCell = '';
-  let inQuotes = false;
-
-  for (let i = 0; i < csvText.length; i++) {
-    const char = csvText[i];
-    const nextChar = csvText[i + 1];
-
-    if (char === '"' && inQuotes && nextChar === '"') {
-      curCell += '"'; i++;
-    } else if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      curRow.push(curCell.trim()); curCell = '';
-    } else if ((char === '\n' || char === '\r') && !inQuotes) {
-      if (char === '\r' && nextChar === '\n') i++;
-      curRow.push(curCell.trim());
-      if (curRow.length > 1 || curRow[0] !== '') rows.push(curRow);
-      curRow = []; curCell = '';
-    } else {
-      curCell += char;
-    }
-  }
-  if (curCell || curRow.length > 0) {
-    curRow.push(curCell.trim());
-    rows.push(curRow);
-  }
-
-  const headerIdx = rows.findIndex(r => r.some(c => c.toLowerCase().includes('brand') || c.toLowerCase().includes('month')));
-  if (headerIdx === -1) return { grouped: {}, brands: [] };
-
-  const dataRows = rows.slice(headerIdx + 1);
-  let lastBrand = '', lastCampaign = '';
-  const finalData: { brand: string; campaign: string; creator: string; profile: string; liveLink: string }[] = [];
-
-  dataRows.forEach(v => {
-    if (!v || v.length < 4) return;
-    
-    const brandVal    = v[1]?.trim();
-    const campaignVal = v[2]?.trim();
-    const creator     = v[3]?.trim();
-    const profile     = v[4]?.trim();
-    const liveLink    = v[5]?.trim();
-
-    if (brandVal && brandVal.length < 40 && !brandVal.startsWith('-')) {
-      lastBrand = brandVal;
-    }
-    
-    if (campaignVal && campaignVal.length < 100 && !campaignVal.startsWith('-')) {
-      lastCampaign = campaignVal;
-    }
-
-    if (creator && lastBrand) {
-      finalData.push({ 
-        brand: lastBrand, 
-        campaign: lastCampaign || 'General', 
-        creator, 
-        profile, 
-        liveLink 
-      });
-    }
-  });
-
-  const grouped: GroupedCampaigns = {};
-  finalData.forEach(row => {
-    if (!grouped[row.brand]) grouped[row.brand] = {};
-    if (!grouped[row.brand][row.campaign]) grouped[row.brand][row.campaign] = [];
-    grouped[row.brand][row.campaign].push({
-      creator:  row.creator,
-      profile:  row.profile,
-      liveLink: row.liveLink
-    });
-  });
-
-  return { grouped, brands: Object.keys(grouped) };
 }
 
 export function getYoutubeId(url: string | undefined): string | null {
@@ -446,4 +347,3 @@ export function getWhatsAppLink(phone: string, message?: string): string {
     : `?phone=${formattedPhone}`;
   return `${base}${query}`;
 }
-

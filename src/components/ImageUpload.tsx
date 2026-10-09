@@ -1,31 +1,37 @@
 import React, { useState, useRef } from "react";
-import { Upload, Trash2, Loader2, X } from "lucide-react";
+import { Upload, Trash2, Loader2, X, Link as LinkIcon } from "lucide-react";
+import { getCloudinaryConfig } from "../lib/cloudinary";
 
-// ── Cloudinary config ──────────────────────────────────────────────────
-const CLOUD_NAME    = "digkpl4re";
-const UPLOAD_PRESET = "axuqgwb1";
-const MAX_SIDE      = 1920;   // px — full HD, sharp on any screen
-const JPEG_QUALITY  = 0.92;   // high quality
+const MAX_SIDE = 1920;
+const JPEG_QUALITY = 0.92;
 
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
-  folderPath: string;
+  folderPath?: string;
   label?: string;
 }
 
-/** Resize + convert to JPEG (skip SVG) */
 const toJpeg = (file: File): Promise<File> =>
   new Promise((resolve, reject) => {
+    if (file.type === "image/svg+xml") {
+      return resolve(file);
+    }
     const img = new Image();
     img.onload = () => {
       let { width, height } = img;
       if (width > MAX_SIDE || height > MAX_SIDE) {
-        if (width > height) { height = Math.round((height / width) * MAX_SIDE); width = MAX_SIDE; }
-        else                { width  = Math.round((width / height) * MAX_SIDE); height = MAX_SIDE; }
+        if (width > height) {
+          height = Math.round((height / width) * MAX_SIDE);
+          width = MAX_SIDE;
+        } else {
+          width = Math.round((width / height) * MAX_SIDE);
+          height = MAX_SIDE;
+        }
       }
       const canvas = document.createElement("canvas");
-      canvas.width = width; canvas.height = height;
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext("2d");
       if (!ctx) return reject(new Error("Canvas not supported"));
       ctx.fillStyle = "#FFFFFF";
@@ -36,73 +42,102 @@ const toJpeg = (file: File): Promise<File> =>
           if (!blob) return reject(new Error("Blob failed"));
           resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", { type: "image/jpeg" }));
         },
-        "image/jpeg", JPEG_QUALITY
+        "image/jpeg",
+        JPEG_QUALITY
       );
     };
     img.onerror = () => reject(new Error("Image load error"));
     img.src = URL.createObjectURL(file);
   });
 
-/** Upload to Cloudinary using unsigned preset — returns CDN URL */
+const fileToBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+    reader.readAsDataURL(file);
+  });
+
 const uploadToCloudinary = async (
   file: File,
   folder: string,
   onProgress: (pct: number) => void
 ): Promise<string> => {
+  const config = getCloudinaryConfig();
+  const cloudName = config.cloudName || "digkpl4re";
+  const uploadPreset = config.uploadPreset || "axuqgwb1";
+
   const toUpload = file.type === "image/svg+xml" ? file : await toJpeg(file);
   const fd = new FormData();
   fd.append("file", toUpload);
-  fd.append("upload_preset", UPLOAD_PRESET);
-  fd.append("folder", folder);
+  fd.append("upload_preset", uploadPreset);
+  if (folder) fd.append("folder", folder);
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`);
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
     };
-    xhr.onload = () => {
+    xhr.onload = async () => {
       if (xhr.status === 200) {
-        const res = JSON.parse(xhr.responseText);
-        resolve(res.secure_url);
-      } else {
-        reject(new Error(`Upload failed: ${xhr.status}`));
+        try {
+          const res = JSON.parse(xhr.responseText);
+          if (res.secure_url) return resolve(res.secure_url);
+        } catch {}
+      }
+      // If Cloudinary fails, fallback to local Base64
+      try {
+        const base64 = await fileToBase64(file);
+        resolve(base64);
+      } catch (err) {
+        reject(new Error(`Upload failed and fallback failed`));
       }
     };
-    xhr.onerror = () => reject(new Error("Network error during upload"));
+    xhr.onerror = async () => {
+      try {
+        const base64 = await fileToBase64(file);
+        resolve(base64);
+      } catch (err) {
+        reject(new Error("Network error during upload"));
+      }
+    };
     xhr.send(fd);
   });
-};
-
-/** Delete from Cloudinary (best-effort — unsigned deletes are limited) */
-const deleteFromCloudinary = async (url: string) => {
-  // Cloudinary unsigned delete isn't supported from browser directly.
-  // We just clear the value — actual asset stays on CDN (free storage is generous).
-  console.info("Cloudinary: image cleared from form (CDN asset retained):", url);
 };
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   value,
   onChange,
-  folderPath,
+  folderPath = "portfolio",
   label = "Upload Image",
 }) => {
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress]   = useState(0);
-  const [error, setError]         = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [customUrl, setCustomUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processUpload = async (file: File) => {
-    if (file.size > 5 * 1024 * 1024) { setError("File too large. Max 5MB."); return; }
-    const ok = ["image/jpeg","image/png","image/webp","image/avif","image/gif","image/svg+xml"];
-    if (!ok.includes(file.type)) { setError("Only JPG, PNG, WebP, AVIF, GIF, SVG allowed."); return; }
+    if (file.size > 10 * 1024 * 1024) {
+      setError("File too large. Max 10MB.");
+      return;
+    }
+    const ok = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif", "image/svg+xml"];
+    if (!ok.includes(file.type)) {
+      setError("Only JPG, PNG, WebP, AVIF, GIF, SVG allowed.");
+      return;
+    }
 
-    setError(null); setUploading(true); setProgress(0);
+    setError(null);
+    setUploading(true);
+    setProgress(0);
     try {
       const url = await uploadToCloudinary(file, folderPath, setProgress);
       onChange(url);
     } catch (err: any) {
-      setError(err?.message || "Upload failed. Try again.");
+      setError(err?.message || "Upload failed.");
     } finally {
       setUploading(false);
     }
@@ -120,17 +155,52 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     if (file) await processUpload(file);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!value) return;
-    if (!confirm("Is image ko hatana chahte ho?")) return;
-    await deleteFromCloudinary(value);
+    if (!confirm("Remove this image?")) return;
     onChange("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const handleSaveCustomUrl = () => {
+    if (customUrl.trim()) {
+      onChange(customUrl.trim());
+      setShowUrlInput(false);
+      setCustomUrl('');
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40 font-medium">{label}</label>
+      <div className="flex justify-between items-center">
+        <label className="text-xs uppercase tracking-widest text-[#D7E2EA]/40 font-medium">{label}</label>
+        <button
+          type="button"
+          onClick={() => setShowUrlInput(!showUrlInput)}
+          className="text-[10px] text-[#7621B0] hover:underline flex items-center gap-1"
+        >
+          <LinkIcon size={10} /> {showUrlInput ? "Hide Link Input" : "Paste Direct Image URL"}
+        </button>
+      </div>
+
+      {showUrlInput && (
+        <div className="flex gap-2 mb-2">
+          <input
+            type="url"
+            placeholder="https://example.com/image.jpg"
+            className="flex-1 bg-[#0C0C0C] border border-[#333] rounded-lg px-3 py-1.5 text-xs text-[#D7E2EA]"
+            value={customUrl}
+            onChange={(e) => setCustomUrl(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={handleSaveCustomUrl}
+            className="bg-[#7621B0] text-white px-3 py-1.5 rounded-lg text-xs font-semibold"
+          >
+            Apply
+          </button>
+        </div>
+      )}
 
       {value ? (
         <div className="relative bg-[#0C0C0C] border border-[#222] rounded-xl overflow-hidden">
@@ -141,7 +211,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             onError={(e) => (e.currentTarget.style.opacity = "0.3")}
           />
           <div className="flex items-center justify-between px-3 py-2 bg-[#111] border-t border-[#222]">
-            <span className="text-[10px] text-green-500 font-semibold">✔ Image set</span>
+            <span className="text-[10px] text-green-500 font-semibold">✔ Image Set</span>
             <div className="flex gap-2">
               <button
                 type="button"
@@ -183,9 +253,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <div className="flex flex-col items-center gap-1.5">
               <Upload className="text-[#D7E2EA]/30" size={22} />
               <span className="text-xs text-[#D7E2EA]/60">
-                Drag &amp; drop ya <span className="text-[#a855f7] font-semibold">browse</span>
+                Drag &amp; drop or <span className="text-[#a855f7] font-semibold">browse photo</span>
               </span>
-              <span className="text-[10px] text-[#D7E2EA]/30">JPG · PNG · WebP · AVIF · SVG (max 5 MB)</span>
+              <span className="text-[10px] text-[#D7E2EA]/30">Supports JPG, PNG, WebP &amp; Cloudinary (max 10 MB)</span>
             </div>
           )}
         </div>

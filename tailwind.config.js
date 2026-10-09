@@ -9,8 +9,16 @@ export default {
       colors: {
         dark: "#0C0C0C",
         lightText: "#D7E2EA",
+        accent: {
+          purple: "#7621B0",
+          pink: "#B600A8",
+          orange: "#BE4C00",
+        }
       },
       fontFamily: {
+        display: ["Syne", "Kanit", "sans-serif"],
+        editorial: ["'Playfair Display'", "serif"],
+        sans: ["'Plus Jakarta Sans'", "Kanit", "sans-serif"],
         kanit: ["Kanit", "sans-serif"],
       },
       animation: {
