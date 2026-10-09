@@ -81,18 +81,15 @@ function MainApp() {
     };
   }, []);
 
-  // Lock body scroll when lightbox is open
+  // Lock body scroll only when lightbox is open
   useEffect(() => {
     if (lightbox) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
     };
   }, [lightbox]);
 

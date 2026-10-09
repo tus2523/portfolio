@@ -55,10 +55,10 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 sm:mb-20 border-b border-[#01472e]/15 pb-8 gap-8">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 block mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 block mb-4 sm:mb-6">
               Visual Archive — 02
             </span>
-            <h2 className="font-display uppercase text-[15vw] leading-[0.8] tracking-[-0.05em] text-[#01472e]">
+            <h2 className="font-display uppercase text-[clamp(3.5rem,13vw,170px)] leading-[0.92] tracking-[-0.04em] text-[#01472e]">
               STILLS
             </h2>
           </div>

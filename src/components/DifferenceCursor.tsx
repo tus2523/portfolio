@@ -14,10 +14,10 @@ export const DifferenceCursor: React.FC = () => {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let currentX = mouseX;
-    let currentY = mouseY;
+    let mouseX = -100;
+    let mouseY = -100;
+    let currentX = -100;
+    let currentY = -100;
     let animId: number;
 
     const onMouseMove = (e: MouseEvent) => {
