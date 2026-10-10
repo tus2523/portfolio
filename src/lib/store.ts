@@ -544,6 +544,47 @@ export function getYoutubeThumbnail(url: string | undefined): string | null {
   return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 }
 
+export async function fetchYoutubeMetadata(urlOrId: string | undefined): Promise<{ title?: string; author?: string; thumbnail?: string } | null> {
+  if (!urlOrId) return null;
+  const id = getYoutubeId(urlOrId) || urlOrId.trim();
+  if (!id || id.length < 5) return null;
+  const standardUrl = `https://www.youtube.com/watch?v=${id}`;
+
+  // 1. Try YouTube official oEmbed API (CORS enabled)
+  try {
+    const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(standardUrl)}&format=json`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.title) {
+        return {
+          title: data.title,
+          author: data.author_name,
+          thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+        };
+      }
+    }
+  } catch {}
+
+  // 2. Try noembed fallback
+  try {
+    const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(standardUrl)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.title) {
+        return {
+          title: data.title,
+          author: data.author_name,
+          thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+        };
+      }
+    }
+  } catch {}
+
+  return {
+    thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+  };
+}
+
 export function getWhatsAppLink(phone: string, message?: string): string {
   const cleanPhone = phone.replace(/\D/g, '');
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;

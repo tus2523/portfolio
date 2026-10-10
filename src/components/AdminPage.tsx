@@ -24,13 +24,14 @@ import {
   logout,
   isLoggedIn,
   getYoutubeId,
+  fetchYoutubeMetadata,
   defaultData
 } from '../lib/store';
 import { ImageUpload } from './ImageUpload';
 import { getCloudinaryConfig, saveCloudinaryConfig, testCloudinaryConnection } from '../lib/cloudinary';
 import { 
   LogOut, CheckCircle2, AlertCircle, Plus, Trash2, Edit3, 
-  ExternalLink, Sparkles, Award, RotateCcw 
+  ExternalLink, Sparkles, Award, RotateCcw, Loader2, Play 
 } from 'lucide-react';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -526,6 +527,8 @@ const VideoProjects: React.FC<{ data: typeof defaultData; save: (s: string, v: a
   const [newVideoUrl, setNewVideoUrl] = useState('');
   const [newVideoTitle, setNewVideoTitle] = useState('');
   const [newVideoThumbnailUrl, setNewVideoThumbnailUrl] = useState('');
+  const [isFetchingTitle, setIsFetchingTitle] = useState(false);
+  const [fetchNotice, setFetchNotice] = useState<{ ok: boolean; msg: string } | null>(null);
 
   useEffect(() => setProjects(data.videoProjects || []), [data.videoProjects]);
 
@@ -559,10 +562,48 @@ const VideoProjects: React.FC<{ data: typeof defaultData; save: (s: string, v: a
     persist(projects.filter(p => p.id !== id));
   };
 
+  const autoFetchYoutubeDetails = async (url: string) => {
+    const cleanUrl = url.trim();
+    if (!cleanUrl) return;
+    const ytId = getYoutubeId(cleanUrl);
+    if (!ytId) return;
+
+    // Immediately set thumbnail
+    const defaultThumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+    setNewVideoThumbnailUrl(prev => prev || defaultThumb);
+
+    setIsFetchingTitle(true);
+    setFetchNotice(null);
+    try {
+      const meta = await fetchYoutubeMetadata(cleanUrl);
+      if (meta && meta.title) {
+        setNewVideoTitle(meta.title);
+        if (meta.thumbnail) setNewVideoThumbnailUrl(meta.thumbnail);
+        setFetchNotice({ ok: true, msg: `Fetched: "${meta.title}"` });
+      } else {
+        setFetchNotice({ ok: false, msg: 'Could not fetch title automatically. You can type it below.' });
+      }
+    } catch {
+      setFetchNotice({ ok: false, msg: 'Could not fetch title automatically. You can type it below.' });
+    } finally {
+      setIsFetchingTitle(false);
+    }
+  };
+
+  const handleVideoUrlChange = (url: string) => {
+    setNewVideoUrl(url);
+    const ytId = getYoutubeId(url);
+    if (ytId) {
+      autoFetchYoutubeDetails(url);
+    }
+  };
+
   const openAddVideoModal = (projId: string) => {
     setNewVideoUrl('');
     setNewVideoTitle('');
     setNewVideoThumbnailUrl('');
+    setFetchNotice(null);
+    setIsFetchingTitle(false);
     setModal({ isProjectModal: false, projectId: projId });
   };
 
@@ -687,15 +728,92 @@ const VideoProjects: React.FC<{ data: typeof defaultData; save: (s: string, v: a
       {modal && !modal.isProjectModal && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-[#131f18] border border-[#01472e]/40 p-6 sm:p-8 rounded-3xl w-full max-w-lg shadow-2xl">
-            <h3 className="text-xl font-display uppercase tracking-tight text-[#fefae0] mb-4">Add Video Cut</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-display uppercase tracking-tight text-[#fefae0]">Add Video Cut</h3>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#01472e]/40 border border-[#01472e]/60 text-[10px] font-bold text-[#10b981] uppercase tracking-wider">
+                <Play size={10} fill="currentColor" />
+                <span>Auto-Fetch Active</span>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-3.5">
-              <input className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none" placeholder="YouTube URL or Instagram Reel URL" value={newVideoUrl} onChange={e => setNewVideoUrl(e.target.value)} />
-              <input className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none" placeholder="Video Cut Title (e.g. Red Carpet Master Cut)" value={newVideoTitle} onChange={e => setNewVideoTitle(e.target.value)} />
-              <ImageUpload value={newVideoThumbnailUrl} onChange={setNewVideoThumbnailUrl} folderPath="thumbnails" label="Custom Video Thumbnail (Optional)" />
+              {/* URL Input with Auto-Fetch Button */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">
+                    Video URL (YouTube or Instagram)
+                  </label>
+                  {isFetchingTitle && (
+                    <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                      <Loader2 size={11} className="animate-spin" /> Fetching title...
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    className="flex-1 bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+                    placeholder="https://www.youtube.com/watch?v=... or shorts/..."
+                    value={newVideoUrl}
+                    onChange={e => handleVideoUrlChange(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => autoFetchYoutubeDetails(newVideoUrl)}
+                    disabled={isFetchingTitle || !newVideoUrl.trim()}
+                    className="px-3.5 py-2 bg-[#01472e] hover:bg-[#025c3c] text-[#fefae0] rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-40 transition flex items-center gap-1 shrink-0"
+                    title="Click to fetch title and thumbnail from YouTube"
+                  >
+                    <Sparkles size={13} className="text-[#10b981]" />
+                    <span className="hidden sm:inline">Fetch Title</span>
+                  </button>
+                </div>
+                {fetchNotice && (
+                  <div className={`p-2.5 rounded-xl text-xs font-semibold border flex items-center gap-2 ${
+                    fetchNotice.ok 
+                      ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' 
+                      : 'bg-amber-950/40 border-amber-500/40 text-amber-300'
+                  }`}>
+                    {fetchNotice.ok ? <CheckCircle2 size={13} className="shrink-0" /> : <AlertCircle size={13} className="shrink-0" />}
+                    <span className="truncate">{fetchNotice.msg}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Title Input (Auto-filled) */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">
+                  Video Title (Auto-Fetched from YouTube)
+                </label>
+                <input
+                  className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+                  placeholder="Video Title (Auto-populates on paste)"
+                  value={newVideoTitle}
+                  onChange={e => setNewVideoTitle(e.target.value)}
+                />
+              </div>
+
+              {/* Live Preview Card */}
+              {newVideoThumbnailUrl && (
+                <div className="p-3 bg-[#0a120e] border border-[#01472e]/40 rounded-2xl flex items-center gap-3">
+                  <img src={newVideoThumbnailUrl} alt="Thumbnail preview" className="w-16 h-10 object-cover rounded-lg shrink-0 border border-[#01472e]/50" />
+                  <div className="truncate">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 block">Thumbnail Ready</span>
+                    <span className="text-xs text-[#fefae0] truncate font-semibold block">{newVideoTitle || 'Selected Cut'}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Custom Thumbnail Upload / Override via Cloudinary */}
+              <ImageUpload
+                value={newVideoThumbnailUrl}
+                onChange={setNewVideoThumbnailUrl}
+                folderPath="thumbnails"
+                label="Custom Thumbnail Override (Optional)"
+              />
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button onClick={() => setModal(null)} className="px-4 py-2 border border-[#01472e]/40 rounded-xl text-xs font-bold uppercase tracking-wider text-[#ccd5ae]/70 hover:text-[#fefae0]">Cancel</button>
-              <button onClick={addVideoToProject} className="px-5 py-2.5 bg-[#01472e] hover:bg-[#025c3c] rounded-xl text-xs font-bold uppercase tracking-wider text-[#fefae0]">Add Cut</button>
+              <button onClick={addVideoToProject} className="px-5 py-2.5 bg-[#01472e] hover:bg-[#025c3c] rounded-xl text-xs font-bold uppercase tracking-wider text-[#fefae0]">Add Video Cut</button>
             </div>
           </div>
         </div>
