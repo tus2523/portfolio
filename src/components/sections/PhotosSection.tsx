@@ -61,7 +61,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
   return (
     <section
       id="photos"
-      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#fefae0] text-[#01472e] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.12)]"
+      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[var(--theme-accent-bg,#fefae0)] text-[var(--theme-text,#01472e)] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.1)] transition-colors duration-500"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
@@ -70,7 +70,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
             <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 block mb-4 sm:mb-6">
               Visual Archive — 02
             </span>
-            <h2 className="font-display uppercase text-[clamp(3.5rem,13vw,170px)] leading-[0.92] tracking-[-0.04em] text-[#01472e]">
+            <h2 className="font-display uppercase text-[clamp(3.5rem,13vw,170px)] leading-[0.92] tracking-[-0.04em] text-[var(--theme-text,#01472e)]">
               STILLS
             </h2>
           </div>
@@ -86,7 +86,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
         </div>
 
         {/* ── Interactive Folders Showcase ── */}
-        <div className="p-8 sm:p-12 rounded-[3.5rem] bg-[#e9edc9]/50 border border-[#01472e]/15 shadow-sm">
+        <div className="p-8 sm:p-12 rounded-[3.5rem] bg-[var(--theme-card-bg,#e9edc9)]/50 border border-[#01472e]/15 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 pb-4 border-b border-[#01472e]/15 gap-4">
             <div className="flex items-center gap-2.5">
               <FolderOpen size={20} className="text-[#01472e]" />
@@ -140,7 +140,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
                     <button
                       type="button"
                       onClick={() => setActiveFolderModal({ ...fSet, photos: folderPhotos })}
-                      className="mt-2 px-4 py-2 rounded-full bg-[#01472e] text-[#fefae0] text-[9px] font-bold uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center gap-1.5 shadow-md"
+                      className="mt-2 px-4 py-2 rounded-full bg-[var(--theme-dark-bg,#01472e)] text-[var(--theme-accent-bg,#fefae0)] text-[9px] font-bold uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center gap-1.5 shadow-md"
                     >
                       <span>VIEW ALL ({folderPhotos.length} STILLS)</span>
                       <ArrowUpRight size={12} />
@@ -156,17 +156,17 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
       {/* ── EXPANDED FULL FOLDER VIEW MODAL (PORTALED to prevent clipping!) ── */}
       {activeFolderModal && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[999999] bg-[#01472e]/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in font-sans"
+          className="fixed inset-0 z-[999999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in font-sans"
           onClick={() => setActiveFolderModal(null)}
         >
           <div
-            className="relative w-full max-w-6xl max-h-[90vh] bg-[#fefae0] rounded-[3rem] p-6 sm:p-10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] border border-[#01472e]/20 text-[#01472e] flex flex-col overflow-hidden"
+            className="relative w-full max-w-6xl max-h-[90vh] bg-[var(--theme-accent-bg,#fefae0)] rounded-[3rem] p-6 sm:p-10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] border border-[#01472e]/20 text-[var(--theme-text,#01472e)] flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Folder Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#01472e]/15 gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#01472e] text-[#fefae0] flex items-center justify-center shadow-md">
+                <div className="w-12 h-12 rounded-2xl bg-[var(--theme-dark-bg,#01472e)] text-[var(--theme-accent-bg,#fefae0)] flex items-center justify-center shadow-md">
                   <FolderOpen size={24} />
                 </div>
                 <div>
@@ -234,22 +234,22 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
       {/* ── LIGHTBOX MODAL (PORTALED to prevent clipping!) ── */}
       {activePhoto && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[9999999] bg-[#01472e]/95 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in"
+          className="fixed inset-0 z-[9999999] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in"
           onClick={() => setActivePhoto(null)}
         >
           <div
-            className="relative max-w-5xl w-full bg-[#fefae0] rounded-[2.5rem] overflow-hidden border border-[#01472e]/20 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] text-[#01472e]"
+            className="relative max-w-5xl w-full bg-[var(--theme-accent-bg,#fefae0)] rounded-[2.5rem] overflow-hidden border border-[#01472e]/20 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] text-[var(--theme-text,#01472e)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setActivePhoto(null)}
-              className="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-[#01472e] text-[#fefae0] flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
+              className="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-[var(--theme-dark-bg,#01472e)] text-[var(--theme-accent-bg,#fefae0)] flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
             >
               <X size={20} />
             </button>
 
-            <div className="max-h-[75vh] bg-[#01472e]/10 flex items-center justify-center overflow-hidden">
+            <div className="max-h-[75vh] bg-black/10 flex items-center justify-center overflow-hidden">
               <img
                 src={activePhoto.imageUrl}
                 alt={activePhoto.title}
@@ -257,21 +257,21 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
               />
             </div>
 
-            <div className="p-8 bg-[#fefae0] border-t border-[#01472e]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-8 bg-[var(--theme-accent-bg,#fefae0)] border-t border-current/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#01472e]/60 block mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-60 block mb-1">
                   {activePhoto.category} — {activePhoto.date || "2024"}
                 </span>
-                <h3 className="font-display uppercase text-3xl tracking-tight text-[#01472e]">
+                <h3 className="font-display uppercase text-3xl tracking-tight text-[var(--theme-text,#01472e)]">
                   {activePhoto.title}
                 </h3>
                 {activePhoto.description && (
-                  <p className="text-xs text-[#01472e]/80 mt-1 max-w-lg">
+                  <p className="text-xs opacity-80 mt-1 max-w-lg">
                     {activePhoto.description}
                   </p>
                 )}
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#01472e]/50 shrink-0">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-50 shrink-0">
                 [TUSHAR MARU STILLS]
               </span>
             </div>

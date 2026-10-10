@@ -21,7 +21,7 @@ export const BrandShowcase: React.FC<BrandShowcaseProps> = ({ data }) => {
   const marqueeCelebs = [...celebrities, ...celebrities, ...celebrities, ...celebrities];
 
   return (
-    <section className="py-20 sm:py-28 px-6 sm:px-10 md:px-14 bg-[#01472e] text-[#fefae0] font-sans relative z-20 overflow-hidden select-none">
+    <section className="py-20 sm:py-28 px-6 sm:px-10 md:px-14 bg-[var(--theme-dark-bg,#01472e)] text-[var(--theme-accent-bg,#fefae0)] font-sans relative z-20 overflow-hidden select-none transition-colors duration-500">
       <div className="max-w-7xl mx-auto mb-12 sm:mb-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[#ccd5ae]/20 pb-8 gap-6">
           <div>

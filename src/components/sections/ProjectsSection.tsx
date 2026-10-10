@@ -34,7 +34,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ videoProjects,
   return (
     <section
       id="projects"
-      className="py-28 sm:py-36 px-6 sm:px-10 md:px-14 bg-[#e9edc9] text-[#01472e] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
+      className="py-28 sm:py-36 px-6 sm:px-10 md:px-14 bg-[var(--theme-card-bg,#e9edc9)] text-[var(--theme-text,#01472e)] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden transition-colors duration-500"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}

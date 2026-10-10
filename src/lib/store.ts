@@ -7,6 +7,70 @@ export interface PhotoItem {
   date?: string;
 }
 
+export interface StudioTheme {
+  id: string;
+  name: string;
+  heroBg: string;
+  primaryText: string;
+  cardBg: string;
+  accentBg: string;
+  darkBg: string;
+  footerText: string;
+}
+
+export const THEME_PRESETS: Record<string, StudioTheme> = {
+  'earthy-sage': {
+    id: 'earthy-sage',
+    name: '🌿 Earthy Sage (Signature)',
+    heroBg: '#ccd5ae',
+    primaryText: '#01472e',
+    cardBg: '#e9edc9',
+    accentBg: '#fefae0',
+    darkBg: '#01472e',
+    footerText: '#ccd5ae',
+  },
+  'minimal-cream': {
+    id: 'minimal-cream',
+    name: '🥛 Minimalist Cream',
+    heroBg: '#faf7f2',
+    primaryText: '#18231c',
+    cardBg: '#f2ece4',
+    accentBg: '#ffffff',
+    darkBg: '#18231c',
+    footerText: '#e8e4dc',
+  },
+  'desert-sand': {
+    id: 'desert-sand',
+    name: '🏜️ Desert Sand',
+    heroBg: '#eedbc5',
+    primaryText: '#3a2414',
+    cardBg: '#f5e8d7',
+    accentBg: '#fffaf5',
+    darkBg: '#2c1a0e',
+    footerText: '#eedbc5',
+  },
+  'studio-olive': {
+    id: 'studio-olive',
+    name: '🫒 Studio Olive & Moss',
+    heroBg: '#dde5b6',
+    primaryText: '#0e2a18',
+    cardBg: '#c9d4a1',
+    accentBg: '#f0ead2',
+    darkBg: '#133520',
+    footerText: '#dde5b6',
+  },
+  'midnight-dark': {
+    id: 'midnight-dark',
+    name: '🌑 Midnight Studio (Dark)',
+    heroBg: '#0d1310',
+    primaryText: '#e2ede7',
+    cardBg: '#131e18',
+    accentBg: '#1c2821',
+    darkBg: '#070b09',
+    footerText: '#8fa89b',
+  },
+};
+
 export const defaultData = {
   heroStats: {
     stat1Value: '50+',
@@ -400,6 +464,7 @@ export const defaultData = {
     sectionOrder: ['about', 'services', 'videos', 'photos', 'experience', 'skills', 'reviews'],
     cloudinaryCloudName: 'aksy1d98',
     cloudinaryUploadPreset: 'tushar_portfolio',
+    theme: THEME_PRESETS['earthy-sage'],
   },
   brands: [
     'Zudio', 'Denver', 'Bewakoof', 'Maybelline', 'Godrej Fashion Week',
@@ -498,7 +563,11 @@ export function getData(): typeof defaultData {
       education: stored.education ?? defaultData.education,
       about: { ...defaultData.about, ...(stored.about || {}) },
       skills: stored.skills ?? defaultData.skills,
-      settings: { ...defaultData.settings, ...(stored.settings || {}) },
+      settings: {
+        ...defaultData.settings,
+        ...(stored.settings || {}),
+        theme: stored.settings?.theme ? { ...THEME_PRESETS['earthy-sage'], ...stored.settings.theme } : defaultData.settings.theme,
+      },
       services: stored.services ?? defaultData.services,
       brands: stored.brands ?? defaultData.brands,
       celebrities: stored.celebrities ?? defaultData.celebrities,

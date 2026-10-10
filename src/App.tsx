@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { getData, getYoutubeId, getInstagramId, defaultData } from './lib/store';
+import { getData, getYoutubeId, getInstagramId, defaultData, THEME_PRESETS } from './lib/store';
 import { AdminPage } from './components/AdminPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { DifferenceCursor } from './components/DifferenceCursor';
@@ -23,6 +23,20 @@ function MainApp() {
   const [loaded, setLoaded] = useState(false);
   const [data, setData] = useState<typeof defaultData>(() => getData());
   const [lightbox, setLightbox] = useState<any>(null);
+
+  const currentTheme = data.settings?.theme || THEME_PRESETS['earthy-sage'];
+
+  // Dynamically synchronize theme with browser meta theme-color and body background
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta && currentTheme.heroBg) {
+        meta.setAttribute('content', currentTheme.heroBg);
+      }
+      document.body.style.backgroundColor = currentTheme.heroBg;
+      document.body.style.color = currentTheme.primaryText;
+    }
+  }, [currentTheme]);
 
   const handleSelectVideo = (video: any) => {
     if (!video || !video.url) return;
@@ -82,7 +96,19 @@ function MainApp() {
   }, [data.videoProjects]);
 
   return (
-    <div className="bg-[#ccd5ae] text-[#01472e] font-sans overflow-x-clip min-h-screen w-full relative selection:bg-[#01472e] selection:text-[#fefae0]">
+    <div 
+      className="font-sans overflow-x-clip min-h-screen w-full relative selection:bg-[#01472e] selection:text-[#fefae0] transition-colors duration-500"
+      style={{
+        backgroundColor: currentTheme.heroBg,
+        color: currentTheme.primaryText,
+        ['--theme-hero-bg' as any]: currentTheme.heroBg,
+        ['--theme-text' as any]: currentTheme.primaryText,
+        ['--theme-card-bg' as any]: currentTheme.cardBg,
+        ['--theme-accent-bg' as any]: currentTheme.accentBg,
+        ['--theme-dark-bg' as any]: currentTheme.darkBg,
+        ['--theme-footer-text' as any]: currentTheme.footerText,
+      }}
+    >
       {/* ── Fixed SVG Fractal Noise Overlay (0.04 Opacity) ── */}
       <div
         aria-hidden="true"

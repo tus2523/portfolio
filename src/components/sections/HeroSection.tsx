@@ -137,8 +137,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
         )}
       </AnimatePresence>
 
-      {/* ── Hero Section (Background #ccd5ae) ── */}
-      <section className="min-h-screen w-full flex flex-col justify-between pt-28 pb-20 sm:pb-28 px-6 sm:px-10 md:px-14 bg-[#ccd5ae] text-[#01472e] font-sans relative overflow-hidden select-none">
+      {/* ── Hero Section (Background Dynamic Theme) ── */}
+      <section className="min-h-screen w-full flex flex-col justify-between pt-28 pb-20 sm:pb-28 px-6 sm:px-10 md:px-14 bg-[var(--theme-hero-bg,#ccd5ae)] text-[var(--theme-text,#01472e)] font-sans relative overflow-hidden select-none transition-colors duration-500">
         {/* Floating Organic Cards (Parallax + @keyframes float) */}
         {floatingImages.map((img, i) => {
           const parallaxOffset = scrollY * img.speed;
@@ -169,11 +169,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
         })}
 
         {/* Top Status Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 border-b border-[#01472e]/15 pb-4 w-full relative z-20 gap-2.5 sm:gap-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] opacity-75 border-b border-current/15 pb-4 w-full relative z-20 gap-2.5 sm:gap-0">
           <span>TUSHAR MARU STUDIO</span>
           <span>COMMERCIAL VIDEOGRAPHER &amp; EDITOR</span>
           <span className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#01472e] animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-current animate-ping" />
             AVAILABLE FOR COMMISSIONS
           </span>
         </div>
@@ -184,7 +184,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
             {/* Row 1: TUSHAR */}
             <div className="overflow-hidden">
               <h1
-                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(3.2rem,14vw,190px)] select-none"
+                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[var(--theme-text,#01472e)] flex justify-center text-[clamp(3.2rem,14vw,190px)] select-none"
                 aria-label="TUSHAR"
               >
                 {line1.split("").map((char, cIdx) => (
@@ -208,7 +208,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
             {/* Row 2: MARU */}
             <div className="overflow-hidden">
               <h1
-                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(3.2rem,14vw,190px)] select-none"
+                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[var(--theme-text,#01472e)] flex justify-center text-[clamp(3.2rem,14vw,190px)] select-none"
                 aria-label="MARU"
               >
                 {line2.split("").map((char, cIdx) => (

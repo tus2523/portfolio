@@ -25,13 +25,16 @@ import {
   isLoggedIn,
   getYoutubeId,
   fetchYoutubeMetadata,
-  defaultData
+  defaultData,
+  THEME_PRESETS,
+  type StudioTheme,
 } from '../lib/store';
 import { ImageUpload } from './ImageUpload';
 import { getCloudinaryConfig, saveCloudinaryConfig, testCloudinaryConnection } from '../lib/cloudinary';
 import { 
   LogOut, CheckCircle2, AlertCircle, Plus, Trash2, Edit3, 
-  ExternalLink, Sparkles, Award, RotateCcw, Loader2, Play 
+  ExternalLink, Sparkles, Award, RotateCcw, Loader2, Play,
+  Palette
 } from 'lucide-react';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -46,7 +49,7 @@ const NAV = [
   { id: 'experience',   icon: '💼', label: 'Work Timeline'   },
   { id: 'skills',       icon: '🛠️', label: 'Technical Skills'},
   { id: 'reviews',      icon: '⭐', label: 'Endorsements'    },
-  { id: 'settings',     icon: '⚙️', label: 'Cloudinary Setup'},
+  { id: 'settings',     icon: '🎨', label: 'Theme & Settings'},
   { id: 'seed',         icon: '🗄️', label: 'System Reset'    },
 ];
 
@@ -1398,15 +1401,21 @@ const ReviewsManagement: React.FC<{ data: typeof defaultData; save: (s: string, 
   );
 };
 
-// ─── 10. CLOUDINARY SETTINGS SUBCOMPONENT ───────────────────────────
+// ─── 10. CLOUDINARY & THEME SETTINGS SUBCOMPONENT ────────────────────
 const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) => void }> = ({ data, save }) => {
   const [form, setForm] = useState({ ...(data.settings || {}) });
   const [cConfig, setCConfig] = useState(getCloudinaryConfig());
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [theme, setTheme] = useState<StudioTheme>(() => {
+    return data.settings?.theme || THEME_PRESETS['earthy-sage'];
+  });
 
   useEffect(() => {
     setForm({ ...(data.settings || {}) });
+    if (data.settings?.theme) {
+      setTheme(data.settings.theme);
+    }
     if (data.settings?.cloudinaryCloudName || data.settings?.cloudinaryUploadPreset) {
       setCConfig({
         cloudName: data.settings.cloudinaryCloudName || '',
@@ -1414,6 +1423,22 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
       });
     }
   }, [data.settings]);
+
+  const handleSelectPreset = (presetKey: string) => {
+    const selected = THEME_PRESETS[presetKey];
+    if (selected) {
+      setTheme(selected);
+    }
+  };
+
+  const handleColorChange = (key: keyof StudioTheme, val: string) => {
+    setTheme(prev => ({
+      ...prev,
+      id: 'custom',
+      name: '🎨 Custom Palette',
+      [key]: val,
+    }));
+  };
 
   const handleTestConnection = async () => {
     if (!cConfig.cloudName.trim() || !cConfig.uploadPreset.trim()) {
@@ -1437,82 +1462,339 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
       ...form,
       cloudinaryCloudName: cConfig.cloudName.trim(),
       cloudinaryUploadPreset: cConfig.uploadPreset.trim(),
+      theme,
     };
     save('settings', updatedSettings);
     saveCloudinaryConfig(cConfig.cloudName, cConfig.uploadPreset);
   };
 
+  const colorFields: { key: keyof StudioTheme; label: string; desc: string }[] = [
+    { key: 'heroBg', label: 'Main Background (Hero / Body)', desc: 'Landing hero, editorial statement, and career timeline' },
+    { key: 'primaryText', label: 'Primary Typography', desc: 'Main display headlines, paragraph body, and section labels' },
+    { key: 'cardBg', label: 'Card & Projects Background', desc: 'Featured films grid, capabilities cards, and review marquee' },
+    { key: 'accentBg', label: 'Stills & Accent Background', desc: 'Photo classified archive container and modal lightbox' },
+    { key: 'darkBg', label: 'Dark Marquee & Footer Background', desc: 'Celebrity brand strip and 12-column footer container' },
+    { key: 'footerText', label: 'Footer Subtext & Links', desc: 'Footer directory links, input placeholders, and copyright' },
+  ];
+
   return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-2xl font-display uppercase tracking-tight text-[#fefae0]">Cloudinary Storage &amp; Studio Settings</h2>
-        <p className="text-xs text-[#ccd5ae]/70 mt-1">Direct unsigned Cloudinary pipeline and WhatsApp inquiries routing.</p>
+    <div className="flex flex-col gap-8">
+      <div>
+        <h2 className="text-2xl font-display uppercase tracking-tight text-[#fefae0]">Website Theme &amp; Studio Settings</h2>
+        <p className="text-xs text-[#ccd5ae]/70 mt-1">
+          Switch aesthetic color themes, customize background colors, route WhatsApp inquiries, and manage Cloudinary storage.
+        </p>
       </div>
 
+      {/* ── 1. Color Themes & Palette Picker ── */}
       <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl flex flex-col gap-6 shadow-xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">WhatsApp Inquiry Number</label>
-            <input className="bg-[#0a120e] border border-[#01472e]/30 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none" value={form.whatsappPhone || ''} onChange={e => setForm(p => ({ ...p, whatsappPhone: e.target.value }))} placeholder="9324704934" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#01472e]/20 pb-5">
+          <div>
+            <h3 className="text-base font-bold text-[#fefae0] flex items-center gap-2">
+              <Palette size={18} className="text-emerald-400" />
+              <span>Website Color Theme &amp; Backgrounds</span>
+            </h3>
+            <p className="text-xs text-[#ccd5ae]/70 mt-0.5">
+              Active: <span className="font-bold text-emerald-300">{theme.name}</span>
+            </p>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">Footer Subheading</label>
-            <input className="bg-[#0a120e] border border-[#01472e]/30 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none" value={form.footerHeading || ''} onChange={e => setForm(p => ({ ...p, footerHeading: e.target.value }))} placeholder="EARTHY EDITORIAL STUDIO AESTHETIC" />
+
+          <button
+            type="button"
+            onClick={() => setTheme(THEME_PRESETS['earthy-sage'])}
+            className="px-3.5 py-2 bg-[#192b22] hover:bg-[#01472e] border border-[#01472e]/50 rounded-xl text-[10px] font-bold text-[#fefae0] uppercase tracking-wider transition self-start sm:self-auto"
+          >
+            ↺ Reset To Signature Earthy Sage
+          </button>
+        </div>
+
+        {/* 5 One-Click Presets */}
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#ccd5ae]/60 block mb-3">
+            Select Curated Theme Preset
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Object.entries(THEME_PRESETS).map(([key, preset]) => {
+              const isSelected = theme.id === preset.id;
+              return (
+                <div
+                  key={key}
+                  onClick={() => handleSelectPreset(key)}
+                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                    isSelected
+                      ? 'border-emerald-400 bg-emerald-950/30 shadow-lg shadow-emerald-950/50'
+                      : 'border-[#01472e]/30 bg-[#0a120e] hover:border-[#01472e]/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs text-[#fefae0] truncate">
+                      {preset.name}
+                    </span>
+                    {isSelected && (
+                      <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                        Active
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Palette Dots */}
+                  <div className="flex items-center gap-1.5 pt-1">
+                    <div
+                      className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
+                      style={{ backgroundColor: preset.heroBg }}
+                      title={`Hero Bg: ${preset.heroBg}`}
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
+                      style={{ backgroundColor: preset.cardBg }}
+                      title={`Card Bg: ${preset.cardBg}`}
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
+                      style={{ backgroundColor: preset.accentBg }}
+                      title={`Accent Bg: ${preset.accentBg}`}
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
+                      style={{ backgroundColor: preset.darkBg }}
+                      title={`Dark Bg: ${preset.darkBg}`}
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
+                      style={{ backgroundColor: preset.primaryText }}
+                      title={`Primary Text: ${preset.primaryText}`}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Cloudinary Integration Settings */}
-        <div className="border-t border-[#01472e]/20 pt-6 flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="text-base font-bold text-[#fefae0] flex items-center gap-2">
-                <span>☁️ Active Cloudinary Pipeline</span>
-              </h3>
-              <p className="text-xs text-[#ccd5ae]/60 mt-0.5">
-                Uploads production photos, stills, and video thumbnails directly to Cloudinary.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleTestConnection}
-              disabled={testing}
-              className="px-4 py-2.5 bg-[#192b22] hover:bg-[#01472e] border border-[#01472e]/50 rounded-xl text-xs font-bold text-[#fefae0] uppercase tracking-wider transition shrink-0"
-            >
-              {testing ? 'Testing Connection...' : '⚡ Test Connection'}
-            </button>
+        {/* Custom Color Controls (Fine-Tuning) */}
+        <div className="border-t border-[#01472e]/20 pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#ccd5ae]/60 block">
+              Custom Hex Color Palette &amp; Fine-Tuning
+            </span>
+            <span className="text-[10px] text-[#ccd5ae]/50">
+              Click any color swatch or type a HEX code
+            </span>
           </div>
 
-          {testResult && (
-            <div className={`p-3.5 rounded-xl text-xs font-semibold border ${testResult.ok ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-red-950/40 border-red-500/40 text-red-300'}`}>
-              {testResult.msg}
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {colorFields.map(({ key, label, desc }) => {
+              const currentColor = (theme[key] as string) || '#ffffff';
+              return (
+                <div key={key} className="bg-[#0a120e] border border-[#01472e]/30 p-3.5 rounded-2xl flex flex-col gap-2">
+                  <div>
+                    <label className="text-[11px] font-bold text-[#fefae0] block leading-tight">
+                      {label}
+                    </label>
+                    <span className="text-[10px] text-[#ccd5ae]/50 block mt-0.5 leading-snug">
+                      {desc}
+                    </span>
+                  </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">Cloud Name</label>
-              <input
-                className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
-                placeholder="aksy1d98"
-                value={cConfig.cloudName}
-                onChange={e => setCConfig(p => ({ ...p, cloudName: e.target.value }))}
-              />
+                  <div className="flex items-center gap-2 mt-auto pt-1">
+                    {/* Visual Color Input Picker */}
+                    <div className="relative w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-white/20 shadow-inner cursor-pointer">
+                      <input
+                        type="color"
+                        value={currentColor.startsWith('#') ? currentColor : '#000000'}
+                        onChange={(e) => handleColorChange(key, e.target.value)}
+                        className="absolute -top-3 -left-3 w-16 h-16 cursor-pointer border-none p-0"
+                      />
+                    </div>
+
+                    {/* Hex Text Input */}
+                    <input
+                      type="text"
+                      value={currentColor}
+                      onChange={(e) => handleColorChange(key, e.target.value)}
+                      placeholder="#000000"
+                      className="w-full bg-[#111c16] border border-[#01472e]/40 rounded-xl px-3 py-2 text-xs font-mono text-[#fefae0] uppercase focus:border-emerald-400 outline-none"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Live Mini Preview Box */}
+        <div className="border-t border-[#01472e]/20 pt-6">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#ccd5ae]/60 block mb-3">
+            Live Website Theme Preview
+          </span>
+          <div
+            className="rounded-2xl p-6 sm:p-8 border shadow-lg transition-colors duration-300 flex flex-col gap-5 overflow-hidden"
+            style={{
+              backgroundColor: theme.heroBg,
+              color: theme.primaryText,
+              borderColor: `${theme.primaryText}20`,
+            }}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style={{ borderColor: `${theme.primaryText}20` }}>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">
+                  Tushar Maru Studio • Live Preview
+                </span>
+                <h4 className="text-xl sm:text-2xl font-display uppercase tracking-tight mt-0.5" style={{ color: theme.primaryText }}>
+                  Crafting High-Energy Visuals
+                </h4>
+              </div>
+
+              <div
+                className="px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shrink-0 self-start sm:self-auto shadow-sm"
+                style={{
+                  backgroundColor: theme.darkBg,
+                  color: theme.accentBg,
+                }}
+              >
+                {theme.name}
+              </div>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">Upload Preset (Unsigned)</label>
-              <input
-                className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
-                placeholder="tushar_portfolio"
-                value={cConfig.uploadPreset}
-                onChange={e => setCConfig(p => ({ ...p, uploadPreset: e.target.value }))}
-              />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Card Container preview */}
+              <div
+                className="p-4 rounded-xl border shadow-sm flex flex-col justify-between gap-3"
+                style={{
+                  backgroundColor: theme.cardBg,
+                  color: theme.primaryText,
+                  borderColor: `${theme.primaryText}20`,
+                }}
+              >
+                <span className="text-[9px] font-bold uppercase tracking-wider opacity-60">
+                  Project Card Sample
+                </span>
+                <p className="text-xs leading-relaxed opacity-85">
+                  High-retention commercial video editing, DaVinci Resolve grading, and celebrity visuals.
+                </p>
+                <div
+                  className="px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest w-fit"
+                  style={{
+                    backgroundColor: theme.accentBg,
+                    color: theme.primaryText,
+                  }}
+                >
+                  Featured Cut
+                </div>
+              </div>
+
+              {/* Footer preview */}
+              <div
+                className="p-4 rounded-xl border shadow-sm flex flex-col justify-between gap-3"
+                style={{
+                  backgroundColor: theme.darkBg,
+                  color: theme.footerText,
+                  borderColor: `${theme.footerText}30`,
+                }}
+              >
+                <span className="text-[9px] font-bold uppercase tracking-wider opacity-60">
+                  Dark Footer / Marquee Strip
+                </span>
+                <p className="text-xs leading-relaxed" style={{ color: theme.footerText }}>
+                  marutushar387@gmail.com • Mumbai, Maharashtra
+                </p>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: theme.accentBg }}>
+                  ★ Zudio • Denver • Maybelline
+                </span>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 2. WhatsApp & Studio Inquiries ── */}
+      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl flex flex-col gap-6 shadow-xl">
+        <div className="border-b border-[#01472e]/20 pb-4">
+          <h3 className="text-base font-bold text-[#fefae0]">
+            📱 Studio Inquiries &amp; Information
+          </h3>
+          <p className="text-xs text-[#ccd5ae]/60 mt-0.5">
+            Direct routing for incoming client projects and footer statement text.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">WhatsApp Inquiry Number</label>
+            <input
+              className="bg-[#0a120e] border border-[#01472e]/30 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+              value={form.whatsappPhone || ''}
+              onChange={e => setForm(p => ({ ...p, whatsappPhone: e.target.value }))}
+              placeholder="9324704934"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">Footer Subheading Statement</label>
+            <input
+              className="bg-[#0a120e] border border-[#01472e]/30 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+              value={form.footerHeading || ''}
+              onChange={e => setForm(p => ({ ...p, footerHeading: e.target.value }))}
+              placeholder="EARTHY EDITORIAL STUDIO AESTHETIC"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ── 3. Cloudinary Integration Settings ── */}
+      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl flex flex-col gap-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#01472e]/20 pb-4">
+          <div>
+            <h3 className="text-base font-bold text-[#fefae0] flex items-center gap-2">
+              <span>☁️ Active Cloudinary Pipeline</span>
+            </h3>
+            <p className="text-xs text-[#ccd5ae]/60 mt-0.5">
+              Uploads high-resolution DSLR photos, stills, and video thumbnails directly to Cloudinary with automatic client-side compression.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleTestConnection}
+            disabled={testing}
+            className="px-4 py-2.5 bg-[#192b22] hover:bg-[#01472e] border border-[#01472e]/50 rounded-xl text-xs font-bold text-[#fefae0] uppercase tracking-wider transition shrink-0"
+          >
+            {testing ? 'Testing Connection...' : '⚡ Test Connection'}
+          </button>
+        </div>
+
+        {testResult && (
+          <div className={`p-3.5 rounded-xl text-xs font-semibold border ${testResult.ok ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-red-950/40 border-red-500/40 text-red-300'}`}>
+            {testResult.msg}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">Cloud Name</label>
+            <input
+              className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+              placeholder="aksy1d98"
+              value={cConfig.cloudName}
+              onChange={e => setCConfig(p => ({ ...p, cloudName: e.target.value }))}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">Upload Preset (Unsigned)</label>
+            <input
+              className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+              placeholder="tushar_portfolio"
+              value={cConfig.uploadPreset}
+              onChange={e => setCConfig(p => ({ ...p, uploadPreset: e.target.value }))}
+            />
           </div>
         </div>
 
         <div className="flex justify-end border-t border-[#01472e]/20 pt-4">
-          <button onClick={handleSave} className="bg-[#01472e] hover:bg-[#025c3c] text-[#fefae0] px-6 py-3 rounded-xl font-bold uppercase tracking-[0.2em] text-xs transition shadow-lg shadow-[#01472e]/20">
-            Save Cloudinary Settings
+          <button
+            onClick={handleSave}
+            className="bg-[#01472e] hover:bg-[#025c3c] text-[#fefae0] px-8 py-3.5 rounded-xl font-bold uppercase tracking-[0.2em] text-xs transition shadow-lg shadow-[#01472e]/30 flex items-center gap-2"
+          >
+            <Palette size={15} />
+            <span>Save Theme &amp; Studio Settings</span>
           </button>
         </div>
       </div>

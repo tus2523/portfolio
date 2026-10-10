@@ -34,21 +34,21 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
   return (
     <section
       id="services"
-      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[#e9edc9] text-[#01472e] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(1,71,46,0.15)] overflow-hidden"
+      className="py-24 sm:py-32 px-6 sm:px-10 md:px-14 bg-[var(--theme-card-bg,#e9edc9)] text-[var(--theme-text,#01472e)] font-sans rounded-t-[5rem] relative z-20 shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden transition-colors duration-500"
     >
       <div className="max-w-7xl mx-auto flex flex-col">
         {/* Section Header with generous, safe spacing */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-14 sm:mb-20 border-b border-[#01472e]/15 pb-8 gap-6 sm:gap-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-14 sm:mb-20 border-b border-current/15 pb-8 gap-6 sm:gap-8">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 block mb-4 sm:mb-6">
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] opacity-70 block mb-4 sm:mb-6">
               Capabilities — 04
             </span>
-            <h2 className="font-display uppercase text-[clamp(3.5rem,13vw,170px)] leading-[0.92] tracking-[-0.04em] text-[#01472e]">
+            <h2 className="font-display uppercase text-[clamp(3.5rem,13vw,170px)] leading-[0.92] tracking-[-0.04em] text-[var(--theme-text,#01472e)]">
               SERVICES
             </h2>
           </div>
 
-          <p className="max-w-xs text-xs sm:text-sm text-[#01472e]/80 leading-relaxed font-normal self-start lg:self-end">
+          <p className="max-w-xs text-xs sm:text-sm opacity-80 leading-relaxed font-normal self-start lg:self-end">
             Complete production pipeline from camera operation to rhythm-synced final export.
           </p>
         </div>
@@ -65,27 +65,27 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
                 layout
                 key={service.id || idx}
                 onClick={() => toggleService(service.id)}
-                className={`bg-[#fefae0] border ${
-                  isExpanded ? 'border-[#01472e]/50 ring-2 ring-[#01472e]/20' : 'border-[#01472e]/15 hover:border-[#01472e]/35'
-                } p-8 rounded-[2.5rem] shadow-[0_20px_40px_-15px_rgba(1,71,46,0.12)] flex flex-col justify-between gap-6 cursor-pointer transition-colors duration-300`}
+                className={`bg-[var(--theme-accent-bg,#fefae0)] border ${
+                  isExpanded ? 'border-current/50 ring-2 ring-current/20' : 'border-current/15 hover:border-current/35'
+                } p-8 rounded-[2.5rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] flex flex-col justify-between gap-6 cursor-pointer transition-colors duration-300`}
               >
                 <div className="flex flex-col gap-4">
                   {/* Top Bar: Icon + Number */}
                   <div className="flex justify-between items-center w-full">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[#01472e] text-[#fefae0] shadow-md">
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[var(--theme-dark-bg,#01472e)] text-[var(--theme-accent-bg,#fefae0)] shadow-md">
                       <IconComp size={22} />
                     </div>
-                    <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#01472e]/50">
+                    <span className="text-xs font-bold uppercase tracking-[0.2em] opacity-50">
                       [{serviceNumber}]
                     </span>
                   </div>
 
                   {/* Title & Short Description */}
                   <div>
-                    <h3 className="font-display uppercase text-2xl text-[#01472e] tracking-tight">
+                    <h3 className="font-display uppercase text-2xl text-[var(--theme-text,#01472e)] tracking-tight">
                       {service.name}
                     </h3>
-                    <p className="text-xs sm:text-sm font-normal leading-relaxed mt-2 text-[#01472e]/80">
+                    <p className="text-xs sm:text-sm font-normal leading-relaxed mt-2 opacity-80">
                       {service.description}
                     </p>
                   </div>
@@ -98,11 +98,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                        className="overflow-hidden flex flex-col gap-4 pt-3 border-t border-[#01472e]/15"
+                        className="overflow-hidden flex flex-col gap-4 pt-3 border-t border-current/15"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="text-xs sm:text-sm text-[#01472e]/85 leading-relaxed font-normal whitespace-pre-line bg-[#01472e]/5 p-4 rounded-2xl border border-[#01472e]/10">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#01472e]/60 block mb-1">
+                        <div className="text-xs sm:text-sm opacity-85 leading-relaxed font-normal whitespace-pre-line bg-current/5 p-4 rounded-2xl border border-current/10">
+                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 block mb-1">
                             PRODUCTION SCOPE &amp; WORKFLOW
                           </span>
                           {service.details || service.description}
@@ -112,7 +112,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
                           href={getServiceWhatsAppLink(service.name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full bg-[#01472e] hover:bg-[#023321] text-[#fefae0] font-bold py-3.5 px-6 rounded-full flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.25em] shadow-[0_12px_24px_-6px_rgba(1,71,46,0.3)] transition-all duration-300"
+                          className="w-full bg-[var(--theme-dark-bg,#01472e)] hover:opacity-90 text-[var(--theme-accent-bg,#fefae0)] font-bold py-3.5 px-6 rounded-full flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.25em] shadow-lg transition-all duration-300"
                         >
                           <MessageSquare size={14} />
                           <span>INQUIRE ON WHATSAPP</span>
@@ -123,12 +123,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ data }) => {
                 </div>
 
                 {/* Bottom Toggle Button */}
-                <div className="flex items-center justify-between text-[10px] font-bold text-[#01472e] uppercase tracking-[0.25em] pt-4 border-t border-[#01472e]/10">
+                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] pt-4 border-t border-current/10">
                   <span>{isExpanded ? 'COLLAPSE DETAILS' : 'DISCOVER DETAILS'}</span>
                   {isExpanded ? (
-                    <ChevronUp size={15} className="text-[#01472e]" />
+                    <ChevronUp size={15} />
                   ) : (
-                    <ArrowRight size={15} className="text-[#01472e] transform group-hover:translate-x-1.5 transition-transform duration-300" />
+                    <ArrowRight size={15} className="transform group-hover:translate-x-1.5 transition-transform duration-300" />
                   )}
                 </div>
               </motion.div>

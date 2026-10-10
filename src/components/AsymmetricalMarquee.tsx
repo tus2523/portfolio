@@ -21,17 +21,17 @@ export const AsymmetricalMarquee: React.FC<AsymmetricalMarqueeProps> = ({ videos
   };
 
   return (
-    <section className="w-full py-20 bg-[#a3b18a] text-[#01472e] overflow-hidden select-none relative z-10 border-t border-[#01472e]/10">
+    <section className="w-full py-20 bg-[var(--theme-card-bg,#e9edc9)] text-[var(--theme-text,#01472e)] overflow-hidden select-none relative z-10 border-t border-current/10 transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-70">
             Archive Highlights
           </span>
-          <h2 className="font-display uppercase text-3xl sm:text-4xl text-[#01472e] tracking-tight mt-1">
+          <h2 className="font-display uppercase text-3xl sm:text-4xl text-[var(--theme-text,#01472e)] tracking-tight mt-1">
             Continuous Motion Reel
           </h2>
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#01472e]/70">
+        <span className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-70">
           [Hover to pause • Click to play]
         </span>
       </div>
