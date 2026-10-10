@@ -581,6 +581,7 @@ export function getData(): typeof defaultData {
 export function saveData(data: typeof defaultData): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(KEY, JSON.stringify(data));
+  window.dispatchEvent(new Event('portfolio-data-updated'));
 }
 
 export function updateSection(section: string, value: any): typeof defaultData {

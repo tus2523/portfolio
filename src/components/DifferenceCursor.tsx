@@ -14,15 +14,21 @@ export const DifferenceCursor: React.FC = () => {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    let mouseX = -100;
-    let mouseY = -100;
-    let currentX = -100;
-    let currentY = -100;
+    let mouseX = -500;
+    let mouseY = -500;
+    let currentX = -500;
+    let currentY = -500;
+    let hasMoved = false;
     let animId: number;
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      if (!hasMoved) {
+        hasMoved = true;
+        currentX = mouseX;
+        currentY = mouseY;
+      }
       if (!isVisibleRef.current) {
         isVisibleRef.current = true;
         if (cursor) cursor.style.opacity = '1';
@@ -30,8 +36,10 @@ export const DifferenceCursor: React.FC = () => {
     };
 
     const onMouseEnter = () => {
-      isVisibleRef.current = true;
-      if (cursor) cursor.style.opacity = '1';
+      if (hasMoved && mouseX >= 0) {
+        isVisibleRef.current = true;
+        if (cursor) cursor.style.opacity = '1';
+      }
     };
 
     const onMouseLeave = () => {
@@ -39,14 +47,19 @@ export const DifferenceCursor: React.FC = () => {
       if (cursor) cursor.style.opacity = '0';
     };
 
+    let currentScale = 1;
+
     // Smooth lerp loop
     const render = () => {
-      currentX += (mouseX - currentX) * 0.16;
-      currentY += (mouseY - currentY) * 0.16;
+      if (hasMoved) {
+        currentX += (mouseX - currentX) * 0.18;
+        currentY += (mouseY - currentY) * 0.18;
+        const targetScale = isHoveredRef.current ? 2.4 : 1;
+        currentScale += (targetScale - currentScale) * 0.2;
 
-      if (cursor) {
-        const scale = isHoveredRef.current ? 2.4 : 1;
-        cursor.style.transform = `translate3d(${currentX - 16}px, ${currentY - 16}px, 0) scale(${scale})`;
+        if (cursor) {
+          cursor.style.transform = `translate3d(${currentX - 16}px, ${currentY - 16}px, 0) scale(${currentScale.toFixed(3)})`;
+        }
       }
 
       animId = requestAnimationFrame(render);
@@ -94,7 +107,8 @@ export const DifferenceCursor: React.FC = () => {
         backgroundColor: '#FFFFFF',
         mixBlendMode: 'difference',
         willChange: 'transform',
-        transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease',
+        transform: 'translate3d(-500px, -500px, 0)',
+        transition: 'opacity 0.25s ease',
       }}
     />
   );

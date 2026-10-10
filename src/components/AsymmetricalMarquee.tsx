@@ -53,7 +53,7 @@ export const AsymmetricalMarquee: React.FC<AsymmetricalMarqueeProps> = ({ videos
               <div
                 key={`${video.id}-${idx}`}
                 onClick={() => onSelectVideo(video)}
-                className={`w-[270px] sm:w-[310px] aspect-[5/7] flex-shrink-0 relative cursor-pointer overflow-hidden bg-[#01472e]/20 border border-[#01472e]/15 shadow-[0_20px_40px_-10px_rgba(1,71,46,0.25)] ${radiusClass} group transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2`}
+                className={`w-[270px] sm:w-[310px] aspect-[5/7] flex-shrink-0 relative cursor-pointer overflow-hidden bg-[var(--theme-dark-bg,#01472e)]/20 border border-[var(--theme-dark-bg,#01472e)]/15 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.25)] ${radiusClass} group transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2`}
               >
                 <img
                   src={thumb}
@@ -63,18 +63,18 @@ export const AsymmetricalMarquee: React.FC<AsymmetricalMarqueeProps> = ({ videos
                 />
 
                 {/* Organic Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#01472e]/90 via-[#01472e]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--theme-dark-bg,#01472e)]/90 via-[var(--theme-dark-bg,#01472e)]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
 
                 {/* Card Meta Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-[#fefae0] flex flex-col gap-1.5">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#ccd5ae]">
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-[var(--theme-accent-bg,#fefae0)] flex flex-col gap-1.5">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[var(--theme-footer-text,#ccd5ae)]">
                     {video.projectTitle || "Cinematography"}
                   </span>
-                  <h3 className="font-bold text-base sm:text-lg tracking-tight text-[#fefae0] line-clamp-1">
+                  <h3 className="font-bold text-base sm:text-lg tracking-tight text-[var(--theme-accent-bg,#fefae0)] line-clamp-1">
                     {video.title || "Selected Motion Cut"}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae] mt-1">
-                    <Play size={10} fill="#ccd5ae" />
+                  <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--theme-footer-text,#ccd5ae)] mt-1">
+                    <Play size={10} fill="currentColor" />
                     <span>Watch Cut</span>
                   </div>
                 </div>

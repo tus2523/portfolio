@@ -26,7 +26,7 @@ function MainApp() {
 
   const currentTheme = data.settings?.theme || THEME_PRESETS['earthy-sage'];
 
-  // Dynamically synchronize theme with browser meta theme-color and body background
+  // Dynamically synchronize theme with browser meta theme-color, body background, and CSS root variables
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const meta = document.querySelector('meta[name="theme-color"]');
@@ -35,6 +35,14 @@ function MainApp() {
       }
       document.body.style.backgroundColor = currentTheme.heroBg;
       document.body.style.color = currentTheme.primaryText;
+
+      const root = document.documentElement;
+      root.style.setProperty('--theme-hero-bg', currentTheme.heroBg);
+      root.style.setProperty('--theme-text', currentTheme.primaryText);
+      root.style.setProperty('--theme-card-bg', currentTheme.cardBg);
+      root.style.setProperty('--theme-accent-bg', currentTheme.accentBg);
+      root.style.setProperty('--theme-dark-bg', currentTheme.darkBg);
+      root.style.setProperty('--theme-footer-text', currentTheme.footerText);
     }
   }, [currentTheme]);
 
@@ -65,8 +73,10 @@ function MainApp() {
       setData(getData());
     };
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('portfolio-data-updated', handleStorageChange);
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('portfolio-data-updated', handleStorageChange);
     };
   }, []);
 
@@ -97,7 +107,7 @@ function MainApp() {
 
   return (
     <div 
-      className="font-sans overflow-x-clip min-h-screen w-full relative selection:bg-[#01472e] selection:text-[#fefae0] transition-colors duration-500"
+      className="font-sans overflow-x-clip min-h-screen w-full relative selection:bg-[var(--theme-dark-bg,#01472e)] selection:text-[var(--theme-accent-bg,#fefae0)] transition-colors duration-500"
       style={{
         backgroundColor: currentTheme.heroBg,
         color: currentTheme.primaryText,
@@ -153,7 +163,7 @@ function MainApp() {
 
         {/* 4. Photo Stills & BTS Showcase (Background: Cream #fefae0, rounded-t-[5rem]) */}
         {data.photos && data.photos.length > 0 && (
-          <PhotosSection photos={data.photos} />
+          <PhotosSection photos={data.photos} theme={currentTheme} />
         )}
 
         {/* 5. Editorial Statement (Background: Sage #ccd5ae, rounded-t-[5rem]) */}
@@ -186,26 +196,26 @@ function MainApp() {
         return (
           <div 
             onClick={() => setLightbox(null)}
-            className="fixed inset-0 z-[9999] bg-[#01472e]/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in font-sans"
+            className="fixed inset-0 z-[9999] bg-[var(--theme-dark-bg,#01472e)]/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in font-sans"
           >
             <div 
               onClick={e => e.stopPropagation()} 
-              className={`w-full ${isInstagram || isShort ? 'max-w-[420px]' : 'max-w-4xl'} relative bg-[#fefae0] rounded-[2.5rem] p-6 sm:p-8 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] border border-[#01472e]/20 text-[#01472e]`}
+              className={`w-full ${isInstagram || isShort ? 'max-w-[420px]' : 'max-w-4xl'} relative bg-[var(--theme-accent-bg,#fefae0)] rounded-[2.5rem] p-6 sm:p-8 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] border border-current/20 text-[var(--theme-text,#01472e)]`}
             >
               <div className="flex justify-between items-center mb-4">
-                <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#01472e] truncate max-w-[80%]">
+                <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[var(--theme-text,#01472e)] truncate max-w-[80%]">
                   {lightbox.title || "Selected Motion Cut"}
                 </span>
                 <button 
                   type="button"
                   onClick={() => setLightbox(null)} 
-                  className="w-10 h-10 rounded-full bg-[#01472e] text-[#fefae0] flex items-center justify-center hover:scale-110 transition-transform"
+                  className="w-10 h-10 rounded-full bg-[var(--theme-dark-bg,#01472e)] text-[var(--theme-accent-bg,#fefae0)] flex items-center justify-center hover:scale-110 transition-transform shadow-md"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className={`relative w-full ${isInstagram || isShort ? 'aspect-[9/16] h-[70vh]' : 'aspect-video'} rounded-2xl overflow-hidden border border-[#01472e]/15 bg-black`}>
+              <div className={`relative w-full ${isInstagram || isShort ? 'aspect-[9/16] h-[70vh]' : 'aspect-video'} rounded-2xl overflow-hidden border border-current/15 bg-black`}>
                 {isInstagram ? (
                   <iframe 
                     src={`https://www.instagram.com/reel/${instaId}/embed/`} 

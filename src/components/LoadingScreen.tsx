@@ -34,7 +34,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[99999] flex flex-col justify-between p-8 sm:p-14 bg-[#ccd5ae] text-[#01472e] font-sans select-none overflow-hidden"
+          className="fixed inset-0 z-[99999] flex flex-col justify-between p-8 sm:p-14 bg-[var(--theme-hero-bg,#ccd5ae)] text-[var(--theme-text,#01472e)] font-sans select-none overflow-hidden"
           exit={{ y: '-100%' }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -48,7 +48,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
           />
 
           {/* Top Bar */}
-          <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 border-b border-[#01472e]/15 pb-4">
+          <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] opacity-70 border-b border-current/15 pb-4">
             <span>TUSHAR MARU STUDIO</span>
             <span>MUMBAI, MH</span>
           </div>
@@ -59,7 +59,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display uppercase text-6xl sm:text-8xl md:text-9xl leading-[0.85] tracking-[-0.04em] text-[#01472e]"
+              className="font-display uppercase text-6xl sm:text-8xl md:text-9xl leading-[0.85] tracking-[-0.04em] text-[var(--theme-text,#01472e)]"
             >
               TUSHAR MARU
             </motion.h1>
@@ -68,7 +68,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 mt-4"
+              className="text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.3em] opacity-70 mt-4"
             >
               FILMMAKER • VIDEOGRAPHER • VIDEO EDITOR
             </motion.p>
@@ -76,14 +76,14 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
 
           {/* Bottom Progress Bar */}
           <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-[#01472e]/80">
+            <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] opacity-80">
               <span>LOADING PRODUCTION ARCHIVE</span>
               <span>{progress}%</span>
             </div>
 
-            <div className="w-full h-1 bg-[#01472e]/15 rounded-full overflow-hidden">
+            <div className="w-full h-1 bg-current/15 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-[#01472e] rounded-full"
+                className="h-full bg-[var(--theme-text,#01472e)] rounded-full"
                 style={{ width: `${progress}%` }}
                 transition={{ ease: 'linear' }}
               />
