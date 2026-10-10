@@ -34,7 +34,7 @@ import { getCloudinaryConfig, saveCloudinaryConfig, testCloudinaryConnection } f
 import { 
   LogOut, CheckCircle2, AlertCircle, Plus, Trash2, Edit3, 
   ExternalLink, Sparkles, Award, RotateCcw, Loader2, Play,
-  Palette
+  Palette, ShieldCheck, Lock, Key
 } from 'lucide-react';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -153,11 +153,12 @@ const AdminPageInner: React.FC = () => {
   if (!authed) {
     const handleLogin = (e: React.FormEvent) => {
       e.preventDefault();
-      if (login(loginForm.email, loginForm.password)) {
+      const res = login(loginForm.email, loginForm.password);
+      if (res.success) {
         setAuthed(true);
         setLoginErr('');
       } else {
-        setLoginErr('Invalid credentials. (Hint: marutushar387@gmail.com / tushar123)');
+        setLoginErr(res.error || 'Invalid credentials.');
       }
     };
 
@@ -1795,6 +1796,62 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
           >
             <Palette size={15} />
             <span>Save Theme &amp; Studio Settings</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── 4. Admin Security & Password Management ── */}
+      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl flex flex-col gap-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#01472e]/20 pb-4">
+          <div>
+            <h3 className="text-base font-bold text-[#fefae0] flex items-center gap-2">
+              <ShieldCheck size={18} className="text-emerald-400" />
+              <span>Admin Security &amp; Access Control</span>
+            </h3>
+            <p className="text-xs text-[#ccd5ae]/60 mt-0.5">
+              Set a private admin password for your studio panel. Leave blank to keep default credentials.
+            </p>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg shrink-0">
+            Active Protection: 5-Attempt Lockout
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">Custom Admin Password</label>
+            <input
+              type="password"
+              className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+              placeholder="Enter new custom password..."
+              value={form.adminPassword || ''}
+              onChange={e => setForm(p => ({ ...p, adminPassword: e.target.value }))}
+            />
+            <span className="text-[10px] text-[#ccd5ae]/50">
+              {form.adminPassword ? '✓ Custom password will be saved.' : 'Currently using default password (tushar123)'}
+            </span>
+          </div>
+
+          <div className="flex flex-col justify-center bg-[#0a120e]/60 border border-[#01472e]/20 p-4 rounded-xl text-xs text-[#ccd5ae]/80 gap-2">
+            <div className="flex items-center gap-2 font-bold text-[#fefae0]">
+              <Lock size={14} className="text-emerald-400" />
+              <span>Active Security Measures:</span>
+            </div>
+            <ul className="list-disc list-inside space-y-1 text-[11px] text-[#ccd5ae]/70">
+              <li>Automatic 60s cooldown lockout after 5 failed attempts</li>
+              <li>Session-scoped authentication (clears on tab close)</li>
+              <li>Safe local storage persistence &amp; XSS link filtering</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex justify-end border-t border-[#01472e]/20 pt-4">
+          <button
+            onClick={handleSave}
+            className="bg-[#01472e] hover:bg-[#025c3c] text-[#fefae0] px-8 py-3.5 rounded-xl font-bold uppercase tracking-[0.2em] text-xs transition shadow-lg shadow-[#01472e]/30 flex items-center gap-2"
+          >
+            <Key size={15} />
+            <span>Update Security &amp; Password</span>
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { defaultData, getWhatsAppLink, updateSection } from '../../lib/store';
+import { defaultData, getWhatsAppLink, updateSection, sanitizeUrl } from '../../lib/store';
 import { Star, ArrowUpRight, ArrowRight } from 'lucide-react';
 
 interface FooterSectionProps {
@@ -164,7 +164,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
               <ul className="flex flex-col gap-3.5 text-[11px] font-bold uppercase tracking-[0.25em]">
                 <li>
                   <a
-                    href={data.heroStats?.youtubeUrl || data.about?.youtubeUrl || "https://youtube.com"}
+                    href={sanitizeUrl(data.heroStats?.youtubeUrl || data.about?.youtubeUrl, "https://youtube.com")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[var(--theme-accent-bg,#fefae0)] hover:text-current flex items-center justify-between group transition-colors"
@@ -175,7 +175,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ data }) => {
                 </li>
                 <li>
                   <a
-                    href={data.heroStats?.instagramUrl || data.about?.instagramUrl || "https://instagram.com/tusharmaru"}
+                    href={sanitizeUrl(data.heroStats?.instagramUrl || data.about?.instagramUrl, "https://instagram.com/tusharmaru")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[var(--theme-accent-bg,#fefae0)] hover:text-current flex items-center justify-between group transition-colors"

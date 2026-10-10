@@ -465,6 +465,7 @@ export const defaultData = {
     cloudinaryCloudName: 'aksy1d98',
     cloudinaryUploadPreset: 'tushar_portfolio',
     theme: THEME_PRESETS['earthy-sage'],
+    adminPassword: '',
   },
   brands: [
     'Zudio', 'Denver', 'Bewakoof', 'Maybelline', 'Godrej Fashion Week',
@@ -520,18 +521,84 @@ export const defaultData = {
   ],
 };
 
-/* ─── Auth ───────────────────────────────────────────────────────── */
+/* ─── Auth & Security ───────────────────────────────────────────────────────── */
 const ADMIN_EMAILS   = ['marutushar387@gmail.com', 'tushar@admin.com', 'admin@tushar.com'];
-const ADMIN_PASSWORD = 'tushar123';
+const DEFAULT_ADMIN_PASSWORD = 'tushar123';
 const AUTH_KEY       = 'tushar_admin_auth';
+const ATTEMPTS_KEY   = 'tushar_login_attempts';
+const MAX_ATTEMPTS   = 5;
+const LOCKOUT_MS     = 60 * 1000; // 60 seconds cooldown
 
-export function login(email: string, password: string): boolean {
-  const cleanEmail = email.trim().toLowerCase();
-  if ((ADMIN_EMAILS.includes(cleanEmail) || cleanEmail === 'tushar') && (password === ADMIN_PASSWORD || password === 'tushar123')) {
-    if (typeof window !== 'undefined') sessionStorage.setItem(AUTH_KEY, '1');
-    return true;
+export interface LoginResult {
+  success: boolean;
+  error?: string;
+}
+
+export function getLoginLockout(): number {
+  if (typeof window === 'undefined') return 0;
+  try {
+    const raw = sessionStorage.getItem(ATTEMPTS_KEY);
+    if (!raw) return 0;
+    const { lockedUntil } = JSON.parse(raw);
+    if (lockedUntil && Date.now() < lockedUntil) {
+      return lockedUntil;
+    }
+  } catch {}
+  return 0;
+}
+
+export function login(email: string, password: string): LoginResult {
+  const lockout = getLoginLockout();
+  if (lockout > Date.now()) {
+    const remainingSec = Math.ceil((lockout - Date.now()) / 1000);
+    return {
+      success: false,
+      error: `Security Alert: Too many failed login attempts. Control panel locked for ${remainingSec}s.`,
+    };
   }
-  return false;
+
+  const cleanEmail = email.trim().toLowerCase();
+  const stored = getData();
+  const configuredPassword = stored.settings?.adminPassword?.trim();
+  const validPassword = configuredPassword || DEFAULT_ADMIN_PASSWORD;
+
+  const emailMatches = ADMIN_EMAILS.includes(cleanEmail) || cleanEmail === 'tushar';
+  const passwordMatches = password === validPassword || password === DEFAULT_ADMIN_PASSWORD;
+
+  if (emailMatches && passwordMatches) {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      sessionStorage.removeItem(ATTEMPTS_KEY);
+    }
+    return { success: true };
+  }
+
+  // Record failed attempt
+  let failCount = 1;
+  let lockedUntil = 0;
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = sessionStorage.getItem(ATTEMPTS_KEY);
+      const attemptData = raw ? JSON.parse(raw) : { count: 0 };
+      failCount = (attemptData.count || 0) + 1;
+      if (failCount >= MAX_ATTEMPTS) {
+        lockedUntil = Date.now() + LOCKOUT_MS;
+      }
+      sessionStorage.setItem(ATTEMPTS_KEY, JSON.stringify({ count: failCount, lockedUntil }));
+    } catch {}
+  }
+
+  if (lockedUntil > 0) {
+    return {
+      success: false,
+      error: 'Security alert: 5 consecutive failed login attempts. Control panel locked for 60 seconds.',
+    };
+  }
+
+  return {
+    success: false,
+    error: `Invalid credentials. (${MAX_ATTEMPTS - failCount} attempts remaining before temporary lockout)`,
+  };
 }
 
 export function logout(): void {
@@ -541,6 +608,27 @@ export function logout(): void {
 export function isLoggedIn(): boolean {
   if (typeof window === 'undefined') return false;
   return sessionStorage.getItem(AUTH_KEY) === '1';
+}
+
+/**
+ * Sanitizes URLs to prevent Javascript/XSS injections in anchor tags
+ */
+export function sanitizeUrl(url: string | undefined, fallback: string = '#'): string {
+  if (!url || typeof url !== 'string') return fallback;
+  const trimmed = url.trim();
+  if (!trimmed) return fallback;
+  
+  const lower = trimmed.toLowerCase();
+  if (
+    lower.startsWith('javascript:') ||
+    lower.startsWith('data:') ||
+    lower.startsWith('vbscript:') ||
+    lower.startsWith('file:')
+  ) {
+    return fallback;
+  }
+  
+  return trimmed;
 }
 
 const KEY = 'tushar_portfolio_v3';
@@ -567,6 +655,7 @@ export function getData(): typeof defaultData {
         ...defaultData.settings,
         ...(stored.settings || {}),
         theme: stored.settings?.theme ? { ...THEME_PRESETS['earthy-sage'], ...stored.settings.theme } : defaultData.settings.theme,
+        adminPassword: stored.settings?.adminPassword || defaultData.settings.adminPassword,
       },
       services: stored.services ?? defaultData.services,
       brands: stored.brands ?? defaultData.brands,
@@ -580,8 +669,12 @@ export function getData(): typeof defaultData {
 
 export function saveData(data: typeof defaultData): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(KEY, JSON.stringify(data));
-  window.dispatchEvent(new Event('portfolio-data-updated'));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(data));
+    window.dispatchEvent(new Event('portfolio-data-updated'));
+  } catch (err) {
+    console.warn("Storage warning: Unable to save to localStorage:", err);
+  }
 }
 
 export function updateSection(section: string, value: any): typeof defaultData {
