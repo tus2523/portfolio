@@ -169,7 +169,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
         })}
 
         {/* Top Status Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 border-b border-[#01472e]/15 pb-4 w-full relative z-20">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] text-[#01472e]/70 border-b border-[#01472e]/15 pb-4 w-full relative z-20 gap-2.5 sm:gap-0">
           <span>TUSHAR MARU STUDIO</span>
           <span>COMMERCIAL VIDEOGRAPHER &amp; EDITOR</span>
           <span className="flex items-center gap-2">
@@ -184,7 +184,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
             {/* Row 1: TUSHAR */}
             <div className="overflow-hidden">
               <h1
-                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(4rem,15vw,190px)] select-none"
+                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(3.2rem,14vw,190px)] select-none"
                 aria-label="TUSHAR"
               >
                 {line1.split("").map((char, cIdx) => (
@@ -208,7 +208,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ data }) => {
             {/* Row 2: MARU */}
             <div className="overflow-hidden">
               <h1
-                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(4rem,15vw,190px)] select-none"
+                className="font-display uppercase tracking-[-0.03em] leading-[0.9] text-[#01472e] flex justify-center text-[clamp(3.2rem,14vw,190px)] select-none"
                 aria-label="MARU"
               >
                 {line2.split("").map((char, cIdx) => (

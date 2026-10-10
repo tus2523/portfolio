@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export const DifferenceCursor: React.FC = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const isHoveredRef = useRef(false);
+  const isVisibleRef = useRef(false);
 
   useEffect(() => {
-    // Only enable on pointer-capable desktop devices
+    // Only enable on desktop pointer devices
     if (typeof window === 'undefined' || window.matchMedia('(pointer: coarse)').matches) {
       return;
     }
@@ -23,19 +23,30 @@ export const DifferenceCursor: React.FC = () => {
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      if (!isVisible) setIsVisible(true);
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        if (cursor) cursor.style.opacity = '1';
+      }
     };
 
-    const onMouseEnter = () => setIsVisible(true);
-    const onMouseLeave = () => setIsVisible(false);
+    const onMouseEnter = () => {
+      isVisibleRef.current = true;
+      if (cursor) cursor.style.opacity = '1';
+    };
 
-    // Lerp interpolation (0.15 factor for smooth lagging feel)
+    const onMouseLeave = () => {
+      isVisibleRef.current = false;
+      if (cursor) cursor.style.opacity = '0';
+    };
+
+    // Smooth lerp loop
     const render = () => {
       currentX += (mouseX - currentX) * 0.16;
       currentY += (mouseY - currentY) * 0.16;
 
       if (cursor) {
-        cursor.style.transform = `translate3d(${currentX - 16}px, ${currentY - 16}px, 0) scale(${isHovered ? 2.5 : 1})`;
+        const scale = isHoveredRef.current ? 2.4 : 1;
+        cursor.style.transform = `translate3d(${currentX - 16}px, ${currentY - 16}px, 0) scale(${scale})`;
       }
 
       animId = requestAnimationFrame(render);
@@ -43,7 +54,7 @@ export const DifferenceCursor: React.FC = () => {
 
     animId = requestAnimationFrame(render);
 
-    // Hover detection on interactive tags
+    // Hover detection on interactive tags without triggering React re-renders
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (
@@ -55,16 +66,16 @@ export const DifferenceCursor: React.FC = () => {
           target.closest('textarea') ||
           target.closest('.cursor-pointer'))
       ) {
-        setIsHovered(true);
+        isHoveredRef.current = true;
       } else {
-        setIsHovered(false);
+        isHoveredRef.current = false;
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseenter', onMouseEnter);
-    window.addEventListener('mouseleave', onMouseLeave);
-    document.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('mouseenter', onMouseEnter, { passive: true });
+    window.addEventListener('mouseleave', onMouseLeave, { passive: true });
+    document.addEventListener('mouseover', handleMouseOver, { passive: true });
 
     return () => {
       cancelAnimationFrame(animId);
@@ -73,19 +84,17 @@ export const DifferenceCursor: React.FC = () => {
       window.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('mouseover', handleMouseOver);
     };
-  }, [isHovered, isVisible]);
+  }, []);
 
   return (
     <div
       ref={cursorRef}
-      className={`fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9999] transition-opacity duration-300 ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}
+      className="hidden md:block fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9999] opacity-0"
       style={{
         backgroundColor: '#FFFFFF',
         mixBlendMode: 'difference',
         willChange: 'transform',
-        transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease',
+        transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease',
       }}
     />
   );

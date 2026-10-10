@@ -12,6 +12,18 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
   const [activePhoto, setActivePhoto] = useState<PhotoItem | null>(null);
   const [activeFolderModal, setActiveFolderModal] = useState<any | null>(null);
 
+  // Close modals on Escape key
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (activePhoto) setActivePhoto(null);
+        else if (activeFolderModal) setActiveFolderModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activePhoto, activeFolderModal]);
+
   if (!photos || photos.length === 0) return null;
 
   // Group photos into 4 primary production folders
@@ -89,7 +101,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 justify-items-center py-6">
             {folderSets.map((fSet) => {
-              const folderPhotos = fSet.photos.length > 0 ? fSet.photos : photos.slice(0, 4);
+              const folderPhotos = fSet.photos.length > 0 ? fSet.photos : photos;
 
               // 3 top preview cards for the folder animation
               const previewItems = folderPhotos.slice(0, 3).map((item, pIdx) => (
@@ -97,7 +109,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
                   key={item.id || pIdx}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActiveFolderModal(fSet);
+                    setActiveFolderModal({ ...fSet, photos: folderPhotos });
                   }}
                   className="w-full h-full relative cursor-pointer overflow-hidden rounded-[8px]"
                   title={`Open ${fSet.label}`}
@@ -118,7 +130,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
                     label={fSet.label}
                     items={previewItems}
                     count={folderPhotos.length}
-                    onClick={() => setActiveFolderModal(fSet)}
+                    onClick={() => setActiveFolderModal({ ...fSet, photos: folderPhotos })}
                   />
 
                   <div className="flex flex-col items-center text-center mt-2 w-full">
@@ -127,7 +139,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
                     </span>
                     <button
                       type="button"
-                      onClick={() => setActiveFolderModal(fSet)}
+                      onClick={() => setActiveFolderModal({ ...fSet, photos: folderPhotos })}
                       className="mt-2 px-4 py-2 rounded-full bg-[#01472e] text-[#fefae0] text-[9px] font-bold uppercase tracking-[0.2em] hover:scale-105 transition-transform flex items-center gap-1.5 shadow-md"
                     >
                       <span>VIEW ALL ({folderPhotos.length} STILLS)</span>
@@ -186,7 +198,7 @@ export const PhotosSection: React.FC<PhotosSectionProps> = ({ photos }) => {
             </p>
 
             {/* All Photos in this Folder Grid */}
-            <div className="overflow-y-auto pt-6 pb-2 pr-2">
+            <div className="flex-1 min-h-0 overflow-y-auto pt-6 pb-2 pr-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {(activeFolderModal.photos || []).map((pItem: PhotoItem, pIdx: number) => (
                   <div
