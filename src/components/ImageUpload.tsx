@@ -150,14 +150,6 @@ const compressImageFile = async (
   });
 };
 
-const fileToBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-    reader.readAsDataURL(file);
-  });
-
 const uploadToCloudinary = async (
   file: File,
   folder: string,
@@ -168,8 +160,7 @@ const uploadToCloudinary = async (
   const uploadPreset = config.uploadPreset;
 
   if (!cloudName || !uploadPreset) {
-    // Safe Base64 fallback if unconfigured
-    return fileToBase64(file);
+    throw new Error('Cloudinary is not configured. Please enter Cloud Name and Upload Preset in Settings.');
   }
 
   const fd = new FormData();
@@ -183,28 +174,26 @@ const uploadToCloudinary = async (
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
     };
-    xhr.onload = async () => {
-      if (xhr.status === 200) {
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
         try {
           const res = JSON.parse(xhr.responseText);
           if (res.secure_url) return resolve(res.secure_url);
-        } catch {}
-      }
-      // If Cloudinary endpoint fails, fallback to local Base64
-      try {
-        const base64 = await fileToBase64(file);
-        resolve(base64);
-      } catch {
-        reject(new Error(`Upload failed with status ${xhr.status}`));
+          reject(new Error("No secure_url returned by Cloudinary"));
+        } catch {
+          reject(new Error("Invalid response received from Cloudinary"));
+        }
+      } else {
+        try {
+          const errRes = JSON.parse(xhr.responseText);
+          reject(new Error(errRes.error?.message || `Cloudinary upload failed (HTTP ${xhr.status})`));
+        } catch {
+          reject(new Error(`Cloudinary upload failed with HTTP status ${xhr.status}`));
+        }
       }
     };
-    xhr.onerror = async () => {
-      try {
-        const base64 = await fileToBase64(file);
-        resolve(base64);
-      } catch {
-        reject(new Error("Network error during upload"));
-      }
+    xhr.onerror = () => {
+      reject(new Error("Network connection error during upload. Please check your internet connection."));
     };
     xhr.send(fd);
   });

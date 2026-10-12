@@ -633,6 +633,90 @@ export function sanitizeUrl(url: string | undefined, fallback: string = '#'): st
 
 const KEY = 'tushar_portfolio_v3';
 
+/**
+ * Detects and purges any massive Base64 data:image strings (>20KB)
+ * that previously bloated and choked browser localStorage (5MB limit).
+ */
+export function sanitizeStorageData(data: typeof defaultData): typeof defaultData {
+  if (!data || typeof data !== 'object') return defaultData;
+  const cleaned = { ...data };
+
+  if (Array.isArray(cleaned.photos)) {
+    cleaned.photos = cleaned.photos.map((p) => {
+      if (p.imageUrl && p.imageUrl.startsWith('data:image/') && p.imageUrl.length > 20000) {
+        console.warn(`Stripping bloated base64 image from photo "${p.title}" to protect localStorage quota.`);
+        return {
+          ...p,
+          imageUrl: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop',
+          description: (p.description || '') + ' (Re-upload via Cloudinary recommended)',
+        };
+      }
+      return p;
+    });
+  }
+
+  if (Array.isArray(cleaned.videoProjects)) {
+    cleaned.videoProjects = cleaned.videoProjects.map((proj) => {
+      if (!proj || !Array.isArray(proj.videos)) return proj;
+      return {
+        ...proj,
+        videos: proj.videos.map((v: any) => {
+          if (v.thumbnail && v.thumbnail.startsWith('data:image/') && v.thumbnail.length > 20000) {
+            const ytId = getYoutubeId(v.url);
+            return {
+              ...v,
+              thumbnail: ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '',
+            };
+          }
+          return v;
+        }),
+      };
+    });
+  }
+
+  return cleaned;
+}
+
+export function getStorageHealth(): {
+  usedKb: number;
+  totalKb: number;
+  percentUsed: number;
+  hasBloat: boolean;
+  itemCount: { photos: number; videos: number; projects: number };
+} {
+  if (typeof window === 'undefined') {
+    return { usedKb: 0, totalKb: 5120, percentUsed: 0, hasBloat: false, itemCount: { photos: 0, videos: 0, projects: 0 } };
+  }
+  try {
+    const raw = localStorage.getItem(KEY) || '';
+    const usedBytes = new Blob([raw]).size;
+    const usedKb = Math.round(usedBytes / 1024);
+    const totalKb = 5120;
+    const percentUsed = Math.min(100, Math.round((usedKb / totalKb) * 100));
+    const hasBloat = raw.includes('data:image/') && raw.length > 50000;
+    const data = getData();
+    const photosCount = data.photos?.length || 0;
+    const projectsCount = data.videoProjects?.length || 0;
+    const videosCount = (data.videoProjects || []).reduce((acc: number, p: any) => acc + (p.videos?.length || 0), 0);
+    return {
+      usedKb,
+      totalKb,
+      percentUsed,
+      hasBloat,
+      itemCount: { photos: photosCount, videos: videosCount, projects: projectsCount }
+    };
+  } catch {
+    return { usedKb: 0, totalKb: 5120, percentUsed: 0, hasBloat: false, itemCount: { photos: 0, videos: 0, projects: 0 } };
+  }
+}
+
+export function purgeStorageBloat(): typeof defaultData {
+  const current = getData();
+  const cleaned = sanitizeStorageData(current);
+  saveData(cleaned);
+  return cleaned;
+}
+
 export function getData(): typeof defaultData {
   if (typeof window === 'undefined') return defaultData;
   try {
@@ -642,46 +726,58 @@ export function getData(): typeof defaultData {
     
     if (!stored || typeof stored !== 'object') return defaultData;
 
-    return {
+    const merged = {
       heroStats: { ...defaultData.heroStats, ...(stored.heroStats || {}) },
-      photos: stored.photos && stored.photos.length > 0 ? stored.photos : defaultData.photos,
-      videoProjects: stored.videoProjects ?? defaultData.videoProjects,
-      reviews: (stored.reviews && stored.reviews.length > 0) ? stored.reviews : defaultData.reviews,
-      experience: stored.experience ?? defaultData.experience,
-      education: stored.education ?? defaultData.education,
+      photos: Array.isArray(stored.photos) && stored.photos.length > 0 ? stored.photos : defaultData.photos,
+      videoProjects: Array.isArray(stored.videoProjects) && stored.videoProjects.length > 0 ? stored.videoProjects : defaultData.videoProjects,
+      reviews: Array.isArray(stored.reviews) && stored.reviews.length > 0 ? stored.reviews : defaultData.reviews,
+      experience: Array.isArray(stored.experience) && stored.experience.length > 0 ? stored.experience : defaultData.experience,
+      education: Array.isArray(stored.education) && stored.education.length > 0 ? stored.education : defaultData.education,
       about: { ...defaultData.about, ...(stored.about || {}) },
-      skills: stored.skills ?? defaultData.skills,
+      skills: Array.isArray(stored.skills) && stored.skills.length > 0 ? stored.skills : defaultData.skills,
       settings: {
         ...defaultData.settings,
         ...(stored.settings || {}),
         theme: stored.settings?.theme ? { ...THEME_PRESETS['earthy-sage'], ...stored.settings.theme } : defaultData.settings.theme,
         adminPassword: stored.settings?.adminPassword || defaultData.settings.adminPassword,
       },
-      services: stored.services ?? defaultData.services,
-      brands: stored.brands ?? defaultData.brands,
-      celebrities: stored.celebrities ?? defaultData.celebrities,
+      services: Array.isArray(stored.services) && stored.services.length > 0 ? stored.services : defaultData.services,
+      brands: Array.isArray(stored.brands) && stored.brands.length > 0 ? stored.brands : defaultData.brands,
+      celebrities: Array.isArray(stored.celebrities) && stored.celebrities.length > 0 ? stored.celebrities : defaultData.celebrities,
     };
+
+    return sanitizeStorageData(merged);
   } catch (err) {
     console.warn("Store: Falling back to default data due to error:", err);
     return defaultData;
   }
 }
 
-export function saveData(data: typeof defaultData): void {
-  if (typeof window === 'undefined') return;
+export function saveData(data: typeof defaultData): { success: boolean; error?: string } {
+  if (typeof window === 'undefined') return { success: false, error: 'No browser window found' };
   try {
-    localStorage.setItem(KEY, JSON.stringify(data));
+    const sanitized = sanitizeStorageData(data);
+    const jsonStr = JSON.stringify(sanitized);
+    localStorage.setItem(KEY, jsonStr);
     window.dispatchEvent(new Event('portfolio-data-updated'));
-  } catch (err) {
-    console.warn("Storage warning: Unable to save to localStorage:", err);
+    return { success: true };
+  } catch (err: any) {
+    console.error("Storage error:", err);
+    const isQuota = err?.name === 'QuotaExceededError' || err?.message?.toLowerCase().includes('quota');
+    return {
+      success: false,
+      error: isQuota
+        ? 'Browser Storage Quota Exceeded (5MB limit). Some large uploaded images may need to be deleted or re-uploaded via Cloudinary.'
+        : (err?.message || 'Failed to save to local storage'),
+    };
   }
 }
 
-export function updateSection(section: string, value: any): typeof defaultData {
+export function updateSection(section: string, value: any): { data: typeof defaultData; success: boolean; error?: string } {
   const current = getData();
   const updated = { ...current, [section]: value };
-  saveData(updated);
-  return updated;
+  const res = saveData(updated);
+  return { data: updated, success: res.success, error: res.error };
 }
 
 export function resetData(): typeof defaultData {

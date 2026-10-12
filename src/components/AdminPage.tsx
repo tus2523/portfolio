@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -20,6 +20,9 @@ import {
   getData,
   updateSection,
   resetData,
+  saveData,
+  getStorageHealth,
+  purgeStorageBloat,
   login,
   logout,
   isLoggedIn,
@@ -34,7 +37,7 @@ import { getCloudinaryConfig, saveCloudinaryConfig, testCloudinaryConnection } f
 import { 
   LogOut, CheckCircle2, AlertCircle, Plus, Trash2, Edit3, 
   ExternalLink, Sparkles, Award, RotateCcw, Loader2, Play,
-  Palette, ShieldCheck, Lock, Key
+  Palette, ShieldCheck, Lock, Key, Download, Upload as UploadIcon, HardDrive, Database
 } from 'lucide-react';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -50,7 +53,7 @@ const NAV = [
   { id: 'skills',       icon: '🛠️', label: 'Technical Skills'},
   { id: 'reviews',      icon: '⭐', label: 'Endorsements'    },
   { id: 'settings',     icon: '🎨', label: 'Theme & Settings'},
-  { id: 'seed',         icon: '🗄️', label: 'System Reset'    },
+  { id: 'seed',         icon: '💾', label: 'Backup & Storage'},
 ];
 
 const SortableNavItem = ({ id, label, icon, active, onClick }: { id: string, label: string, icon: string, active: boolean, onClick: () => void }) => {
@@ -229,7 +232,14 @@ const AdminPageInner: React.FC = () => {
             <div className="text-center mt-3">
               <a 
                 href="#" 
-                onClick={(e) => { e.preventDefault(); window.location.hash = ''; window.location.pathname = '/'; }}
+                onClick={(e) => { 
+                  e.preventDefault(); 
+                  window.location.hash = ''; 
+                  if (window.location.pathname !== '/') {
+                    window.history.pushState(null, '', '/');
+                    window.dispatchEvent(new Event('popstate'));
+                  }
+                }}
                 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/50 hover:text-[#fefae0] transition-colors"
               >
                 ← Back to Live Portfolio
@@ -241,15 +251,20 @@ const AdminPageInner: React.FC = () => {
     );
   }
 
-  const flash = (msg = 'Changes saved!') => {
+  const flash = (msg = 'Changes saved!', _isError = false) => {
     setSaved(msg);
     setTimeout(() => setSaved(''), 2500);
   };
 
   const save = (section: string, val: any) => {
-    const updated = updateSection(section, val);
-    setData(updated);
-    flash('Saved to portfolio store! ✨');
+    const res = updateSection(section, val);
+    setData(res.data);
+    if (res.success) {
+      flash('Saved to portfolio store! ✨');
+    } else {
+      alert(`⚠️ Storage Warning: ${res.error || 'Failed to save to browser storage.'}`);
+      flash('⚠️ Storage save failed!', true);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -302,7 +317,14 @@ const AdminPageInner: React.FC = () => {
             <div className="flex items-center gap-2 md:hidden">
               <a
                 href="#"
-                onClick={(e) => { e.preventDefault(); window.location.hash = ''; window.location.pathname = '/'; }}
+                onClick={(e) => { 
+                  e.preventDefault(); 
+                  window.location.hash = ''; 
+                  if (window.location.pathname !== '/') {
+                    window.history.pushState(null, '', '/');
+                    window.dispatchEvent(new Event('popstate'));
+                  }
+                }}
                 className="px-2.5 py-1 bg-[#192b22] text-[#ccd5ae] rounded-lg text-[10px] font-bold uppercase tracking-wider"
               >
                 Live
@@ -319,7 +341,14 @@ const AdminPageInner: React.FC = () => {
           {/* Quick View Website Button */}
           <a
             href="#"
-            onClick={(e) => { e.preventDefault(); window.location.hash = ''; window.location.pathname = '/'; }}
+            onClick={(e) => { 
+              e.preventDefault(); 
+              window.location.hash = ''; 
+              if (window.location.pathname !== '/') {
+                window.history.pushState(null, '', '/');
+                window.dispatchEvent(new Event('popstate'));
+              }
+            }}
             className="hidden md:flex items-center justify-between gap-2 mt-4 px-3 py-2 rounded-xl bg-[#192b22] text-[#fefae0] text-xs font-semibold hover:bg-[#01472e] transition-colors border border-[#01472e]/40 shadow-sm"
           >
             <span className="flex items-center gap-1.5">
@@ -1859,30 +1888,191 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
   );
 };
 
-// ─── 11. RESET / SEED DATA SUBCOMPONENT ─────────────────────────────
+// ─── 11. BACKUP, STORAGE HEALTH & RESET SUBCOMPONENT ─────────────────
 const SeedData: React.FC<{ setData: (d: any) => void; flash: (m: string) => void }> = ({ setData, flash }) => {
+  const [health, setHealth] = useState(() => getStorageHealth());
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const refreshHealth = () => setHealth(getStorageHealth());
+
+  const handleExportBackup = () => {
+    try {
+      const data = getData();
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `tushar-portfolio-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      flash('Portfolio backup downloaded! 💾');
+    } catch (err: any) {
+      alert(`Export failed: ${err.message}`);
+    }
+  };
+
+  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target?.result as string;
+        const parsed = JSON.parse(text);
+        if (!parsed || typeof parsed !== 'object') {
+          throw new Error('Invalid JSON file format.');
+        }
+        const res = saveData(parsed);
+        if (res.success) {
+          setData(parsed);
+          flash('Backup restored successfully! 🚀');
+          refreshHealth();
+          alert('Success! All photos, projects, settings, and themes have been restored from your backup.');
+        } else {
+          alert(`Import failed: ${res.error}`);
+        }
+      } catch (err: any) {
+        alert(`Failed to import backup file: ${err.message}`);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  const handlePurgeBloat = () => {
+    if (!confirm('Optimize browser storage? This will clean any oversized Base64 items to keep your storage healthy and permanently prevent data loss.')) return;
+    const cleaned = purgeStorageBloat();
+    setData(cleaned);
+    flash('Storage cleaned & optimized! 🧹');
+    refreshHealth();
+  };
+
   const handleReset = () => {
-    if (!confirm('Reset all website data back to Tushar Maru default portfolio content?')) return;
+    if (!confirm('Reset all website data back to Tushar Maru signature default portfolio content?')) return;
     resetData();
     setData(defaultData);
     flash('Reset to default data! ✨');
+    refreshHealth();
   };
 
   return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-2xl font-display uppercase tracking-tight text-[#fefae0]">Database Reset</h2>
-        <p className="text-xs text-[#ccd5ae]/70 mt-1">Restore default editorial catalog data.</p>
+    <div className="flex flex-col gap-8">
+      <div>
+        <h2 className="text-2xl font-display uppercase tracking-tight text-[#fefae0]">Storage Health &amp; Data Backup</h2>
+        <p className="text-xs text-[#ccd5ae]/70 mt-1">Export full backups, transfer data between devices, and monitor browser storage health.</p>
       </div>
 
-      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl shadow-xl">
-        <p className="text-xs text-[#ccd5ae]/70 mb-6 leading-relaxed">
-          This will restore all default projects, classified photos, 12 commercial brands, and 6 celebrity collaborations back to initial state.
-        </p>
-        <button onClick={handleReset} className="bg-red-950/30 text-red-400 border border-red-900/40 px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-950/60 transition flex items-center gap-2">
-          <RotateCcw size={14} />
-          <span>Reset All Content</span>
-        </button>
+      {/* 1. Storage Health Diagnostic */}
+      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col gap-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#01472e]/20 pb-4">
+          <div className="flex items-center gap-2.5">
+            <HardDrive size={18} className="text-[#10b981]" />
+            <h3 className="text-base font-bold text-[#fefae0]">Browser Storage Status</h3>
+          </div>
+          <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg border ${
+            health.hasBloat 
+              ? 'bg-amber-950/40 border-amber-500/40 text-amber-300' 
+              : 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+          }`}>
+            {health.hasBloat ? '⚠️ High Storage Usage (Bloat Detected)' : '✓ Storage Healthy & Light'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-[#0a120e] border border-[#01472e]/40 p-4 rounded-2xl flex flex-col gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#ccd5ae]/60">Memory Used</span>
+            <span className="text-xl font-bold text-[#fefae0]">{health.usedKb} KB <span className="text-xs font-normal text-[#ccd5ae]/50">/ {health.totalKb} KB ({health.percentUsed}%)</span></span>
+          </div>
+          <div className="bg-[#0a120e] border border-[#01472e]/40 p-4 rounded-2xl flex flex-col gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#ccd5ae]/60">Active Photos</span>
+            <span className="text-xl font-bold text-[#fefae0]">{health.itemCount.photos} Stills</span>
+          </div>
+          <div className="bg-[#0a120e] border border-[#01472e]/40 p-4 rounded-2xl flex flex-col gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#ccd5ae]/60">Video Projects</span>
+            <span className="text-xl font-bold text-[#fefae0]">{health.itemCount.videos} Videos <span className="text-xs font-normal text-[#ccd5ae]/50">({health.itemCount.projects} Groups)</span></span>
+          </div>
+        </div>
+
+        {health.hasBloat && (
+          <div className="bg-amber-950/30 border border-amber-800/40 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-200">
+            <div>
+              <p className="font-bold">Notice: Oversized Base64 image data detected in browser storage.</p>
+              <p className="text-amber-200/70 text-[11px] mt-0.5">Click below to clean and free up 99% of space to guarantee your additions never disappear.</p>
+            </div>
+            <button
+              onClick={handlePurgeBloat}
+              className="bg-amber-600 hover:bg-amber-500 text-black px-4 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px] shrink-0 transition"
+            >
+              🧹 Clean &amp; Optimize Storage
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 2. Portable Backup & Restore */}
+      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col gap-5">
+        <div>
+          <h3 className="text-base font-bold text-[#fefae0] flex items-center gap-2">
+            <Database size={18} className="text-emerald-400" />
+            <span>Portable Backup &amp; Device Transfer</span>
+          </h3>
+          <p className="text-xs text-[#ccd5ae]/70 mt-1">
+            Save a backup file to your computer or phone. You can load this backup on any device to keep your edits synchronized everywhere.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <button
+            onClick={handleExportBackup}
+            className="flex-1 bg-[#01472e] hover:bg-[#025c3c] text-[#fefae0] px-6 py-3.5 rounded-xl font-bold uppercase tracking-[0.15em] text-xs transition shadow-lg shadow-[#01472e]/20 flex items-center justify-center gap-2"
+          >
+            <Download size={15} />
+            <span>Download Portfolio Backup (.json)</span>
+          </button>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            onChange={handleImportBackup}
+            className="hidden"
+          />
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-1 bg-[#192b22] hover:bg-[#253d30] border border-[#01472e]/50 text-[#fefae0] px-6 py-3.5 rounded-xl font-bold uppercase tracking-[0.15em] text-xs transition flex items-center justify-center gap-2"
+          >
+            <UploadIcon size={15} />
+            <span>Restore From Backup File (.json)</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Default Catalog Reset */}
+      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col gap-4">
+        <div>
+          <h3 className="text-base font-bold text-red-300 flex items-center gap-2">
+            <RotateCcw size={16} />
+            <span>Reset Content to Factory Defaults</span>
+          </h3>
+          <p className="text-xs text-[#ccd5ae]/60 mt-1">
+            Restores all 12 default photo stills, video reels, and client brands back to the initial portfolio state.
+          </p>
+        </div>
+
+        <div>
+          <button
+            onClick={handleReset}
+            className="bg-red-950/30 text-red-400 border border-red-900/40 px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-950/60 transition flex items-center gap-2"
+          >
+            <RotateCcw size={14} />
+            <span>Reset All Content to Default</span>
+          </button>
+        </div>
       </div>
     </div>
   );
