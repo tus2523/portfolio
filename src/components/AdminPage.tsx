@@ -33,7 +33,7 @@ import {
   type StudioTheme,
 } from '../lib/store';
 import { ImageUpload } from './ImageUpload';
-import { getCloudinaryConfig, saveCloudinaryConfig, testCloudinaryConnection } from '../lib/cloudinary';
+import { getCloudinaryConfig, saveCloudinaryConfig, testCloudinaryConnection, deleteFromCloudinary } from '../lib/cloudinary';
 import { 
   LogOut, CheckCircle2, AlertCircle, Plus, Trash2, Edit3, 
   ExternalLink, Sparkles, Award, RotateCcw, Loader2, Play,
@@ -591,8 +591,16 @@ const VideoProjects: React.FC<{ data: typeof defaultData; save: (s: string, v: a
   };
 
   const deleteProject = (id: string) => {
-    if (!confirm('Delete video project group?')) return;
+    const projToDelete = projects.find(p => p.id === id);
+    if (!confirm(`Delete project group "${projToDelete?.title || ''}"? This will also remove any uploaded thumbnails from Cloudinary.`)) return;
     persist(projects.filter(p => p.id !== id));
+    if (projToDelete?.videos) {
+      projToDelete.videos.forEach((v: any) => {
+        if (v.thumbnail && v.thumbnail.includes('cloudinary.com')) {
+          deleteFromCloudinary(v.thumbnail).catch(console.error);
+        }
+      });
+    }
   };
 
   const autoFetchYoutubeDetails = async (url: string) => {
@@ -660,6 +668,9 @@ const VideoProjects: React.FC<{ data: typeof defaultData; save: (s: string, v: a
   };
 
   const deleteVideoFromProject = (projId: string, vidId: string) => {
+    const proj = projects.find(p => p.id === projId);
+    const vidToDelete = proj?.videos?.find((v: any) => v.id === vidId);
+    if (!confirm(`Delete video "${vidToDelete?.title || 'cut'}"?`)) return;
     const updated = projects.map(p => {
       if (p.id === projId) {
         return { ...p, videos: (p.videos || []).filter((v: any) => v.id !== vidId) };
@@ -667,6 +678,9 @@ const VideoProjects: React.FC<{ data: typeof defaultData; save: (s: string, v: a
       return p;
     });
     persist(updated);
+    if (vidToDelete?.thumbnail && vidToDelete.thumbnail.includes('cloudinary.com')) {
+      deleteFromCloudinary(vidToDelete.thumbnail).catch(console.error);
+    }
   };
 
   return (
@@ -928,7 +942,19 @@ const PhotosManagement: React.FC<{ data: typeof defaultData; save: (s: string, v
               <span className="text-[10px] text-[#ccd5ae]/50 font-bold uppercase">{item.date || '2024'}</span>
               <div className="flex gap-2">
                 <button onClick={() => openEdit(item)} className="text-xs px-2.5 py-1 bg-[#192b22] text-[#ccd5ae] rounded-lg hover:text-[#fefae0]">Edit</button>
-                <button onClick={() => { if(confirm('Delete photo?')) persist(items.filter((i:any) => i.id !== item.id)); }} className="text-xs px-2.5 py-1 bg-red-950/30 text-red-400 rounded-lg hover:bg-red-950/60">Delete</button>
+                <button
+                  onClick={async () => {
+                    if (!confirm(`Delete photo "${item.title}"? This will also remove it from Cloudinary storage.`)) return;
+                    const remaining = items.filter((i: any) => i.id !== item.id);
+                    persist(remaining);
+                    if (item.imageUrl && item.imageUrl.includes('cloudinary.com')) {
+                      deleteFromCloudinary(item.imageUrl).catch(console.error);
+                    }
+                  }}
+                  className="text-xs px-2.5 py-1 bg-red-950/30 text-red-400 rounded-lg hover:bg-red-950/60"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </div>
@@ -1446,10 +1472,12 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
     if (data.settings?.theme) {
       setTheme(data.settings.theme);
     }
-    if (data.settings?.cloudinaryCloudName || data.settings?.cloudinaryUploadPreset) {
+    if (data.settings?.cloudinaryCloudName || data.settings?.cloudinaryUploadPreset || data.settings?.cloudinaryApiKey) {
       setCConfig({
-        cloudName: data.settings.cloudinaryCloudName || '',
-        uploadPreset: data.settings.cloudinaryUploadPreset || '',
+        cloudName: data.settings.cloudinaryCloudName || 'aksy1d98',
+        uploadPreset: data.settings.cloudinaryUploadPreset || 'tushar_portfolio',
+        apiKey: data.settings.cloudinaryApiKey || '',
+        apiSecret: data.settings.cloudinaryApiSecret || '',
       });
     }
   }, [data.settings]);
@@ -1478,8 +1506,8 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
     setTesting(true);
     setTestResult(null);
     try {
-      await testCloudinaryConnection(cConfig.cloudName, cConfig.uploadPreset);
-      setTestResult({ ok: true, msg: '✅ Cloudinary is connected and ready to upload!' });
+      const res = await testCloudinaryConnection(cConfig.cloudName, cConfig.uploadPreset, cConfig.apiKey, cConfig.apiSecret);
+      setTestResult({ ok: true, msg: `✅ ${res.message}` });
     } catch (err: any) {
       setTestResult({ ok: false, msg: `❌ Connection error: ${err.message}` });
     } finally {
@@ -1492,10 +1520,12 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
       ...form,
       cloudinaryCloudName: cConfig.cloudName.trim(),
       cloudinaryUploadPreset: cConfig.uploadPreset.trim(),
+      cloudinaryApiKey: (cConfig.apiKey || '').trim(),
+      cloudinaryApiSecret: (cConfig.apiSecret || '').trim(),
       theme,
     };
     save('settings', updatedSettings);
-    saveCloudinaryConfig(cConfig.cloudName, cConfig.uploadPreset);
+    saveCloudinaryConfig(cConfig.cloudName, cConfig.uploadPreset, cConfig.apiKey, cConfig.apiSecret);
   };
 
   const colorFields: { key: keyof StudioTheme; label: string; desc: string }[] = [
@@ -1816,6 +1846,37 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
               onChange={e => setCConfig(p => ({ ...p, uploadPreset: e.target.value }))}
             />
           </div>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">API Key (For Auto-Deletion)</label>
+              <span className="text-[9px] text-[#ccd5ae]/40 font-mono">Dashboard &gt; Access Keys</span>
+            </div>
+            <input
+              className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+              placeholder="e.g. 123456789012345"
+              value={cConfig.apiKey || ''}
+              onChange={e => setCConfig(p => ({ ...p, apiKey: e.target.value }))}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccd5ae]/60">API Secret (For Auto-Deletion)</label>
+              <span className="text-[9px] text-[#ccd5ae]/40 font-mono">Encrypted locally</span>
+            </div>
+            <input
+              type="password"
+              className="bg-[#0a120e] border border-[#01472e]/40 rounded-xl p-3 text-sm text-[#fefae0] focus:border-[#10b981] outline-none"
+              placeholder="••••••••••••••••••••••••••••"
+              value={cConfig.apiSecret || ''}
+              onChange={e => setCConfig(p => ({ ...p, apiSecret: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className="bg-[#0a120e] border border-[#01472e]/30 p-3.5 rounded-2xl flex items-center justify-between gap-3 text-xs text-[#ccd5ae]/80">
+          <span className="text-[11px] leading-relaxed">
+            🗑️ <strong className="text-[#fefae0]">Cloudinary Auto-Deletion:</strong> When API Key &amp; Secret are provided, deleting any photo or video thumbnail in this Admin Panel will permanently delete it from your Cloudinary storage too.
+          </span>
         </div>
 
         <div className="flex justify-end border-t border-[#01472e]/20 pt-4">

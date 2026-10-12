@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Upload, Trash2, Loader2, X, Link as LinkIcon, CheckCircle2, Zap } from "lucide-react";
-import { getCloudinaryConfig } from "../lib/cloudinary";
+import { getCloudinaryConfig, saveDeleteToken, deleteFromCloudinary } from "../lib/cloudinary";
 
 const MAX_DIMENSION = 2048;
 const INITIAL_JPEG_QUALITY = 0.85;
@@ -178,7 +178,12 @@ const uploadToCloudinary = async (
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           const res = JSON.parse(xhr.responseText);
-          if (res.secure_url) return resolve(res.secure_url);
+          if (res.secure_url) {
+            if (res.delete_token) {
+              saveDeleteToken(res.secure_url, res.delete_token);
+            }
+            return resolve(res.secure_url);
+          }
           reject(new Error("No secure_url returned by Cloudinary"));
         } catch {
           reject(new Error("Invalid response received from Cloudinary"));
@@ -278,12 +283,16 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     if (file) await processUpload(file);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!value) return;
-    if (!confirm("Remove this image?")) return;
+    if (!confirm("Remove this image? This will also delete it from Cloudinary storage.")) return;
+    const oldUrl = value;
     onChange("");
     setCompressionInfo(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
+    if (oldUrl.includes("cloudinary.com")) {
+      deleteFromCloudinary(oldUrl).catch(console.error);
+    }
   };
 
   const handleSaveCustomUrl = () => {

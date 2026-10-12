@@ -23,6 +23,10 @@ export interface FolderProps {
   onClick?: () => void;
   /** Count of photos inside */
   count?: number;
+  /** Controlled open state */
+  isOpen?: boolean;
+  /** Callback when user closes the folder */
+  onClose?: () => void;
 }
 
 const darkenColor = (hex: string, percent: number): string => {
@@ -40,7 +44,7 @@ const darkenColor = (hex: string, percent: number): string => {
   let g = (num >> 8) & 0xff;
   let b = num & 0xff;
   r = Math.max(0, Math.min(255, Math.floor(r * (1 - percent))));
-  g = Math.max(0, Math.min(255, Math.floor(g * (1 - percent))));
+  g = Math.max(0, Math.min(255, Math.floor(r * (1 - percent))));
   b = Math.max(0, Math.min(255, Math.floor(b * (1 - percent))));
   return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
 };
@@ -52,9 +56,13 @@ export function InteractiveFolder({
   className = '',
   label,
   onClick,
-  count
+  count,
+  isOpen: controlledIsOpen,
+  onClose,
 }: FolderProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isControlled = controlledIsOpen !== undefined;
+  const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -71,9 +79,20 @@ export function InteractiveFolder({
     '#ffffff'
   ];
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-    if (onClick) onClick();
+  const handleToggle = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (isControlled) {
+      if (isOpen) {
+        if (onClose) onClose();
+      } else {
+        if (onClick) onClick();
+      }
+    } else {
+      const next = !internalIsOpen;
+      setInternalIsOpen(next);
+      if (next && onClick) onClick();
+      if (!next && onClose) onClose();
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent, index: number) => {
@@ -225,6 +244,26 @@ export function InteractiveFolder({
                 {label}
               </div>
             </motion.div>
+          )}
+
+          {/* ── Close Cross Button when open ── */}
+          {isOpen && (
+            <motion.button
+              type="button"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onClose) onClose();
+                if (!isControlled) setInternalIsOpen(false);
+              }}
+              className="absolute -top-3.5 -right-3.5 z-50 w-7 h-7 rounded-full bg-[var(--theme-dark-bg,#01472e)] text-[var(--theme-accent-bg,#fefae0)] border border-current/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-xl text-xs font-bold"
+              title="Close Folder"
+              aria-label="Close Folder"
+            >
+              ✕
+            </motion.button>
           )}
         </div>
       </div>
