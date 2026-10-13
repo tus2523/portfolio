@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { getData, getYoutubeId, getInstagramId, defaultData, THEME_PRESETS } from './lib/store';
+import { getData, syncWithCloudDatabase, getYoutubeId, getInstagramId, defaultData, THEME_PRESETS } from './lib/store';
 import { AdminPage } from './components/AdminPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { DifferenceCursor } from './components/DifferenceCursor';
@@ -65,9 +65,14 @@ function MainApp() {
     }
   };
 
-  // Sync Portfolio Data
+  // Sync Portfolio Data (Local + Cloud Database)
   useEffect(() => {
     setData(getData());
+    syncWithCloudDatabase().then((res) => {
+      if (res.cloudSyncActive && res.data) {
+        setData(res.data);
+      }
+    });
 
     const handleStorageChange = () => {
       setData(getData());

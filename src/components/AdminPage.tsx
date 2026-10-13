@@ -18,6 +18,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import {
   getData,
+  syncWithCloudDatabase,
   updateSection,
   resetData,
   saveData,
@@ -148,6 +149,11 @@ const AdminPageInner: React.FC = () => {
     setIsMounted(true);
     setAuthed(isLoggedIn());
     setData(getData());
+    syncWithCloudDatabase().then((res) => {
+      if (res.cloudSyncActive && res.data) {
+        setData(res.data);
+      }
+    });
   }, []);
 
   if (!isMounted) return <div style={{ minHeight: '100vh', background: '#0a120e' }} />;
@@ -1952,9 +1958,42 @@ const Settings: React.FC<{ data: typeof defaultData; save: (s: string, v: any) =
 // ─── 11. BACKUP, STORAGE HEALTH & RESET SUBCOMPONENT ─────────────────
 const SeedData: React.FC<{ setData: (d: any) => void; flash: (m: string) => void }> = ({ setData, flash }) => {
   const [health, setHealth] = useState(() => getStorageHealth());
+  const [cloudStatus, setCloudStatus] = useState<{ checked: boolean; active: boolean }>({ checked: false, active: false });
+  const [isSyncingCloud, setIsSyncingCloud] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const refreshHealth = () => setHealth(getStorageHealth());
+
+  useEffect(() => {
+    fetch('/api/portfolio-data')
+      .then(r => r.json())
+      .then(d => {
+        setCloudStatus({ checked: true, active: !!d.configured });
+      })
+      .catch(() => {
+        setCloudStatus({ checked: true, active: false });
+      });
+  }, []);
+
+  const handleManualCloudSync = async () => {
+    setIsSyncingCloud(true);
+    try {
+      const res = await syncWithCloudDatabase();
+      if (res.cloudSyncActive) {
+        setCloudStatus({ checked: true, active: true });
+        setData(res.data);
+        flash('Synchronized with Upstash Cloud Database! ☁️');
+      } else {
+        setCloudStatus({ checked: true, active: false });
+        alert('Cloud database is not connected yet. Add Upstash Redis in your Vercel Marketplace (Integration) to activate automatic sync across all devices!');
+      }
+    } catch (err: any) {
+      alert(`Cloud sync check failed: ${err.message}`);
+    } finally {
+      setIsSyncingCloud(false);
+      refreshHealth();
+    }
+  };
 
   const handleExportBackup = () => {
     try {
@@ -2027,7 +2066,44 @@ const SeedData: React.FC<{ setData: (d: any) => void; flash: (m: string) => void
         <p className="text-xs text-[#ccd5ae]/70 mt-1">Export full backups, transfer data between devices, and monitor browser storage health.</p>
       </div>
 
-      {/* 1. Storage Health Diagnostic */}
+      {/* 1. Cloud Database Status Banner */}
+      <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#01472e]/20 pb-4">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">☁️</span>
+            <div>
+              <h3 className="text-base font-bold text-[#fefae0]">Universal Cloud Database (Cross-Device Sync)</h3>
+              <p className="text-xs text-[#ccd5ae]/70 mt-0.5">
+                Automatically synchronizes your YouTube links, video projects, photos, and settings across all computers, phones, and live visitors worldwide.
+              </p>
+            </div>
+          </div>
+          <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg border shrink-0 ${
+            cloudStatus.active
+              ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+              : 'bg-amber-950/40 border-amber-500/40 text-amber-300'
+          }`}>
+            {cloudStatus.active ? '● Cloud Database Active & Connected' : '○ Local Storage Active (Click to check Upstash)'}
+          </span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+          <p className="text-xs text-[#ccd5ae]/80 leading-relaxed max-w-2xl">
+            {cloudStatus.active
+              ? '✅ Upstash Redis is active. Whenever you add or edit anything in this Admin Panel, it saves to the cloud instantly. Every visitor worldwide will see your updates!'
+              : 'To enable 100% free cross-device synchronization, link Upstash Redis in your Vercel Marketplace. Once linked, all devices and phones will sync automatically.'}
+          </p>
+          <button
+            onClick={handleManualCloudSync}
+            disabled={isSyncingCloud}
+            className="px-5 py-2.5 bg-[#01472e] hover:bg-[#025c3c] border border-[#10b981]/40 rounded-xl text-xs font-bold uppercase tracking-wider text-[#fefae0] transition flex items-center justify-center gap-1.5 shrink-0 shadow-md"
+          >
+            <span>{isSyncingCloud ? 'Syncing...' : '🔄 Sync With Cloud Now'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Storage Health Diagnostic */}
       <div className="bg-[#111c16] border border-[#01472e]/30 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col gap-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#01472e]/20 pb-4">
           <div className="flex items-center gap-2.5">

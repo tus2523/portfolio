@@ -2,13 +2,16 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import crypto from 'crypto';
 
+let devMemoryStore: any = null;
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     {
-      name: 'api-delete-cloudinary',
+      name: 'api-portfolio-and-cloudinary',
       configureServer(server) {
+        // 1. Cloudinary Delete API proxy
         server.middlewares.use('/api/delete-cloudinary', (req, res) => {
           if (req.method === 'POST') {
             let bodyStr = '';
@@ -61,6 +64,83 @@ export default defineConfig({
                 res.statusCode = cRes.status;
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify(data));
+              } catch (err: any) {
+                res.statusCode = 500;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: err.message || 'Server error' }));
+              }
+            });
+          } else {
+            res.statusCode = 405;
+            res.end();
+          }
+        });
+
+        // 2. Portfolio Data API (Upstash Redis proxy / local fallback)
+        server.middlewares.use('/api/portfolio-data', (req, res) => {
+          const url = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '').trim();
+          const token = (process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '').trim();
+          const KEY = 'tushar_portfolio_v3_data';
+
+          if (req.method === 'GET') {
+            if (url && token) {
+              fetch(`${url}/get/${KEY}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              })
+                .then((r) => r.json())
+                .then((uData: any) => {
+                  let parsed = null;
+                  if (uData && uData.result) {
+                    try {
+                      parsed = typeof uData.result === 'string' ? JSON.parse(uData.result) : uData.result;
+                    } catch {
+                      parsed = uData.result;
+                    }
+                  }
+                  res.statusCode = 200;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ configured: true, data: parsed }));
+                })
+                .catch(() => {
+                  res.statusCode = 200;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ configured: true, data: devMemoryStore }));
+                });
+            } else {
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ configured: false, data: devMemoryStore }));
+            }
+          } else if (req.method === 'POST') {
+            let bodyStr = '';
+            req.on('data', (chunk) => {
+              bodyStr += chunk;
+            });
+            req.on('end', async () => {
+              try {
+                let parsedBody: any = null;
+                try {
+                  parsedBody = JSON.parse(bodyStr || '{}');
+                } catch {
+                  parsedBody = bodyStr;
+                }
+                devMemoryStore = parsedBody;
+
+                if (url && token) {
+                  const serialized = typeof parsedBody === 'string' ? parsedBody : JSON.stringify(parsedBody);
+                  await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(['SET', KEY, serialized]),
+                  });
+                }
+
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true }));
               } catch (err: any) {
                 res.statusCode = 500;
                 res.setHeader('Content-Type', 'application/json');

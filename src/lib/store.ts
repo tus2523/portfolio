@@ -719,44 +719,75 @@ export function purgeStorageBloat(): typeof defaultData {
   return cleaned;
 }
 
+export function mergeWithDefaultData(stored: any): typeof defaultData {
+  if (!stored || typeof stored !== 'object') return defaultData;
+
+  const merged = {
+    heroStats: { ...defaultData.heroStats, ...(stored.heroStats || {}) },
+    photos: Array.isArray(stored.photos) && stored.photos.length > 0 ? stored.photos : defaultData.photos,
+    videoProjects: Array.isArray(stored.videoProjects) && stored.videoProjects.length > 0 ? stored.videoProjects : defaultData.videoProjects,
+    reviews: Array.isArray(stored.reviews) && stored.reviews.length > 0 ? stored.reviews : defaultData.reviews,
+    experience: Array.isArray(stored.experience) && stored.experience.length > 0 ? stored.experience : defaultData.experience,
+    education: Array.isArray(stored.education) && stored.education.length > 0 ? stored.education : defaultData.education,
+    about: { ...defaultData.about, ...(stored.about || {}) },
+    skills: Array.isArray(stored.skills) && stored.skills.length > 0 ? stored.skills : defaultData.skills,
+    settings: {
+      ...defaultData.settings,
+      ...(stored.settings || {}),
+      theme: stored.settings?.theme ? { ...THEME_PRESETS['earthy-sage'], ...stored.settings.theme } : defaultData.settings.theme,
+      adminPassword: stored.settings?.adminPassword || defaultData.settings.adminPassword,
+      cloudinaryApiKey: stored.settings?.cloudinaryApiKey || defaultData.settings.cloudinaryApiKey,
+      cloudinaryApiSecret: stored.settings?.cloudinaryApiSecret || defaultData.settings.cloudinaryApiSecret,
+    },
+    services: Array.isArray(stored.services) && stored.services.length > 0 ? stored.services : defaultData.services,
+    brands: Array.isArray(stored.brands) && stored.brands.length > 0 ? stored.brands : defaultData.brands,
+    celebrities: Array.isArray(stored.celebrities) && stored.celebrities.length > 0 ? stored.celebrities : defaultData.celebrities,
+  };
+
+  return sanitizeStorageData(merged);
+}
+
 export function getData(): typeof defaultData {
   if (typeof window === 'undefined') return defaultData;
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return defaultData;
     const stored = JSON.parse(raw);
-    
-    if (!stored || typeof stored !== 'object') return defaultData;
-
-    const merged = {
-      heroStats: { ...defaultData.heroStats, ...(stored.heroStats || {}) },
-      photos: Array.isArray(stored.photos) && stored.photos.length > 0 ? stored.photos : defaultData.photos,
-      videoProjects: Array.isArray(stored.videoProjects) && stored.videoProjects.length > 0 ? stored.videoProjects : defaultData.videoProjects,
-      reviews: Array.isArray(stored.reviews) && stored.reviews.length > 0 ? stored.reviews : defaultData.reviews,
-      experience: Array.isArray(stored.experience) && stored.experience.length > 0 ? stored.experience : defaultData.experience,
-      education: Array.isArray(stored.education) && stored.education.length > 0 ? stored.education : defaultData.education,
-      about: { ...defaultData.about, ...(stored.about || {}) },
-      skills: Array.isArray(stored.skills) && stored.skills.length > 0 ? stored.skills : defaultData.skills,
-      settings: {
-        ...defaultData.settings,
-        ...(stored.settings || {}),
-        theme: stored.settings?.theme ? { ...THEME_PRESETS['earthy-sage'], ...stored.settings.theme } : defaultData.settings.theme,
-        adminPassword: stored.settings?.adminPassword || defaultData.settings.adminPassword,
-        cloudinaryApiKey: stored.settings?.cloudinaryApiKey || defaultData.settings.cloudinaryApiKey,
-        cloudinaryApiSecret: stored.settings?.cloudinaryApiSecret || defaultData.settings.cloudinaryApiSecret,
-      },
-      services: Array.isArray(stored.services) && stored.services.length > 0 ? stored.services : defaultData.services,
-      brands: Array.isArray(stored.brands) && stored.brands.length > 0 ? stored.brands : defaultData.brands,
-      celebrities: Array.isArray(stored.celebrities) && stored.celebrities.length > 0 ? stored.celebrities : defaultData.celebrities,
-    };
-
-    return sanitizeStorageData(merged);
+    return mergeWithDefaultData(stored);
   } catch (err) {
     console.warn("Store: Falling back to default data due to error:", err);
     return defaultData;
   }
 }
 
+/**
+ * Loads the latest data from the Cloud Database (Upstash Redis).
+ * If configured, automatically caches it locally and dispatches a refresh.
+ */
+export async function syncWithCloudDatabase(): Promise<{ cloudSyncActive: boolean; data: typeof defaultData }> {
+  if (typeof window === 'undefined') return { cloudSyncActive: false, data: defaultData };
+  try {
+    const res = await fetch('/api/portfolio-data');
+    if (!res.ok) {
+      return { cloudSyncActive: false, data: getData() };
+    }
+    const json = await res.json();
+    if (json.configured && json.data) {
+      const merged = mergeWithDefaultData(json.data);
+      localStorage.setItem(KEY, JSON.stringify(merged));
+      window.dispatchEvent(new Event('portfolio-data-updated'));
+      return { cloudSyncActive: true, data: merged };
+    }
+    return { cloudSyncActive: !!json.configured, data: getData() };
+  } catch (err) {
+    console.warn('Could not sync with cloud database:', err);
+    return { cloudSyncActive: false, data: getData() };
+  }
+}
+
+/**
+ * Saves data locally and asynchronously writes it to the cloud database (Upstash Redis)
+ */
 export function saveData(data: typeof defaultData): { success: boolean; error?: string } {
   if (typeof window === 'undefined') return { success: false, error: 'No browser window found' };
   try {
@@ -764,6 +795,16 @@ export function saveData(data: typeof defaultData): { success: boolean; error?: 
     const jsonStr = JSON.stringify(sanitized);
     localStorage.setItem(KEY, jsonStr);
     window.dispatchEvent(new Event('portfolio-data-updated'));
+
+    // Asynchronously synchronize with Cloud Database (Upstash Redis)
+    fetch('/api/portfolio-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonStr,
+    }).catch((err) => {
+      console.warn('Cloud database background write notice:', err);
+    });
+
     return { success: true };
   } catch (err: any) {
     console.error("Storage error:", err);
