@@ -14,8 +14,21 @@ export default async function handler(req, res) {
   }
 
   // Configuration from Vercel Environment Variables or request
-  const url = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '').trim();
-  const token = (process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '').trim();
+  const url = (
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.STORAGE_REST_API_URL ||
+    process.env.KV_REST_API_URL ||
+    process.env.STORAGE_URL ||
+    ''
+  ).trim();
+
+  const token = (
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.STORAGE_REST_API_TOKEN ||
+    process.env.KV_REST_API_TOKEN ||
+    process.env.STORAGE_TOKEN ||
+    ''
+  ).trim();
 
   // If Upstash isn't configured in environment variables, return unconfigured status cleanly
   if (!url || !token) {
